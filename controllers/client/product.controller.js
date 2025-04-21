@@ -1,16 +1,20 @@
 const Product = require("../../models/product.model.js")
 
-module.exports.index = async (req,res)=>{
-    const products = await Product.find({});
-    console.log(products);
-
-
-    products.forEach(item => {
-        item.priceNew = (item.price-(item.price*item.discountPercentage/100)).toFixed(0);
-    })
+class ProductController {
     
-    res.render("client/pages/products/index.pug",{
-        pageTitle: "Trang danh sách sản phẩm",
-        products : products
-    });
-  }
+    index(req,res) {
+        res.render("client/pages/shop-grid",{
+            layout: 'main',
+            pageTitle : "Shop"
+        });
+    }
+    
+    show(req,res){
+        res.render("client/pages/product-details",{
+            layout: 'main',
+            pageTitle : "Product details"
+        });
+      }
+    }
+
+module.exports = new ProductController();
