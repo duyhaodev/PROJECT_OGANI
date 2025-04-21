@@ -26,6 +26,11 @@ app.engine('hbs', hbs.engine({
   partialsDir: path.join(__dirname, 'src/resources/views/client/partials')
 })); 
 
+app.engine('admin_hbs', hbs.engine({
+  extname: '.hbs',
+  defaultLayout: false
+})); 
+
 routeAdmin(app);
 routeClient(app);
 
