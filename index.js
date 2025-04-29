@@ -1,6 +1,6 @@
 const path = require('path');
 const express = require('express')
-require('dotenv').config(); //nhúng env
+// require('dotenv').config(); //nhúng env
 const database = require("./config/database.js")
 const app = express();
 const hbs = require('express-handlebars');
@@ -8,7 +8,7 @@ const routeClient = require("./routes/client/index.route")
 const routeAdmin = require("./routes/admin/index.route")
 const systemConfig = require ("./config/system.js")
 
-const port = process.env.PORT;
+const port = 3000;
 
 app.use(express.static(path.join(__dirname, 'src', 'public')));
 
