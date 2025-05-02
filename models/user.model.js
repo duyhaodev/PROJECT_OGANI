@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema({
     address: { type: String },
     avatar: { type: String }, // Avatar nên để string (URL hoặc đường dẫn file)
     joinAt: { type: Date, default: Date.now }, // Ngày tham gia, mặc định là ngày hiện tại
+    status: { type: String, enum: ["active", "locked"], default: "active" },
 });
 
 // Mã hóa mật khẩu trước khi lưu

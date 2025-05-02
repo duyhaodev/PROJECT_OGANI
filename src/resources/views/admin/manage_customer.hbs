@@ -6,10 +6,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Tables - SB Admin</title>
+        <title>Admin Page</title>
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="/css/styles_admin.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -61,8 +62,8 @@
                         </div>
                     </div>
                     <div class="sb-sidenav-footer">
-                        <div class="small">Logged in as:</div>
-                        Start Bootstrap
+                        <div class="small">Welcome,</div>
+                        {{user.username}}
                     </div>
                 </nav>
             </div>
@@ -73,51 +74,54 @@
                         <div class="card mb-4">
                             <div class="card-header">
                                 <i class="fas fa-table me-1"></i>
-                                DataTable Category
+                                DataTable Customer
                             </div>
                             <div class="card-body">
                                 <table id="datatablesSimple">
                                     <thead>
                                         <tr>
-                                            <th>Category name</th>
-                                            <th>Description</th>
+                                            <th>Username</th>
+                                            <th>FullName</th>
+                                            <th>Email Address</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tfoot>
                                         <tr>
-                                            <th>Category name</th>
-                                            <th>Description</th>
+                                            <th>Username</th>
+                                            <th>FullName</th>
+                                            <th>Email Address</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </tfoot>
                                     <tbody>
+                                    {{#each modifiedCustomers}}
                                         <tr>
-                                            <td>Rau tươi</td>
-                                            <td>Rau tươi được thay mới liên tục</td>
-                                            <td>Đang bán</td>
-                                            <td>Ngưng bán/ Chỉnh sửa/ Thêm món</td>
+                                            <td>{{this.username}}</td>
+                                            <td>{{this.fullName}}</td>
+                                            <td>{{this.emailAddress}}</td>
+                                            <td class="text-center align-middle">
+                                            {{#if this.isActive}}
+                                                <span class="btn btn-success btn-sm text-uppercase">{{this.status}}</span>
+                                            {{else}}
+                                                <span class="btn btn-danger btn-sm text-uppercase">{{this.status}}</span>
+                                            {{/if}}
+                                            </td>
+                                            
+                                            <td class="text-center align-middle">
+                                                <div class="d-flex justify-content-center gap-2">
+                                                    {{#if isActive}}
+                                                    <a href="/admin/customer/lock/{{_id}}" class="btn btn-danger btn-sm" title="Khóa tài khoản">Lock</a>
+                                                    {{else}}
+                                                    <a href="/admin/customer/unlock/{{_id}}" class="btn btn-success btn-sm" title="Gỡ khóa tài khoản">Unlock</a>
+                                                    {{/if}}
+                                                    <a href="/admin/customer/view/{{_id}}" class="btn btn-primary btn-sm" title="Xem thông tin khách hàng"><i class="fa-solid fa-user"></i> View</a>
+                                                </div>
+                                            </td>
                                         </tr>
-                                        <tr>
-                                            <td>Thịt tươi</td>
-                                            <td>Thịt chắc chắn sẽ tươi vì lên kệ liên tục</td>
-                                            <td>Đang bán</td>
-                                            <td>Ngưng bán/ Chỉnh sửa/ Thêm món</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Trái cây</td>
-                                            <td>Trái cây hàng tuyển của Việt Nam, say no with hàng Tàu</td>
-                                            <td>Đang bán</td>
-                                            <td>Ngưng bán/ Chỉnh sửa/ Thêm món</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Bánh ngọt</td>
-                                            <td>Bánh ngọt nhà làm</td>
-                                            <td>Đang bán</td>
-                                            <td>Ngưng bán/ Chỉnh sửa/ Thêm món</td>
-                                        </tr>
+                                    {{/each}}
                                     </tbody>
                                 </table>
                             </div>
