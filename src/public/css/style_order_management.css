@@ -1,0 +1,370 @@
+:root {
+    --primary-color: #4f46e5;
+    --primary-hover: #4338ca;
+    --secondary-color: #f9fafb;
+    --text-color: #1f2937;
+    --text-muted: #6b7280;
+    --border-color: #e5e7eb;
+    --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --hover-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    
+    /* Status colors */
+    --pending-color: #f59e0b;
+    --confirmed-color: #3b82f6;
+    --shipping-color: #06b6d4;
+    --completed-color: #10b981;
+    --cancelled-color: #ef4444;
+    --unknown-color: #6b7280;
+  }
+  
+  /* Cải thiện giao diện chung */
+  body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text-color);
+  }
+  
+  /* Cải thiện card */
+  .card {
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
+  
+  .card:hover {
+    box-shadow: var(--hover-shadow);
+  }
+  
+  .card-header {
+    background-color: white;
+    border-bottom: 1px solid var(--border-color);
+    padding: 1.25rem 1.5rem;
+  }
+  
+  .card-title {
+    margin: 0;
+    font-weight: 600;
+    color: var(--text-color);
+  }
+  
+  .card-body {
+    padding: 1.5rem;
+  }
+  
+  /* Status filters */
+  .status-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .status-filter {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    border-radius: 0.5rem;
+    background-color: white;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    font-weight: 500;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .status-filter:hover {
+    border-color: var(--primary-color);
+    background-color: rgba(79, 70, 229, 0.05);
+  }
+  
+  .status-filter.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+  }
+  
+  .status-filter.status-pending {
+    border-color: var(--pending-color);
+  }
+  
+  .status-filter.status-pending:hover,
+  .status-filter.status-pending.active {
+    background-color: var(--pending-color);
+    color: #000;
+    border-color: var(--pending-color);
+  }
+  
+  .status-filter.status-confirmed {
+    border-color: var(--confirmed-color);
+  }
+  
+  .status-filter.status-confirmed:hover,
+  .status-filter.status-confirmed.active {
+    background-color: var(--confirmed-color);
+    color: white;
+    border-color: var(--confirmed-color);
+  }
+  
+  .status-filter.status-shipping {
+    border-color: var(--shipping-color);
+  }
+  
+  .status-filter.status-shipping:hover,
+  .status-filter.status-shipping.active {
+    background-color: var(--shipping-color);
+    color: #000;
+    border-color: var(--shipping-color);
+  }
+  
+  .status-filter.status-completed {
+    border-color: var(--completed-color);
+  }
+  
+  .status-filter.status-completed:hover,
+  .status-filter.status-completed.active {
+    background-color: var(--completed-color);
+    color: white;
+    border-color: var(--completed-color);
+  }
+  
+  .status-filter.status-cancelled {
+    border-color: var(--cancelled-color);
+  }
+  
+  .status-filter.status-cancelled:hover,
+  .status-filter.status-cancelled.active {
+    background-color: var(--cancelled-color);
+    color: white;
+    border-color: var(--cancelled-color);
+  }
+  
+  /* Cải thiện bảng */
+  .table {
+    margin-bottom: 1.5rem;
+  }
+  
+  .table th {
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    padding: 0.75rem 1rem;
+    border-bottom: 2px solid var(--border-color);
+    background-color: #f9fafb;
+  }
+  
+  .table td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .table tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+  
+  /* Order ID */
+  .order-id {
+    font-weight: 600;
+    color: var(--primary-color);
+  }
+  
+  /* Customer Info */
+  .customer-info {
+    line-height: 1.4;
+  }
+  
+  .customer-name {
+    font-weight: 500;
+  }
+  
+  /* Product List */
+  .product-list {
+    max-height: 80px;
+    overflow-y: auto;
+  }
+  
+  .product-item {
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+  }
+  
+  .product-item:last-child {
+    margin-bottom: 0;
+  }
+  
+  .product-name {
+    font-weight: 500;
+    display: block;
+  }
+  
+  /* Status Badges */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.375rem 0.75rem;
+    border-radius: 9999px;
+    font-weight: 500;
+    font-size: 0.75rem;
+    letter-spacing: 0.025em;
+  }
+  
+  .status-pending {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: var(--pending-color);
+  }
+  
+  .status-confirmed {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: var(--confirmed-color);
+  }
+  
+  .status-shipping {
+    background-color: rgba(6, 182, 212, 0.1);
+    color: var(--shipping-color);
+  }
+  
+  .status-completed {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--completed-color);
+  }
+  
+  .status-cancelled {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--cancelled-color);
+  }
+  
+  .status-unknown {
+    background-color: rgba(107, 114, 128, 0.1);
+    color: var(--unknown-color);
+  }
+  
+  /* Order Amount */
+  .order-amount {
+    font-weight: 600;
+    color: var(--text-color);
+  }
+  
+  /* Action Buttons */
+  .action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  
+  /* Search Box */
+  .search-box {
+    position: relative;
+  }
+  
+  .search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+  }
+  
+  .search-box input {
+    padding-left: 2.5rem;
+    border-radius: 0.5rem;
+  }
+  
+  /* Responsive Styles */
+  @media (max-width: 992px) {
+    .status-filters {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    .status-filter {
+      white-space: nowrap;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .action-buttons {
+      justify-content: flex-start;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .card-body {
+      padding: 1rem;
+    }
+    
+    .table {
+      font-size: 0.875rem;
+    }
+  }
+  
+  /* Cải thiện nút */
+  .btn {
+    font-weight: 500;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+  }
+  
+  .btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+  }
+  
+  .btn-primary:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+  }
+  
+  .btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+  }
+  
+  .btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+  }
+  
+  .btn-success {
+    background-color: var(--completed-color);
+    border-color: var(--completed-color);
+  }
+  
+  .btn-danger {
+    background-color: var(--cancelled-color);
+    border-color: var(--cancelled-color);
+  }
+  
+  .btn-info {
+    background-color: var(--shipping-color);
+    border-color: var(--shipping-color);
+  }
+  
+  .btn-warning {
+    background-color: var(--pending-color);
+    border-color: var(--pending-color);
+  }
+  
+  /* Animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .card {
+    animation: fadeIn 0.3s ease-out;
+  }

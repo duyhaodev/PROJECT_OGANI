@@ -34,9 +34,19 @@ app.engine('hbs', hbs.engine({
   extname: '.hbs',
   layoutsDir: path.join(__dirname, 'src/resources/views/client/layouts'),
   partialsDir: path.join(__dirname, 'src/resources/views/client/partials'),
-  defaultLayout: false
-})); 
-
+  defaultLayout: false,
+  helpers: {
+    eq: (a, b) => a === b,
+    notEq: (a, b) => a !== b,
+    formatCurrency: (number) => {
+      if (!number) return '0';
+      return number.toLocaleString("vi-VN") + 'đ';
+    },
+    multiply: (a, b) => {
+      return a * b;
+    }
+  }
+}));
 
 
 routeAdmin(app);
