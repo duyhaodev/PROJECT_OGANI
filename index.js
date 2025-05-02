@@ -10,7 +10,7 @@ const authRoute = require("./routes/auth.route");
 const waitingRoute = require("./routes/waiting.route");
 const systemConfig = require ("./config/system.js")
 const session = require("express-session");
-
+const moment = require('moment');
 const port = process.env.PORT;
 
 app.use(express.static(path.join(__dirname, 'src', 'public')));
@@ -44,9 +44,14 @@ app.engine('hbs', hbs.engine({
     },
     multiply: (a, b) => {
       return a * b;
+    },
+    formatDate: (date, format) => {
+      const safeFormat = typeof format === 'string' ? format : 'DD/MM/YYYY';
+      return moment(date).format(safeFormat);
     }
   }
-}));
+})); 
+
 
 
 routeAdmin(app);

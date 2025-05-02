@@ -1,7 +1,14 @@
-const express = require ("express");
+const express = require("express");
 const router = express.Router();
-const AdminStaffcontroller =  require ("../../controllers/admin/staff.controller")
+const controller = require("../../controllers/admin/staff.controller");
 
-router.get("/", AdminStaffcontroller.staff)
-
+router.get("/", controller.staff);
+router.get("/lock/:id", controller.lock);
+router.get("/unlock/:id", controller.unlock);
+router.get("/delete/:id", controller.delete);
+router.get("/edit/:id", controller.editForm);
+router.post("/update/:id", controller.editSave);
+router.get("/add", controller.addForm);
+router.post("/insert", controller.addSave);
+router.get("/view/:id", controller.viewStaff);
 module.exports = router;
