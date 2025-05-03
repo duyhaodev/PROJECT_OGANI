@@ -12,6 +12,7 @@ const productSchema = new mongoose.Schema({
   status: { type: String, enum: ["active", "inactive"], default: "active" },
   sellDate: { type: Date },
   import: { type: String, required: true },
+  thumbnail: { type: String },
   views: { type: Number, default: 0 } // thêm views để dùng với hotProduct
 }, {
   timestamps: true // tự động thêm createdAt & updatedAt
