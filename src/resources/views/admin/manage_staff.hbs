@@ -101,14 +101,14 @@
                                         </tr>
                                     </tfoot>
                                     <tbody>
-                                        {{#each staffs}}
+                                        {{#each staffList}}
                                         <tr>
                                             <td>{{this.username}}</td>
                                             <td>{{this.fullName}}</td>
                                             <td>{{this.emailAddress}}</td>
 
                                             <td class="text-center align-middle">
-                                                {{#if this.isActive}}
+                                                {{#if (eq this.status "active")}}
                                                     <span class="btn btn-success btn-sm text-uppercase">{{this.status}}</span>
                                                 {{else}}
                                                     <span class="btn btn-danger btn-sm text-uppercase">{{this.status}}</span>
@@ -117,7 +117,7 @@
 
                                             <td class="text-center align-middle">
                                                 <div class="d-flex justify-content-center gap-2">
-                                                    {{#if this.isActive}}
+                                                    {{#if (eq this.status "active")}}
                                                     <a href="/admin/staff/lock/{{this._id}}" class="btn btn-danger btn-sm" title="Khóa tài khoản"> Lock</a>
                                                     {{else}}
                                                     <a href="/admin/staff/unlock/{{this._id}}" class="btn btn-success btn-sm" title="Gỡ khóa tài khoản"> Unlock</a>

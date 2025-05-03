@@ -6,9 +6,6 @@ class AdminCustomerController {
       const user = req.session.user || null;
       const customers = await User.find({ role: 1 }).lean(); 
       console.log("Danh sách khách hàng:", customers); 
-
-      
-
       res.render("admin/manage_customer", {
         pageTitle: "Customer Management",
         user,
