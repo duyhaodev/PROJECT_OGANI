@@ -11241,3 +11241,61 @@ body {
   font-size: 0.75rem;
   border-radius: 0.375rem !important;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+.nav-pills .nav-link {
+  border-radius: 20px;
+  padding: 8px 16px;
+  transition: all 0.2s ease-in-out;
+  font-weight: 500;
+}
+
+.nav-pills .nav-link.active,
+.nav-pills .nav-link:hover {
+  color: white !important;
+}
+
+.nav-pills .btn-outline-secondary.active,
+.nav-pills .btn-outline-secondary:hover {
+  background-color: #6c757d;
+}
+
+.nav-pills .btn-outline-warning.active,
+.nav-pills .btn-outline-warning:hover {
+  background-color: #ffc107;
+}
+
+.nav-pills .btn-outline-primary.active,
+.nav-pills .btn-outline-primary:hover {
+  background-color: #0d6efd;
+}
+
+.nav-pills .btn-outline-info.active,
+.nav-pills .btn-outline-info:hover {
+  background-color: #0dcaf0;
+}
+
+.nav-pills .btn-outline-success.active,
+.nav-pills .btn-outline-success:hover {
+  background-color: #198754;
+}
+
+.nav-pills .btn-outline-danger.active,
+.nav-pills .btn-outline-danger:hover {
+  background-color: #dc3545;
+}
+
+.dataTable-selector {
+  display: none ;
+}
