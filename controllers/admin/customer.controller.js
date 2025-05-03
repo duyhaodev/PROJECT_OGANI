@@ -7,15 +7,12 @@ class AdminCustomerController {
       const customers = await User.find({ role: 1 }).lean(); 
       console.log("Danh sách khách hàng:", customers); 
 
-      const modifiedCustomers = customers.map(c => ({
-        ...c,
-        isActive: c.status === "active"
-      }));
+      
 
       res.render("admin/manage_customer", {
         pageTitle: "Customer Management",
         user,
-        modifiedCustomers,
+        customers,
       });
     } catch (error) {
       console.error('Lỗi lấy danh sách khách hàng:', error);
@@ -75,7 +72,26 @@ class AdminCustomerController {
       console.error("Lỗi xem chi tiết khách hàng:", err);
       res.status(500).send("Lỗi khi xem chi tiết khách hàng.");
     }
-  }  
+  }
+  async upgradeRank(req, res) {
+    try {
+      const userId = req.params.id;
+      const user = await User.findById(userId);
+      if (!user) return res.status(404).send("Không tìm thấy khách hàng");
+  
+      const ranks = ["Bạc", "Vàng", "Kim cương"];
+      const currentIndex = ranks.indexOf(user.rank || "Bạc");
+      const nextIndex = (currentIndex + 1) % ranks.length;
+  
+      user.rank = ranks[nextIndex];
+      await user.save();
+  
+      res.redirect("/admin/customer");
+    } catch (error) {
+      console.error("Lỗi nâng cấp hạng:", error);
+      res.status(500).send("Lỗi nâng cấp hạng khách hàng");
+    }
+  }
 }
 
 module.exports = new AdminCustomerController();

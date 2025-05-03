@@ -6,4 +6,5 @@ router.get("/", AdminCustomercontroller.customer)
 router.get("/lock/:id", AdminCustomercontroller.lockCustomer);
 router.get("/unlock/:id", AdminCustomercontroller.unlockCustomer);
 router.get("/view/:id", AdminCustomercontroller.viewCustomer);
+router.get("/upgrade/:id", AdminCustomercontroller.upgradeRank);
 module.exports = router;
