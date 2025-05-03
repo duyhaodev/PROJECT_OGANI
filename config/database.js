@@ -1,12 +1,18 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
-module.exports.connect = async () =>{
+module.exports.connect = async () => {
     try {
-      await  mongoose.connect(process.env.MONGO_URL);
-      console.log("Connected Successful!")
+        const uri = process.env.MONGODB_URI;
+
+        if (!uri) {
+            throw new Error("MongoDB URL is not defined in .env file");
+        }
+
+        // Kết nối MongoDB mà không cần các tùy chọn deprecated
+        await mongoose.connect(uri);
+
+        console.log("✅ Connected to MongoDB successfully!");
     } catch (error) {
-        console.log("Connected Failure")
+        console.error("❌ MongoDB connection failed:", error.message);
     }
-}
-
-
+};
