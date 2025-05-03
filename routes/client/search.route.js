@@ -9,7 +9,7 @@ router.get("/search", async (req, res) => {
     const result = await findByName(keyword);
     res.json(result.map(item => ({
       title: item.title,
-      slug:  item._id  
+      id:  item._id  
     })));
   } catch (err) {
     console.error(err);
