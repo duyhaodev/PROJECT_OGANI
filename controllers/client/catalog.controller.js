@@ -12,6 +12,7 @@ class CatalogController {
         pageTitle: "Danh mục sản phẩm",
         catalogList,
         user,
+        currentPage: "catalog"
       });
     } catch (error) {
       console.error(error);
@@ -53,7 +54,8 @@ class CatalogController {
         products: uniqueProducts,
         categoryName: nameCat,
         user,
-        catalogList
+        catalogList,
+        currentPage: "catalog"
       });
     } catch (err) {
       console.error('Lỗi khi load sản phẩm theo danh mục:', err);

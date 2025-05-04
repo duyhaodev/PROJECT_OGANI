@@ -32,6 +32,7 @@ class CartController {
                     subtotal: 0,
                     cartCount: 0,
                     user: req.session.user || null,
+                    currentPage: "cart"
                 });
             }
 
@@ -67,6 +68,7 @@ class CartController {
                 subtotal,
                 cartCount,
                 user,
+                currentPage: "cart"
             });
         } catch (error) {
             console.error('Error in showCart:', error);

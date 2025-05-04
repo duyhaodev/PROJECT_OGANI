@@ -22,7 +22,8 @@ module.exports.index = async (req, res) => {
       user,
       listPro,
       listCat,
-      breadcrumb: "Trang chủ"
+      breadcrumb: "Trang chủ",
+      currentPage: "home"
     });
   } catch (err) {
     console.error("Lỗi khi tải trang chủ:", err);
