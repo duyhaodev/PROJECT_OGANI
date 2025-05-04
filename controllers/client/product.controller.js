@@ -1,5 +1,5 @@
 
-const mongoose = require('mongoose');  
+const mongoose = require('mongoose');
 const { Product } = require("../../models/product.model.js");
 const modelCatalog = require("../../models/catalog.model.js");
 
@@ -44,40 +44,40 @@ class ProductController {
       res.status(500).send('Lỗi khi tìm kiếm sản phẩm');
     }
   }
-// Trang chi tiết sản phẩm
-async show(req, res, next) {
-  const id = req.params.id;
+  // Trang chi tiết sản phẩm
+  async show(req, res, next) {
+    const id = req.params.id;
 
-  // Kiểm tra tính hợp lệ của ID
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).send("ID không hợp lệ");
-  }
-
-  try {
-    // Tìm sản phẩm theo ID, sử dụng phương thức lean để chuyển đổi Mongoose object thành plain object
-    const product = await Product.findById(id).lean();
-    const listPro = await Product.find({}).lean();
-    const user = req.session.user || null;
-    // Nếu không tìm thấy sản phẩm
-    if (!product) {
-      return res.status(404).send("Không tìm thấy sản phẩm");
+    // Kiểm tra tính hợp lệ của ID
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).send("ID không hợp lệ");
     }
 
-    // Hiển thị chi tiết sản phẩm
-    res.render('client/pages/product-details', {
-      layout: 'main',
-      pageTitle : "Product details",
-      listPro,
-      user,
-      product: product , // Không cần mongooseToObject nếu dùng lean()
-    });
-  } catch (err) {
-    console.error("Lỗi khi hiển thị sản phẩm:", err);
-    res.status(500).send("Lỗi khi hiển thị sản phẩm");
-  }
-}
+    try {
+      // Tìm sản phẩm theo ID, sử dụng phương thức lean để chuyển đổi Mongoose object thành plain object
+      const product = await Product.findById(id).lean();
+      const listPro = await Product.find({}).lean();
 
-    
+      // Nếu không tìm thấy sản phẩm
+      if (!product) {
+        return res.status(404).send("Không tìm thấy sản phẩm");
+      }
+      const user = req.session.user || null;
+      // Hiển thị chi tiết sản phẩm
+      res.render('client/pages/product-details', {
+        layout: 'main',
+        pageTitle: "Product details",
+        listPro,
+        user,
+        product: product, // Không cần mongooseToObject nếu dùng lean()
+      });
+    } catch (err) {
+      console.error("Lỗi khi hiển thị sản phẩm:", err);
+      res.status(500).send("Lỗi khi hiển thị sản phẩm");
+    }
+  }
+
+
 }
 
 module.exports = new ProductController();
