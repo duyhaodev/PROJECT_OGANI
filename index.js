@@ -4,7 +4,7 @@ const session = require('express-session');
 const moment = require('moment');
 const Swal = require('sweetalert2')
 const catalogRouter = require('./routes/client/catalog.route');
-// require('dotenv').config(); //nhúng env
+require('dotenv').config(); //nhúng env
 const Cart = require('./models/cart.model');
 const database = require("./config/database.js");
 const app = express();
