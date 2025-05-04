@@ -1,0 +1,210 @@
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-section set-bg" data-setbg="img/breadcrumb.jpg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    <h2>Giỏ hàng</h2>
+                    <div class="breadcrumb__option">
+                        <a href="/">Trang chủ</a>
+                        <span>Shopping Cart</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Shoping Cart Section Begin -->
+<style>
+    .shoping__cart__item img {
+        max-width: 100px;
+        max-height: 100px;
+        object-fit: contain;
+        margin-right: 15px;
+    }
+</style>
+<section class="shoping-cart spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="shoping__cart__table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="shoping__product">Sản phẩm</th>
+                                <th>Giá</th>
+                                <th>Số lượng</th>
+                                <th>Tổng</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="cartItemsContainer">
+                            {{#each cartItems}}
+                            <tr data-item-id="{{this._id}}">
+                                <td class="shoping__cart__item">
+                                    <img src="{{this.thumbnail}}" alt="{{this.title}}" />
+                                    <h5>{{this.title}}</h5>
+                                </td>
+                                <td class="shoping__cart__price" data-price="{{this.sellPrice}}">
+                                    ${{this.sellPrice}}
+                                </td>
+                                <td class="shoping__cart__quantity">
+                                    <div class="pro-qty">
+                                        <input type="text" value="{{this.quantity}}" class="item-quantity"
+                                            data-item-id="{{this._id}}">
+                                    </div>
+                                </td>
+                                <td class="shoping__cart__total" data-item-id="{{this._id}}">
+                                    ${{this.total}}
+                                </td>
+                                <td class="shoping__cart__item__close">
+                                    <span class="icon_close remove-item" data-item-id="{{this._id}}"></span>
+                                </td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="shoping__cart__btns">
+                    <a href="/" class="primary-btn cart-btn-right">TIẾP TỤC MUA SẮM</a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="shoping__continue">
+                    <div class="shoping__discount">
+                        <h5>Mã giảm giá</h5>
+                        <form action="#">
+                            <input type="text" placeholder="Nhập mã giảm giá">
+                            <button type="submit" class="site-btn">ÁP DỤNG</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="shoping__checkout">
+                    <h5>TỔNG CỘNG</h5>
+                    <ul>
+                        <li>Tạm tính<span id="subtotal">${{subtotal}}</span></li>
+                        <li>Tổng <span id="total">${{subtotal}}</span></li>
+                    </ul>
+                    <a href="/checkout" class="primary-btn">THANH TOÁN</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Shoping Cart Section End -->
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Xóa bỏ phần tạo nút tăng/giảm thủ công và sử dụng nút từ main.js
+        const qtyInputs = document.querySelectorAll('.item-quantity');
+        qtyInputs.forEach(input => {
+            const itemId = input.getAttribute('data-item-id');
+
+            // Lắng nghe sự kiện thay đổi input
+            input.addEventListener('change', function () {
+                let newValue = parseInt(this.value);
+
+                // Đảm bảo giá trị hợp lệ
+                if (isNaN(newValue) || newValue < 1) {
+                    newValue = 1;
+                    this.value = newValue;
+                }
+
+                updateCartItemQuantity(itemId, newValue);
+            });
+        });
+
+        // Xử lý sự kiện khi nhấn nút xóa
+        const removeButtons = document.querySelectorAll('.remove-item');
+        removeButtons.forEach(btn => {
+            btn.addEventListener('click', function () {
+                const itemId = this.getAttribute('data-item-id');
+                removeCartItem(itemId);
+            });
+        });
+
+        // Hàm cập nhật số lượng sản phẩm
+        function updateCartItemQuantity(itemId, quantity) {
+            fetch(`/cart/update/${itemId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `quantity=${quantity}`
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Cập nhật tổng tiền của sản phẩm
+                        const totalElement = document.querySelector(`.shoping__cart__total[data-item-id="${itemId}"]`);
+                        if (totalElement) {
+                            totalElement.textContent = '$' + data.itemTotal;
+                        }
+
+                        // Cập nhật tổng tiền của giỏ hàng
+                        const subtotalElement = document.getElementById('subtotal');
+                        const totalElement2 = document.getElementById('total');
+                        if (subtotalElement) {
+                            subtotalElement.textContent = '$' + data.subtotal;
+                        }
+                        if (totalElement2) {
+                            totalElement2.textContent = '$' + data.subtotal;
+                        }
+
+                        // Cập nhật số lượng sản phẩm trong header
+                        updateHeaderCartCount(data.cartCount);
+                    } else {
+                        Swal.fire({
+                            title: 'Lỗi!',
+                            text: data.message,
+                            icon: 'error',
+                            confirmButtonText: 'Đóng'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        title: 'Lỗi!',
+                        text: 'Đã xảy ra lỗi khi cập nhật số lượng',
+                        icon: 'error',
+                        confirmButtonText: 'Đóng'
+                    });
+                });
+        }
+
+        // Hàm xóa sản phẩm khỏi giỏ hàng
+        function removeCartItem(itemId) {
+            Swal.fire({
+                title: 'Xác nhận',
+                text: 'Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Xóa',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = `/cart/remove/${itemId}`;
+                }
+            });
+        }
+
+        // Hàm cập nhật số lượng sản phẩm trong header
+        function updateHeaderCartCount(count) {
+            const cartCountElement = document.querySelector('.header__cart ul li:nth-child(2) span');
+            if (cartCountElement) {
+                cartCountElement.textContent = count;
+            }
+        }
+    });
+</script>

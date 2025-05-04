@@ -1,8 +1,9 @@
+const { default: Swal } = require("sweetalert2");
 const User = require("../models/user.model")
 
 class AuthController {
-    
-    async signup (req, res) {
+
+    async signup(req, res) {
         try {
             const { emailAddress, fullName, password } = req.body;
 
@@ -32,24 +33,26 @@ class AuthController {
         }
     }
 
-    async login (req, res) {
+    async login(req, res) {
         try {
             const { emailAddress, password } = req.body;
-    
+
             // Tìm người dùng theo email
             const user = await User.findOne({ emailAddress });
             if (!user) {
                 return res.status(400).json({ message: "Email hoặc mật khẩu không đúng." });
+
             }
-    
+
             // Kiểm tra mật khẩu
             const isMatch = await user.comparePassword(password);
             if (!isMatch) {
                 return res.status(400).json({ message: "Email hoặc mật khẩu không đúng." });
             }
-    
+
             // Lưu thông tin người dùng vào session
             req.session.user = {
+                _id: user._id,
                 username: user.username,
                 fullName: user.fullName,
                 emailAddress: user.emailAddress,
@@ -71,7 +74,7 @@ class AuthController {
                     console.error("Lỗi khi xóa session:", err);
                     return res.status(500).json({ message: "Lỗi server." });
                 }
-    
+
                 // Chuyển hướng về trang đăng nhập
                 res.redirect("/");
             });

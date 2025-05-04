@@ -1,0 +1,121 @@
+<!-- Thông tin cá nhân -->
+<div class="container rounded bg-white mt-5 mb-5">
+    {{#if message}}
+    <div class="alert alert-{{message.type}} alert-dismissible fade show" role="alert">
+        {{message.text}}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {{/if}}
+    <div class="row">
+        <div class="col-md-3 border-right">
+            <div class="d-flex flex-column align-items-center text-center p-3 py-5">
+                <img class="rounded-circle mt-5" width="150px" id="profileImage"
+                    src="{{#if user.avatar}}{{user.avatar}}{{else}}/img/user-default.jpg{{/if}}" alt="Profile">
+                <span class="font-weight-bold">{{user.fullName}}</span>
+                <span class="text-black-50">{{user.emailAddress}}</span>
+                <span class="badge badge-primary">Hạng: {{user.rank}}</span>
+                <div class="d-flex justify-content-between align-items-center experience mt-3">
+                    <span>Đổi ảnh đại diện</span>
+                    <span class="border px-3 p-1 add-experience" id="changeBtn">
+                        <i class="fa fa-plus"></i>&nbsp;Thay đổi
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5 border-right">
+            <form action="/info/update" method="POST">
+                <div class="p-3 py-5">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="text-right">Thông tin cá nhân</h4>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            <label class="labels">Họ và tên</label>
+                            <input type="text" class="form-control" name="fullName" placeholder="Họ và tên" required
+                                value="{{user.fullName}}">
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-12">
+                            <label class="labels">Email</label>
+                            <input type="email" class="form-control" name="emailAddress" value="{{user.emailAddress}}"
+                                readonly>
+                        </div>
+                        <div class="col-md-12 mt-3">
+                            <label class="labels">Số điện thoại</label>
+                            <input type="text" class="form-control" name="phoneNumber" placeholder="Số điện thoại"
+                                value="{{user.phoneNumber}}">
+                        </div>
+                        <div class="col-md-12 mt-3">
+                            <label class="labels">Địa chỉ</label>
+                            <input type="text" class="form-control" name="address" placeholder="Địa chỉ"
+                                value="{{user.address}}">
+                        </div>
+                        <div class="col-md-12 mt-3">
+                            <label class="labels">Ngày sinh</label>
+                            <input type="date" class="form-control" name="dateOfBirth" value="{{formattedDOB}}">
+                        </div>
+                        <div class="col-md-12 mt-3">
+                            <label class="labels">Giới tính</label>
+                            <select class="form-control" name="gender">
+                                <option value="1" {{#if (eq user.gender 1)}}selected{{/if}}>Nam</option>
+                                <option value="2" {{#if (eq user.gender 2)}}selected{{/if}}>Nữ</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12 mt-3">
+                            <label class="labels">Tên đăng nhập</label>
+                            <input type="text" class="form-control" value="{{user.username}}" readonly>
+                        </div>
+                    </div>
+
+                    <div class="mt-5 text-center">
+                        <button class="btn btn-primary profile-button" type="submit">Lưu thông tin</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <form action="/info/change-password" method="POST">
+                <div class="p-3 py-5">
+                    <div class="d-flex justify-content-between align-items-center experience">
+                        <h4>Đổi mật khẩu</h4>
+                        <button type="submit" class="border px-3 p-1 add-experience">
+                            <i class="fa fa-lock"></i>&nbsp;Cập nhật
+                        </button>
+                    </div>
+
+                    <div class="col-md-12 mt-3">
+                        <label class="labels">Mật khẩu cũ</label>
+                        <input type="password" class="form-control" placeholder="Mật khẩu cũ" name="password" required>
+                    </div>
+                    <div class="col-md-12 mt-3">
+                        <label class="labels">Mật khẩu mới</label>
+                        <input type="password" class="form-control" placeholder="Mật khẩu mới" name="password1"
+                            required>
+                    </div>
+                    <div class="col-md-12 mt-3">
+                        <label class="labels">Nhập lại mật khẩu mới</label>
+                        <input type="password" class="form-control" placeholder="Nhập lại mật khẩu mới" name="password2"
+                            required>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Tự động ẩn thông báo sau 5 giây
+        setTimeout(function () {
+            const alert = document.querySelector('.alert');
+            if (alert) {
+                alert.classList.remove('show');
+            }
+        }, 5000);
+    });
+</script>

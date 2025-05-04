@@ -1,25 +1,30 @@
 const path = require('path');
-const express = require('express')
-require('dotenv').config(); //nhúng env
-const database = require("./config/database.js")
+const express = require('express');
+const session = require('express-session');
+const moment = require('moment');
+const Swal = require('sweetalert2')
+const catalogRouter = require('./routes/client/catalog.route');
+// require('dotenv').config(); //nhúng env
+const Cart = require('./models/cart.model');
+const database = require("./config/database.js");
 const app = express();
 const hbs = require('express-handlebars');
-const routeClient = require("./routes/client/index.route")
-const routeAdmin = require("./routes/admin/index.route")
+const routeClient = require("./routes/client/index.route");
+const routeAdmin = require("./routes/admin/index.route");
 const authRoute = require("./routes/auth.route");
 const waitingRoute = require("./routes/waiting.route");
-const systemConfig = require ("./config/system.js")
-const session = require("express-session");
-const moment = require('moment');
-const port = process.env.PORT;
+const systemConfig = require("./config/system.js")
+const catalogMiddleware = require('./middleware/catalog.middleware.js');
+
+const port = 3000;
 
 app.use(express.static(path.join(__dirname, 'src', 'public')));
-
+app.use(catalogMiddleware);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use(session({
-  secret: "DuyHao25092004", // Thay bằng một chuỗi bí mật của bạn
+  secret: "HuuThong15082004", // Thay bằng một chuỗi bí mật của bạn
   resave: false,
   saveUninitialized: true,
   cookie: { secure: false } // Đặt `secure: true` nếu sử dụng HTTPS
@@ -50,14 +55,35 @@ app.engine('hbs', hbs.engine({
       return moment(date).format(safeFormat);
     }
   }
-})); 
+}));
 
+// Middleware tính cartCount
+app.use(async (req, res, next) => {
+  try {
+    if (req.session.user) {
+      // Tìm giỏ hàng của user hiện tại
+      const cart = await Cart.findOne({ userId: req.session.user._id }).lean();
 
+      // Nếu có cart, tính tổng quantity; nếu không có, set về 0
+      res.locals.cartCount = cart
+        ? cart.items.reduce((sum, item) => sum + item.quantity, 0)
+        : 0;
+    } else {
+      // Chưa login => không có item
+      res.locals.cartCount = 0;
+    }
+  } catch (err) {
+    console.error('Error in cartCount middleware:', err);
+    res.locals.cartCount = 0;
+  }
+  next();
+});
 
 routeAdmin(app);
 routeClient(app);
 app.use("/", authRoute);
 app.use("/", waitingRoute);
+app.use('/', catalogRouter);
 
 app.locals.prefixAdmin = systemConfig.prefixAdmin;
 
@@ -66,4 +92,3 @@ database.connect();
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
-

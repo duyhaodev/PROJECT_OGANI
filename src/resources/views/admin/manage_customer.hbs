@@ -90,6 +90,7 @@
                                             <th>Email Address</th>
                                             <th>Status</th>
                                             <th>Action</th>
+                                            <th>Rank</th>
                                         </tr>
                                     </thead>
                                     <tfoot>
@@ -99,30 +100,50 @@
                                             <th>Email Address</th>
                                             <th>Status</th>
                                             <th>Action</th>
+                                            <th>Rank</th>
                                         </tr>
                                     </tfoot>
                                     <tbody>
-                                    {{#each modifiedCustomers}}
+                                    {{#each customers}}
                                         <tr>
                                             <td>{{this.username}}</td>
                                             <td>{{this.fullName}}</td>
                                             <td>{{this.emailAddress}}</td>
                                             <td class="text-center align-middle">
-                                            {{#if this.isActive}}
+                                                {{#if (eq this.status "active")}}
                                                 <span class="btn btn-success btn-sm text-uppercase">{{this.status}}</span>
-                                            {{else}}
+                                                {{else}}
                                                 <span class="btn btn-danger btn-sm text-uppercase">{{this.status}}</span>
-                                            {{/if}}
+                                                {{/if}}
                                             </td>
                                             
                                             <td class="text-center align-middle">
+                                                <div class="d-flex justify-content-center gap-2"></div>
+                                                    {{#if this.rank}}
+                                                        {{#if (eq this.rank "Vàng")}}
+                                                        <span class="btn btn-warning btn-sm text-uppercase">{{this.rank}}</span>
+                                                        {{else}}
+                                                        {{#if (eq this.rank "Kim cương")}}
+                                                            <span class="btn btn-primary btn-sm text-uppercase">{{this.rank}}</span>
+                                                        {{else}}
+                                                            <span class="btn btn-secondary btn-sm text-uppercase">{{this.rank}}</span>
+                                                        {{/if}}
+                                                        {{/if}}
+                                                    {{else}}
+                                                        <span class="btn btn-secondary btn-sm text-uppercase">Bạc</span>
+                                                    {{/if}}
+                                                </div>
+                                            </td>
+
+                                            <td class="text-center align-middle">
                                                 <div class="d-flex justify-content-center gap-2">
-                                                    {{#if isActive}}
+                                                    {{#if (eq this.status "active")}}
                                                     <a href="/admin/customer/lock/{{_id}}" class="btn btn-danger btn-sm" title="Khóa tài khoản">Lock</a>
                                                     {{else}}
                                                     <a href="/admin/customer/unlock/{{_id}}" class="btn btn-success btn-sm" title="Gỡ khóa tài khoản">Unlock</a>
                                                     {{/if}}
                                                     <a href="/admin/customer/view/{{_id}}" class="btn btn-primary btn-sm" title="Xem thông tin khách hàng"><i class="fa-solid fa-user"></i> View</a>
+                                                    <a href="/admin/customer/upgrade/{{_id}}" class="btn btn-warning btn-sm" title="Nâng cấp hạng khách hàng"><i class="fa-solid fa-star"></i> Upgrade</a>
                                                 </div>
                                             </td>
                                         </tr>
