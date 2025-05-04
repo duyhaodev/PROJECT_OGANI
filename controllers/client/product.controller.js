@@ -44,14 +44,19 @@ async show(req, res, next) {
     if (!product) {
       return res.status(404).send("Không tìm thấy sản phẩm");
     }
-
+    // Tính tồn kho (đếm số lượng sản phẩm cùng import và status: active)
+    const stockCount = await Product.countDocuments({
+      import: product.import,
+      status: 'active'
+    });
+    product.stock = stockCount;
     // Hiển thị chi tiết sản phẩm
     res.render('client/pages/product-details', {
       layout: 'main',
       pageTitle : "Product details",
       listPro,
       user,
-      product: product , // Không cần mongooseToObject nếu dùng lean()
+      product: product , 
     });
   } catch (err) {
     console.error("Lỗi khi hiển thị sản phẩm:", err);
