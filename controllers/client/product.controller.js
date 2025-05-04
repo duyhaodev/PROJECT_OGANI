@@ -1,49 +1,33 @@
 const mongoose = require('mongoose');
-const { Product, detail } = require("../../models/product.model.js");
-const modelCatalog = require("../../models/catalog.model.js");
+const { Product, findByName } = require("../../models/product.model.js");
 const Cart = require('../../models/cart.model');
 
 class ProductController {
-  // Trang danh sách sản phẩm
-  async index(req, res) {
+  // Tìm kiếm sản phẩm
+  async searchProduct(req, res) {
+    const keyword = req.query.q || "";
     try {
-      const listPro = await Product.find({}).lean();
-      const listCat = await modelCatalog.list();
-      const user = req.session.user || null;
-      res.render("client/pages/home", {
-        layout: 'main',
-        pageTitle: "Tất cả sản phẩm",
-        listPro,
-        listCat,
-        user,
-        breadcrumb: "Tất cả sản phẩm"
+      const result = await findByName(keyword);
+
+      // Lọc trùng theo title + import
+      const seen = new Set();
+      const uniqueProducts = result.filter(item => {
+        const key = `${item.title}-${item.import}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
       });
+
+      res.json(uniqueProducts.map(item => ({
+        title: item.title,
+        id: item._id
+      })));
     } catch (err) {
-      console.error(err);
-      res.status(500).send("Lỗi khi tải danh sách sản phẩm");
+      console.error("Lỗi khi tìm kiếm sản phẩm:", err);
+      res.status(500).json({ error: "Lỗi tìm kiếm" });
     }
   }
 
-  // Tìm kiếm sản phẩm
-  async search(req, res) {
-    try {
-      const keyword = req.query.q || '';
-      const regex = new RegExp(keyword, 'i');
-      const listPro = await Product.find({ title: regex }).lean();
-      const listCat = await modelCatalog.list();
-      const user = req.session.user || null;
-      res.render('client/partials/header', {
-        layout: 'main',
-        pageTitle: `Kết quả tìm kiếm cho "${keyword}"`,
-        listPro,
-        user,
-        listCat,
-      });
-    } catch (err) {
-      console.error(err);
-      res.status(500).send('Lỗi khi tìm kiếm sản phẩm');
-    }
-  }
   // Trang chi tiết sản phẩm
   async show(req, res, next) {
     const id = req.params.id;
@@ -54,39 +38,50 @@ class ProductController {
     }
 
     try {
-      // Tìm sản phẩm theo ID, sử dụng phương thức detail
-      const product = await detail(id);
-      const listPro = await Product.find({}).lean();
+      // Tìm sản phẩm theo ID, sử dụng phương thức lean để chuyển đổi Mongoose object thành plain object
+      const product = await Product.findById(id).lean();
+      const allProducts = await Product.find({}).lean();
+      // Lọc các sản phẩm trùng (giữ lại duy nhất mỗi cặp title + import)
+      const seen = new Set();
+      const listPro = allProducts.filter((p) => {
+        const key = `${p.title}-${p.import}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
 
+      const user = req.session.user || null;
       // Nếu không tìm thấy sản phẩm
       if (!product) {
         return res.status(404).send("Không tìm thấy sản phẩm");
       }
-      
-      const user = req.session.user || null;
-      
+      // Tính tồn kho (đếm số lượng sản phẩm cùng import và status: active)
+      const stockCount = await Product.countDocuments({
+        import: product.import,
+        status: 'active'
+      });
+      product.stock = stockCount;
       // Lấy số lượng sản phẩm trong giỏ hàng nếu đã đăng nhập
       let cartCount = 0;
       if (user) {
         const cart = await Cart.findOne({ userId: user._id }).lean() || { items: [] };
         cartCount = cart.items.reduce((total, item) => total + item.quantity, 0);
       }
-      
+
       // Hiển thị chi tiết sản phẩm
       res.render('client/pages/product-details', {
         layout: 'main',
         pageTitle: "Product details",
         listPro,
         user,
+        product: product,
         cartCount,
-        product: product, // Không cần mongooseToObject nếu dùng lean()
       });
     } catch (err) {
       console.error("Lỗi khi hiển thị sản phẩm:", err);
       res.status(500).send("Lỗi khi hiển thị sản phẩm");
     }
   }
-
 
 }
 

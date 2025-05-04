@@ -11,8 +11,8 @@
                 <div class="col-lg-6 col-md-6">
                     <div class="header__top__left">
                         <ul>
-                            <li><i class="fa fa-envelope"></i> hello@colorlib.com</li>
-                            <li>Free Shipping for all Order of $99</li>
+                            <li><i class="fa fa-envelope"></i> dichoonline@gmail.com</li>
+                            <li>Miễn phí ship cho đơn hàng trên 100K</li>
                         </ul>
                     </div>
                 </div>
@@ -23,15 +23,6 @@
                             <a href="#"><i class="fa fa-twitter"></i></a>
                             <a href="#"><i class="fa fa-linkedin"></i></a>
                             <a href="#"><i class="fa fa-pinterest-p"></i></a>
-                        </div>
-                        <div class="header__top__right__language">
-                            <img src="img/language.png" alt="">
-                            <div>English</div>
-                            <span class="arrow_carrot-down"></span>
-                            <ul>
-                                <li><a href="#">Spanis</a></li>
-                                <li><a href="#">English</a></li>
-                            </ul>
                         </div>
                         <div class="header__top__right__auth">
                             {{#if user}}
@@ -46,7 +37,7 @@
                                 </div>
                             </div>
                             {{else}}
-                            <a href="/login"><i class="fa fa-user"></i> Login</a>
+                            <a href="/login"><i class="fa fa-user"></i> Đăng nhập</a>
                             {{/if}}
                         </div>
                     </div>
@@ -58,24 +49,22 @@
         <div class="row">
             <div class="col-lg-3">
                 <div class="header__logo">
-                    <a href="./index.html"><img src="img/logo.png" alt=""></a>
+                    <a href="/"><img src="img/logo.png" alt=""></a>
                 </div>
             </div>
             <div class="col-lg-6">
                 <nav class="header__menu">
                     <ul>
-                        <li class="active"><a href="/product">Home</a></li>
-                        <li><a href="/catalog">Shop</a></li>
-                        <li><a href="#">Pages</a>
+                        <li class="active"><a href="/">Trang chủ</a></li>
+                        <li><a href="/catalog">Danh mục</a></li>
+                        <li><a href="#">Trang</a>
                             <ul class="header__menu__dropdown">
-                                <li><a href="/product/6815d169cea2819e0b3f7180">Shop Details</a></li>
-                                <li><a href="./shoping-cart.html">Shoping Cart</a></li>
-                                <li><a href="./checkout.html">Check Out</a></li>
-                                <li><a href="./blog-details.html">Blog Details</a></li>
+                                <li><a href="/">Sản Phẩm</a></li>
+                                <li><a href="/cart">Giỏ hàng</a></li>
                             </ul>
                         </li>
                         <li><a href="./blog.html">Blog</a></li>
-                        <li><a href="./contact.html">Contact</a></li>
+                        <li><a href="./contact.html">Liên hệ</a></li>
                     </ul>
                 </nav>
             </div>
@@ -100,54 +89,59 @@
 <section class="hero hero-normal">
     <div class="container">
         <div class="row">
-            <div class="col-lg-3">
-                <div class="hero__categories">
-                    <div class="hero__categories__all">
-                        <i class="fa fa-bars"></i>
-                        <span>All departments</span>
-                    </div>
-                    <ul style="display: none;">
-                        <li><a href="#">Fresh Meat</a></li>
-                        <li><a href="#">Vegetables</a></li>
-                        <li><a href="#">Fruit & Nut Gifts</a></li>
-                        <li><a href="#">Fresh Berries</a></li>
-                        <li><a href="#">Ocean Foods</a></li>
-                        <li><a href="#">Butter & Eggs</a></li>
-                        <li><a href="#">Fastfood</a></li>
-                        <li><a href="#">Fresh Onion</a></li>
-                        <li><a href="#">Papayaya & Crisps</a></li>
-                        <li><a href="#">Oatmeal</a></li>
-                        <li><a href="#">Fresh Bananas</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-lg-9">
-                <div class="hero__search d-flex justify-content-between align-items-start flex-wrap">
+            <!-- Main Content (Search Box and Phone Support) -->
+            <div class="col-12">
+                <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap py-3">
 
-                    <!-- Thanh tìm kiếm -->
-                    <div class="container mt-4 mb-4 flex-grow-1" style="max-width: 600px; z-index: 1050;">
+                    <!-- Sidebar: Danh mục -->
+                    <div class="col-lg-3">
+                        <div class="hero__categories">
+                            <div class="hero__categories__all">
+                                <i class="fa fa-bars"></i>
+                                <span>Danh mục sản phẩm</span>
+                            </div>
+                            <ul>
+                                {{#if catalogList}}
+                                {{#each catalogList}}
+                                <li><a href="/catalog/{{this.nameCat}}">{{this.nameCat}}</a></li>
+                                {{/each}}
+                                {{else}}
+                                <li><a href="#">Không có danh mục nào</a></li>
+                                {{/if}}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Search Box -->
+                    <div class="flex-grow-1 position-relative" style="max-width: 600px;">
                         <input type="text" id="searchInput" placeholder="Tìm sản phẩm..." class="form-control w-100"
                             autocomplete="off">
                         <div id="searchResults"
                             class="list-group position-absolute w-100 bg-white shadow border rounded"
-                            style="z-index: 2000; top: 100%; max-height: 300px; overflow-y: auto;">
+                            style="z-index: 1050; top: 100%; max-height: 300px; overflow-y: auto;">
                         </div>
                     </div>
-                    <!-- Phone support giữ nguyên -->
-                    <div class="hero__search__phone mt-4 ms-3">
-                        <div class="hero__search__phone__icon">
-                            <i class="fa fa-phone"></i>
+
+                    <!-- Phone Support -->
+                    <div class="hero__search__phone d-flex align-items-center ms-2">
+                        <div class="bg-light rounded-circle d-flex align-items-center justify-content-center me-2"
+                            style="width: 40px; height: 40px;">
+                            <i class="fa fa-phone text-success"></i>
                         </div>
-                        <div class="hero__search__phone__text">
-                            <h5>+65 11.188.888</h5>
-                            <span>support 24/7 time</span>
+                        <div class="text-start">
+                            <h5 class="mb-0 fw-bold">+84 11.188.888</h5>
+                            <span class="text-muted small">Hỗ trợ 24/7</span>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+
+
 <!-- Hero Section End -->
 <!-- Script tìm kiếm -->
 <script>

@@ -3,7 +3,7 @@ const express = require('express');
 const session = require('express-session');
 const moment = require('moment');
 const Swal = require('sweetalert2')
-
+const catalogRouter = require('./routes/client/catalog.route');
 // require('dotenv').config(); //nhúng env
 const Cart = require('./models/cart.model');
 const database = require("./config/database.js");
@@ -14,11 +14,12 @@ const routeAdmin = require("./routes/admin/index.route");
 const authRoute = require("./routes/auth.route");
 const waitingRoute = require("./routes/waiting.route");
 const systemConfig = require("./config/system.js")
+const catalogMiddleware = require('./middleware/catalog.middleware.js');
 
 const port = 3000;
 
 app.use(express.static(path.join(__dirname, 'src', 'public')));
-
+app.use(catalogMiddleware);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -82,6 +83,7 @@ routeAdmin(app);
 routeClient(app);
 app.use("/", authRoute);
 app.use("/", waitingRoute);
+app.use('/', catalogRouter);
 
 app.locals.prefixAdmin = systemConfig.prefixAdmin;
 
@@ -90,4 +92,3 @@ database.connect();
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
-
