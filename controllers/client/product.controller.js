@@ -4,25 +4,7 @@ const { Product } = require("../../models/product.model.js");
 const modelCatalog = require("../../models/catalog.model.js");
 
 class ProductController {
-  // Trang danh sách sản phẩm
-  async index(req, res) {
-    try {
-      const listPro = await Product.find({}).lean();
-      const listCat = await modelCatalog.list();
-      const user = req.session.user || null;
-      res.render("client/pages/home", {
-        layout: 'main',
-        pageTitle: "Tất cả sản phẩm",
-        listPro,
-        listCat,
-        user,
-        breadcrumb: "Tất cả sản phẩm"
-      });
-    } catch (err) {
-      console.error(err);
-      res.status(500).send("Lỗi khi tải danh sách sản phẩm");
-    }
-  }
+  
 
   // Tìm kiếm sản phẩm
   async search(req, res) {

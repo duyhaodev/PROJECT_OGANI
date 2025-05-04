@@ -10,11 +10,12 @@ const authRoute = require("./routes/auth.route");
 const waitingRoute = require("./routes/waiting.route");
 const systemConfig = require ("./config/system.js")
 const session = require("express-session");
+const catalogMiddleware = require('./middleware/catalog.middleware.js');
 
 const port = process.env.PORT;
 
 app.use(express.static(path.join(__dirname, 'src', 'public')));
-
+app.use(catalogMiddleware);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -37,7 +38,8 @@ app.engine('hbs', hbs.engine({
   defaultLayout: false
 })); 
 
-
+const catalogRouter = require('./routes/client/catalog.route');
+app.use('/', catalogRouter);
 
 routeAdmin(app);
 routeClient(app);

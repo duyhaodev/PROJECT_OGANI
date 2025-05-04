@@ -57,16 +57,17 @@
             <div class="row">
                 <div class="col-lg-3">
                     <div class="header__logo">
-                        <a href="./index.html"><img src="img/logo.png" alt=""></a>
+                        <a href="/"><img src="img/logo.png" alt=""></a>
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <nav class="header__menu">
                         <ul>
-                            <li class="active"><a href="/product">Home</a></li>
+                            <li class="active"><a href="/">Home</a></li>
                             <li><a href="/catalog">Shop</a></li>
                             <li><a href="#">Pages</a>
-                                <ul class="header__menu__dropdown">
+                                <ul class="header__menu__dropdown"
+                                style="z-index: 2000;">
                                     <li><a href="/product/6815d169cea2819e0b3f7180">Shop Details</a></li>
                                     <li><a href="./shoping-cart.html">Shoping Cart</a></li>
                                     <li><a href="./checkout.html">Check Out</a></li>
@@ -100,26 +101,24 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-3">
-                    <div class="hero__categories">
-                        <div class="hero__categories__all">
-                            <i class="fa fa-bars"></i>
-                            <span>All departments</span>
-                        </div>
-                        <ul style="display: none;">
-                            <li><a href="#">Fresh Meat</a></li>
-                            <li><a href="#">Vegetables</a></li>
-                            <li><a href="#">Fruit & Nut Gifts</a></li>
-                            <li><a href="#">Fresh Berries</a></li>
-                            <li><a href="#">Ocean Foods</a></li>
-                            <li><a href="#">Butter & Eggs</a></li>
-                            <li><a href="#">Fastfood</a></li>
-                            <li><a href="#">Fresh Onion</a></li>
-                            <li><a href="#">Papayaya & Crisps</a></li>
-                            <li><a href="#">Oatmeal</a></li>
-                            <li><a href="#">Fresh Bananas</a></li>
-                        </ul>
-                    </div>
-                </div>
+    <div class="hero__categories">
+        <div class="hero__categories__all">
+            <i class="fa fa-bars"></i>
+            <span>All departments</span>
+        </div>
+        <ul>
+  {{#if catalogList}}
+    {{#each catalogList}}
+      <li><a href="/catalog/{{this.nameCat}}">{{this.nameCat}}</a></li>
+    {{/each}}
+  {{else}}
+    <li><a href="#">Không có danh mục nào</a></li>
+  {{/if}}
+</ul>
+
+    </div>
+</div>
+
                 <div class="col-lg-9">
                    <div class="hero__search d-flex justify-content-between align-items-start flex-wrap">
 
@@ -128,7 +127,7 @@
   <input type="text" id="searchInput" placeholder="Tìm sản phẩm..." class="form-control w-100" autocomplete="off">
   <div id="searchResults"
        class="list-group position-absolute w-100 bg-white shadow border rounded"
-       style="z-index: 2000; top: 100%; max-height: 300px; overflow-y: auto;">
+       style="z-index: 1050; top: 100%; max-height: 300px; overflow-y: auto;">
   </div>
 </div>
   <!-- Phone support giữ nguyên -->
