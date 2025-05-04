@@ -39,6 +39,10 @@
             <span class="status-badge status-cancelled">
               <i class="fas fa-times-circle me-2"></i>Đã hủy
             </span>
+          {{else if (eq order.status "RequestCancelled")}}
+            <span class="status-badge status-cancelled">
+              <i class="fas fa-times-circle me-2"></i>Yêu cầu hủy
+            </span>
           {{else}}
             <span class="status-badge status-unknown">
               <i class="fas fa-question-circle me-2"></i>Không rõ

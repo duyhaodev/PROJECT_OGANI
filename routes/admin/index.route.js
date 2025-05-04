@@ -3,6 +3,8 @@ const cateRoute = require ("./category.route")
 const orderRoute = require ("./order.route")
 const customerRoute = require ("./customer.route")
 const staffRoute = require ("./staff.route")
+const supportRoute = require ("./support.route")
+
 
 function routeAdmin(app) {
     const PATH_ADMIN = systemConfig.prefixAdmin;
@@ -15,7 +17,12 @@ function routeAdmin(app) {
 
     app.use(PATH_ADMIN + "/customer", customerRoute);
 
-    app.use(PATH_ADMIN, cateRoute);
+    app.use(PATH_ADMIN + "/support", supportRoute);
+
+
+     app.use(PATH_ADMIN, cateRoute);
+
+
 }
 
 module.exports = routeAdmin

@@ -5,7 +5,7 @@ const { calculateTotalAmount, formatOrder } = require("../../config/helper");
 //lấy danh sách đơn hàng 
 module.exports.order = async (req, res) => {
   try {
-
+    const user = req.session.user || null;
     let find = {};
       if (req.query.status) {
         find.status = req.query.status;
@@ -17,6 +17,7 @@ module.exports.order = async (req, res) => {
 
        res.render("admin/manage_order", {
       pageTitle: "Trang quản lý đơn hàng",
+      user,
       orders: ordersWithTotal
     });
 
@@ -91,7 +92,6 @@ module.exports.applyBulkAction = async (req, res) => {
 
   try {
     
-    // Cập nhật trạng thái cho tất cả đơn hàng được chọn
     const result = await Order.updateMany(
       { _id: { $in: orderIds } },
       { $set: { status: newStatus } }
