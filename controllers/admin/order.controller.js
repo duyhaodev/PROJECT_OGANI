@@ -67,9 +67,25 @@ module.exports.updateOrderStatus = async (req, res) => {
       }
 
       order.status = status;
+      
+      // Tự động cập nhật paymentStatus dựa trên status
+      if (status === 'Completed') {
+          order.paymentStatus = 'Paid';
+          console.log(`Đơn hàng ${id} đã được đánh dấu là đã thanh toán khi hoàn thành`);
+      } else {
+          // Nếu không phải Completed, đặt là Unpaid
+          order.paymentStatus = 'Unpaid';
+          console.log(`Đơn hàng ${id} đã được đặt lại trạng thái thanh toán thành chưa thanh toán`);
+      }
+      
       await order.save();
 
-      return res.json({ success: true, message: 'Cập nhật trạng thái thành công', updatedStatus: status });
+      return res.json({ 
+          success: true, 
+          message: 'Cập nhật trạng thái thành công', 
+          updatedStatus: status,
+          paymentStatus: order.paymentStatus
+      });
   } catch (error) {
       console.error(error);
       return res.status(500).json({ success: false, message: 'Lỗi máy chủ' });
@@ -90,11 +106,21 @@ module.exports.applyBulkAction = async (req, res) => {
   }
 
   try {
+    let updateData = { status: newStatus };
+    
+    // Cập nhật paymentStatus dựa trên trạng thái mới
+    if (newStatus === 'Completed') {
+      updateData.paymentStatus = 'Paid';
+      console.log(`Tất cả đơn hàng được chọn sẽ được đánh dấu là đã thanh toán khi hoàn thành`);
+    } else {
+      updateData.paymentStatus = 'Unpaid';
+      console.log(`Tất cả đơn hàng được chọn sẽ được đặt lại trạng thái thanh toán thành chưa thanh toán`);
+    }
     
     // Cập nhật trạng thái cho tất cả đơn hàng được chọn
     const result = await Order.updateMany(
       { _id: { $in: orderIds } },
-      { $set: { status: newStatus } }
+      { $set: updateData }
     );
 
     if (result.modifiedCount === 0) {
@@ -103,7 +129,7 @@ module.exports.applyBulkAction = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: `Đã cập nhật trạng thái cho ${result.modifiedCount} đơn hàng`,
+      message: `Đã cập nhật trạng thái cho ${result.modifiedCount} đơn hàng và ${newStatus === 'Completed' ? 'đánh dấu là đã thanh toán' : 'đặt lại trạng thái thanh toán thành chưa thanh toán'}`,
       updatedCount: result.modifiedCount
     });
   } catch (error) {

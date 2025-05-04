@@ -33,6 +33,7 @@
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="userDropdown">
                                     <a class="dropdown-item" href="/info">Thông tin cá nhân</a>
+                                    <a class="dropdown-item" href="/order/history">Đơn hàng của tôi</a>
                                     <a class="dropdown-item" href="/logout">Đăng xuất</a>
                                 </div>
                             </div>
@@ -60,9 +61,9 @@
                         </li>
                         <li {{#if (eq currentPage "pages" )}}class="active" {{/if}}><a href="#">Trang</a>
                             <ul class="header__menu__dropdown">
-                                <li><a href="/">Sản Phẩm</a></li>
                                 <li {{#if (eq currentPage "cart" )}}class="active" {{/if}}><a href="/cart">Giỏ hàng</a>
                                 </li>
+                                <li><a href="/order/history">Đơn hàng của tôi</a></li>
                             </ul>
                         </li>
                         <li {{#if (eq currentPage "blog" )}}class="active" {{/if}}><a href="./blog.html">Blog</a></li>

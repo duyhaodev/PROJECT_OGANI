@@ -1,0 +1,196 @@
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-section set-bg" data-setbg="/img/breadcrumb.jpg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    <h2>Chi tiết đơn hàng</h2>
+                    <div class="breadcrumb__option">
+                        <a href="/">Trang chủ</a>
+                        <a href="/order/history">Đơn hàng của tôi</a>
+                        <span>Chi tiết đơn hàng</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Order Detail Section Begin -->
+<section class="order-detail spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="order-detail__header">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Mã đơn hàng: #{{order._id}}</h4>
+                            <p>Ngày đặt hàng: {{formatDate order.orderDate "DD/MM/YYYY HH:mm"}}</p>
+                            <p>Trạng thái: 
+                                <span class="badge 
+                                    {{#if (eq order.status 'Pending')}}badge-warning{{/if}}
+                                    {{#if (eq order.status 'Confirmed')}}badge-info{{/if}}
+                                    {{#if (eq order.status 'Shipping')}}badge-primary{{/if}}
+                                    {{#if (eq order.status 'Completed')}}badge-success{{/if}}
+                                    {{#if (eq order.status 'Cancelled')}}badge-danger{{/if}}
+                                ">
+                                    {{order.status}}
+                                </span>
+                            </p>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            <span class="back-to-history"><a href="/order/history"><i class="fa fa-arrow-left"></i> Trở lại</a></span>
+                            {{#if (eq order.status 'Pending')}}
+                            <form action="/order/cancel/{{order._id}}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?');" class="mt-2">
+                                <button type="submit" class="btn btn-danger">Hủy đơn hàng</button>
+                            </form>
+                            {{/if}}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-detail__shipping mt-4">
+                    <h5>Thông tin giao hàng</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Người nhận:</strong> {{order.shipping.receiverName}}</p>
+                            <p><strong>Số điện thoại:</strong> {{order.shipping.phoneNumber}}</p>
+                            <p><strong>Địa chỉ:</strong> {{order.shipping.address}}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Phương thức vận chuyển:</strong> {{order.shipping.shippingMethod}}</p>
+                            <p><strong>Phương thức thanh toán:</strong> {{order.paymentMethod}}</p>
+                            <p><strong>Trạng thái thanh toán:</strong> {{order.paymentStatus}}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-detail__items mt-4">
+                    <h5>Sản phẩm đã đặt</h5>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Sản phẩm</th>
+                                    <th>Đơn giá</th>
+                                    <th>Số lượng</th>
+                                    <th class="text-right">Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each order.items}}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="{{this.thumbnail}}" alt="{{this.name}}" style="max-width: 80px; max-height: 80px; object-fit: contain; margin-right: 15px;">
+                                            <span>{{this.name}}</span>
+                                        </div>
+                                    </td>
+                                    <td>{{formatCurrency this.price}}</td>
+                                    <td>{{this.quantity}}</td>
+                                    <td class="text-right">{{formatCurrency this.total}}</td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="order-detail__summary mt-4">
+                    <div class="row">
+                        <div class="col-md-6 offset-md-6">
+                            <div class="order-detail__total">
+                                <ul>
+                                    <li>Tạm tính <span>{{formatCurrency order.subtotal}}</span></li>
+                                    <li>VAT <span>{{formatCurrency order.vat}}</span></li>
+                                    <li>Phí vận chuyển <span>{{formatCurrency order.shipping.shippingFee}}</span></li>
+                                    {{#if order.discount}}
+                                    <li>Giảm giá <span>-{{formatCurrency order.discount}}</span></li>
+                                    {{/if}}
+                                    <li class="order-total">Tổng cộng <span>{{formatCurrency order.totalAmount}}</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{#if order.note}}
+                <div class="order-detail__note mt-4">
+                    <h5>Ghi chú</h5>
+                    <p>{{order.note}}</p>
+                </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Order Detail Section End -->
+
+<style>
+    .order-detail__total ul {
+        list-style: none;
+        padding: 0;
+        border: 1px solid #ebebeb;
+        padding: 20px;
+    }
+    
+    .order-detail__total ul li {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+    
+    .order-detail__total ul li.order-total {
+        font-weight: 700;
+        color: #dd2222;
+        border-top: 1px solid #ebebeb;
+        padding-top: 15px;
+        margin-top: 15px;
+    }
+    
+    .badge {
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-weight: 500;
+    }
+    
+    .badge-warning {
+        background-color: #ffc107;
+        color: #212529;
+    }
+    
+    .badge-info {
+        background-color: #17a2b8;
+        color: #fff;
+    }
+    
+    .badge-primary {
+        background-color: #007bff;
+        color: #fff;
+    }
+    
+    .badge-success {
+        background-color: #28a745;
+        color: #fff;
+    }
+    
+    .badge-danger {
+        background-color: #dc3545;
+        color: #fff;
+    }
+    
+    .back-to-history {
+        display: inline-block;
+        margin-bottom: 10px;
+    }
+    
+    .back-to-history a {
+        color: #7fad39;
+        font-weight: 500;
+    }
+    
+    .back-to-history a:hover {
+        text-decoration: underline;
+    }
+</style>
