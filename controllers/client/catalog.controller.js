@@ -61,18 +61,6 @@ class CatalogController {
     }
   }
   
-  
-  
-
-  async getAll(req, res) {
-    try {
-      const catalogs = await modelCatalog.list();
-      res.json(catalogs);
-    } catch (error) {
-      console.error("Error fetching catalogs:", error);
-      res.status(500).json({ message: "Server Error" });
-    }
-  }
 }
 
 module.exports = new CatalogController();

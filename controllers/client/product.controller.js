@@ -1,35 +1,31 @@
 
 const mongoose = require('mongoose');  
-const { Product } = require("../../models/product.model.js");
-const modelCatalog = require("../../models/catalog.model.js");
+const { Product, findByName } = require("../../models/product.model.js");
+
 
 class ProductController {
   // Tìm kiếm sản phẩm
-  async search(req, res) {
+  async searchProduct (req, res) {
+    const keyword = req.query.q || "";
     try {
-      const keyword = req.query.q || '';
-      const regex = new RegExp(keyword, 'i');
-      const allProducts = await Product.find({ title: regex }).lean();
+      const result = await findByName(keyword);
   
       // Lọc trùng theo title + import
       const seen = new Set();
-      const filteredProducts = allProducts.filter(p => {
-        const key = `${p.title}-${p.import}`;
+      const uniqueProducts = result.filter(item => {
+        const key = `${item.title}-${item.import}`;
         if (seen.has(key)) return false;
         seen.add(key);
         return true;
       });
   
-      // Trả về JSON với các trường cần thiết
-      const result = filteredProducts.map(p => ({
-        id: p._id,
-        title: p.title
-      }));
-  
-      res.json(result);
+      res.json(uniqueProducts.map(item => ({
+        title: item.title,
+        id: item._id
+      })));
     } catch (err) {
       console.error("Lỗi khi tìm kiếm sản phẩm:", err);
-      res.status(500).json({ error: 'Lỗi server khi tìm kiếm sản phẩm' });
+      res.status(500).json({ error: "Lỗi tìm kiếm" });
     }
   }
   
@@ -80,7 +76,6 @@ async show(req, res, next) {
   }
 }
 
-    
 }
 
 module.exports = new ProductController();
