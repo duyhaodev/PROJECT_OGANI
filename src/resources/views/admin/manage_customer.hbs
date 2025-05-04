@@ -76,48 +76,36 @@
                                 DataTable Category
                             </div>
                             <div class="card-body">
-                                <table id="datatablesSimple">
+                                <table class="table table-bordered">
                                     <thead>
                                         <tr>
-                                            <th>Category name</th>
-                                            <th>Description</th>
-                                            <th>Status</th>
+                                            <th>Username</th>
+                                            <th>FullName</th>
+                                            <th>Email Address</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tfoot>
                                         <tr>
-                                            <th>Category name</th>
-                                            <th>Description</th>
-                                            <th>Status</th>
+                                            <th>Username</th>
+                                            <th>FullName</th>
+                                            <th>Email Address</th>
                                             <th>Action</th>
                                         </tr>
                                     </tfoot>
                                     <tbody>
+                                    {{#each customers}}
                                         <tr>
-                                            <td>Rau tươi</td>
-                                            <td>Rau tươi được thay mới liên tục</td>
-                                            <td>Đang bán</td>
-                                            <td>Ngưng bán/ Chỉnh sửa/ Thêm món</td>
+                                            <td>{{this.username}}</td>
+                                            <td>{{this.fullName}}</td>
+                                            <td>{{this.emailAddress}}</td> 
+                                            <td>
+                                                <a href="/admin/customer/lock/{{this._id}}" class="btn btn-danger btn-sm">Khóa</a>
+                                                <a href="/admin/customer/unlock/{{this._id}}" class="btn btn-success btn-sm">Gỡ Khóa</a>
+                                                <a href="/admin/customer/edit/{{this._id}}" class="btn btn-primary btn-sm">Chỉnh Sửa</a>
+                                            </td>
                                         </tr>
-                                        <tr>
-                                            <td>Thịt tươi</td>
-                                            <td>Thịt chắc chắn sẽ tươi vì lên kệ liên tục</td>
-                                            <td>Đang bán</td>
-                                            <td>Ngưng bán/ Chỉnh sửa/ Thêm món</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Trái cây</td>
-                                            <td>Trái cây hàng tuyển của Việt Nam, say no with hàng Tàu</td>
-                                            <td>Đang bán</td>
-                                            <td>Ngưng bán/ Chỉnh sửa/ Thêm món</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Bánh ngọt</td>
-                                            <td>Bánh ngọt nhà làm</td>
-                                            <td>Đang bán</td>
-                                            <td>Ngưng bán/ Chỉnh sửa/ Thêm món</td>
-                                        </tr>
+                                    {{/each}}
                                     </tbody>
                                 </table>
                             </div>
