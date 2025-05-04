@@ -23,7 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use(session({
-  secret: "DuyHao25092004", // Thay bằng một chuỗi bí mật của bạn
+  secret: "HuuThong15082004", // Thay bằng một chuỗi bí mật của bạn
   resave: false,
   saveUninitialized: true,
   cookie: { secure: false } // Đặt `secure: true` nếu sử dụng HTTPS
