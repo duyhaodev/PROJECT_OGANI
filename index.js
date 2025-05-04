@@ -1,7 +1,12 @@
 const path = require('path');
-const express = require('express')
-require('dotenv').config(); //nhúng env
-const database = require("./config/database.js")
+const express = require('express');
+const session = require('express-session');
+const moment = require('moment');
+const Swal = require('sweetalert2')
+const catalogRouter = require('./routes/client/catalog.route');
+require('dotenv').config(); 
+const Cart = require('./models/cart.model');
+const database = require("./config/database.js");
 const app = express();
 const hbs = require('express-handlebars');
 const routeClient = require("./routes/client/index.route")
