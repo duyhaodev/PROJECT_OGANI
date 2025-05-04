@@ -1,0 +1,50 @@
+/* Custom CSS để sửa lỗi hiển thị nút tăng/giảm số lượng */
+.pro-qty {
+    position: relative;
+    width: 140px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f5f5f5;
+    margin-bottom: 5px;
+}
+
+.pro-qty input {
+    width: 50px;
+    height: 100%;
+    border: none;
+    background: #f5f5f5;
+    text-align: center;
+    font-size: 16px;
+    color: #6f6f6f;
+}
+
+.pro-qty .qtybtn {
+    width: 35px;
+    font-size: 16px;
+    color: #6f6f6f;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pro-qty .dec {
+    margin-left: 5px;
+}
+
+.pro-qty .inc {
+    margin-right: 5px;
+}
+
+/* Sửa lỗi hiển thị cho trang giỏ hàng */
+.shoping__cart__quantity .pro-qty {
+    width: 120px;
+    height: 40px;
+    margin: 0 auto;
+}
+
+.shoping__cart__quantity .pro-qty .qtybtn {
+    width: 15px;
+}

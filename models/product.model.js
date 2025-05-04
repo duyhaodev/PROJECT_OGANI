@@ -24,7 +24,7 @@ const Product = mongoose.models.Product || mongoose.model("Product", productSche
 
 // Các hàm tiện ích
 const list = async () => Product.find({});
-const detail = async (_id) => Product.findById(_id);
+const detail = async (_id) => Product.findById(_id).lean();
 const findByName = async (keyword) => {
   const regex = new RegExp(keyword, "i");
   return await Product.find({ title: regex }).lean();

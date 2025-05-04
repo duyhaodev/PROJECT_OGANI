@@ -1,169 +1,243 @@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <section class="product-details spad">
-        <div class="container">
-            <div class="row">
-               <div class="col-lg-6 col-md-6">
-  <div class="product__details__pic">
-    <div class="product__details__pic__item">
-      <img class="product__details__pic__item--large" src="{{product.thumbnail}}" alt="{{product.title}}">
-    </div>
-    <!-- Nếu có nhiều ảnh thumbnail phụ, có thể lặp ở đây -->
-    <div class="product__details__pic__slider owl-carousel">
-      <img data-imgbigurl="{{product.thumbnail}}" src="{{product.thumbnail}}" alt="{{product.title}}">
-    </div>
-  </div>
-</div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6 col-md-6">
+        <div class="product__details__pic">
+          <div class="product__details__pic__item">
+            <img class="product__details__pic__item--large" src="{{product.thumbnail}}" alt="{{product.title}}">
+          </div>
+          <!-- Nếu có nhiều ảnh thumbnail phụ, có thể lặp ở đây -->
+          <div class="product__details__pic__slider owl-carousel">
+            <img data-imgbigurl="{{product.thumbnail}}" src="{{product.thumbnail}}" alt="{{product.title}}">
+          </div>
+        </div>
+      </div>
 
-<div class="col-lg-6 col-md-6">
-  <div class="product__details__text">
-    <h3>{{product.title}}</h3>
+      <div class="col-lg-6 col-md-6">
+        <div class="product__details__text">
+          <h3>{{product.title}}</h3>
 
-    <!-- Nếu bạn có đánh giá: -->
-    <div class="product__details__rating">
-      <i class="fa fa-star"></i>
-      <i class="fa fa-star"></i>
-      <i class="fa fa-star"></i>
-      <i class="fa fa-star"></i>
-      <i class="fa fa-star-half-o"></i>
-      <span>(18 đánh giá)</span>
-    </div>
+          <!-- Nếu bạn có đánh giá: -->
+          <div class="product__details__rating">
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star-half-o"></i>
+            <span>(18 đánh giá)</span>
+          </div>
 
-    <div class="product__details__price">{{product.sellPrice}}₫</div>
+          <div class="product__details__price">{{product.sellPrice}}₫</div>
 
-    <p>{{product.description}}</p>
+          <p>{{product.description}}</p>
+          <form id="addCartForm" action="/cart/add/{{product._id}}" method="POST">
+            <div class="product__details__quantity">
+              <div class="quantity">
+                <div class="pro-qty">
+                  <input type="text" value="1" id="quantity" name="qty" min="1">
+                </div>
+              </div>
+            </div>
 
-    <div class="product__details__quantity">
-      <div class="quantity">
-        <div class="pro-qty">
-          <input type="text" value="1">
+            <button type="submit" class="primary-btn">Thêm vào giỏ hàng</button>
+            <a href="#" class="heart-icon"><span class="icon_heart_alt"></span></a>
+          </form>
+
+          <ul>
+            <li><b>Tồn kho</b> <span>{{product.stock}}</span></li>
+            <li><b>Trạng thái</b> <span>{{product.status}}</span></li>
+          </ul>
+
+          {{#if listCat.length}}
+          <h5 class="mt-4">Danh mục:</h5>
+          <ul>
+            {{#each listCat}}
+            <li>{{this.name}}</li>
+            {{/each}}
+          </ul>
+          {{/if}}
+
+        </div>
+      </div>
+
+      <div class="col-lg-12">
+        <div class="product__details__tab">
+          <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" data-toggle="tab" href="#tabs-1" role="tab"
+                aria-selected="true">Description</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#tabs-2" role="tab" aria-selected="false">Information</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#tabs-3" role="tab" aria-selected="false">Reviews
+                <span>(1)</span></a>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane active" id="tabs-1" role="tabpanel">
+              <div class="product__details__tab__desc">
+                <h6>Products Infomation</h6>
+                <p>Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui.
+                  Pellentesque in ipsum id orci porta dapibus. Proin eget tortor risus. Vivamus
+                  suscipit tortor eget felis porttitor volutpat. Vestibulum ac diam sit amet quam
+                  vehicula elementum sed sit amet dui. Donec rutrum congue leo eget malesuada.
+                  Vivamus suscipit tortor eget felis porttitor volutpat. Curabitur arcu erat,
+                  accumsan id imperdiet et, porttitor at sem. Praesent sapien massa, convallis a
+                  pellentesque nec, egestas non nisi. Vestibulum ac diam sit amet quam vehicula
+                  elementum sed sit amet dui. Vestibulum ante ipsum primis in faucibus orci luctus
+                  et ultrices posuere cubilia Curae; Donec velit neque, auctor sit amet aliquam
+                  vel, ullamcorper sit amet ligula. Proin eget tortor risus.</p>
+                <p>Praesent sapien massa, convallis a pellentesque nec, egestas non nisi. Lorem
+                  ipsum dolor sit amet, consectetur adipiscing elit. Mauris blandit aliquet
+                  elit, eget tincidunt nibh pulvinar a. Cras ultricies ligula sed magna dictum
+                  porta. Cras ultricies ligula sed magna dictum porta. Sed porttitor lectus
+                  nibh. Mauris blandit aliquet elit, eget tincidunt nibh pulvinar a.
+                  Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui. Sed
+                  porttitor lectus nibh. Vestibulum ac diam sit amet quam vehicula elementum
+                  sed sit amet dui. Proin eget tortor risus.</p>
+              </div>
+            </div>
+            <div class="tab-pane" id="tabs-2" role="tabpanel">
+              <div class="product__details__tab__desc">
+                <h6>Products Infomation</h6>
+                <p>Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui.
+                  Pellentesque in ipsum id orci porta dapibus. Proin eget tortor risus.
+                  Vivamus suscipit tortor eget felis porttitor volutpat. Vestibulum ac diam
+                  sit amet quam vehicula elementum sed sit amet dui. Donec rutrum congue leo
+                  eget malesuada. Vivamus suscipit tortor eget felis porttitor volutpat.
+                  Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Praesent
+                  sapien massa, convallis a pellentesque nec, egestas non nisi. Vestibulum ac
+                  diam sit amet quam vehicula elementum sed sit amet dui. Vestibulum ante
+                  ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;
+                  Donec velit neque, auctor sit amet aliquam vel, ullamcorper sit amet ligula.
+                  Proin eget tortor risus.</p>
+                <p>Praesent sapien massa, convallis a pellentesque nec, egestas non nisi. Lorem
+                  ipsum dolor sit amet, consectetur adipiscing elit. Mauris blandit aliquet
+                  elit, eget tincidunt nibh pulvinar a. Cras ultricies ligula sed magna dictum
+                  porta. Cras ultricies ligula sed magna dictum porta. Sed porttitor lectus
+                  nibh. Mauris blandit aliquet elit, eget tincidunt nibh pulvinar a.</p>
+              </div>
+            </div>
+            <div class="tab-pane" id="tabs-3" role="tabpanel">
+              <div class="product__details__tab__desc">
+                <h6>Products Infomation</h6>
+                <p>Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui.
+                  Pellentesque in ipsum id orci porta dapibus. Proin eget tortor risus.
+                  Vivamus suscipit tortor eget felis porttitor volutpat. Vestibulum ac diam
+                  sit amet quam vehicula elementum sed sit amet dui. Donec rutrum congue leo
+                  eget malesuada. Vivamus suscipit tortor eget felis porttitor volutpat.
+                  Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Praesent
+                  sapien massa, convallis a pellentesque nec, egestas non nisi. Vestibulum ac
+                  diam sit amet quam vehicula elementum sed sit amet dui. Vestibulum ante
+                  ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;
+                  Donec velit neque, auctor sit amet aliquam vel, ullamcorper sit amet ligula.
+                  Proin eget tortor risus.</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-
-    <a href="#" class="primary-btn">Thêm vào giỏ hàng</a>
-    <a href="#" class="heart-icon"><span class="icon_heart_alt"></span></a>
-
-    <ul>
-      <li><b>Tồn kho</b> <span>{{product.stock}}</span></li>
-      <li><b>Trạng thái</b> <span>{{product.status}}</span></li>
-    </ul>
-
-    {{#if listCat.length}}
-      <h5 class="mt-4">Danh mục:</h5>
-      <ul>
-        {{#each listCat}}
-          <li>{{this.name}}</li>
-        {{/each}}
-      </ul>
-    {{/if}}
-
   </div>
-</div>
+</section>
+<!-- Product Details Section End -->
 
-                <div class="col-lg-12">
-                    <div class="product__details__tab">
-                        <ul class="nav nav-tabs" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" data-toggle="tab" href="#tabs-1" role="tab"
-                                    aria-selected="true">Description</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#tabs-2" role="tab"
-                                    aria-selected="false">Information</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#tabs-3" role="tab"
-                                    aria-selected="false">Reviews <span>(1)</span></a>
-                            </li>
-                        </ul>
-                        <div class="tab-content">
-                            <div class="tab-pane active" id="tabs-1" role="tabpanel">
-                                <div class="product__details__tab__desc">
-                                    <h6>Products Infomation</h6>
-                                    <p>Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui.
-                                        Pellentesque in ipsum id orci porta dapibus. Proin eget tortor risus. Vivamus
-                                        suscipit tortor eget felis porttitor volutpat. Vestibulum ac diam sit amet quam
-                                        vehicula elementum sed sit amet dui. Donec rutrum congue leo eget malesuada.
-                                        Vivamus suscipit tortor eget felis porttitor volutpat. Curabitur arcu erat,
-                                        accumsan id imperdiet et, porttitor at sem. Praesent sapien massa, convallis a
-                                        pellentesque nec, egestas non nisi. Vestibulum ac diam sit amet quam vehicula
-                                        elementum sed sit amet dui. Vestibulum ante ipsum primis in faucibus orci luctus
-                                        et ultrices posuere cubilia Curae; Donec velit neque, auctor sit amet aliquam
-                                        vel, ullamcorper sit amet ligula. Proin eget tortor risus.</p>
-                                        <p>Praesent sapien massa, convallis a pellentesque nec, egestas non nisi. Lorem
-                                        ipsum dolor sit amet, consectetur adipiscing elit. Mauris blandit aliquet
-                                        elit, eget tincidunt nibh pulvinar a. Cras ultricies ligula sed magna dictum
-                                        porta. Cras ultricies ligula sed magna dictum porta. Sed porttitor lectus
-                                        nibh. Mauris blandit aliquet elit, eget tincidunt nibh pulvinar a.
-                                        Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui. Sed
-                                        porttitor lectus nibh. Vestibulum ac diam sit amet quam vehicula elementum
-                                        sed sit amet dui. Proin eget tortor risus.</p>
-                                </div>
-                            </div>
-                            <div class="tab-pane" id="tabs-2" role="tabpanel">
-                                <div class="product__details__tab__desc">
-                                    <h6>Products Infomation</h6>
-                                    <p>Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui.
-                                        Pellentesque in ipsum id orci porta dapibus. Proin eget tortor risus.
-                                        Vivamus suscipit tortor eget felis porttitor volutpat. Vestibulum ac diam
-                                        sit amet quam vehicula elementum sed sit amet dui. Donec rutrum congue leo
-                                        eget malesuada. Vivamus suscipit tortor eget felis porttitor volutpat.
-                                        Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Praesent
-                                        sapien massa, convallis a pellentesque nec, egestas non nisi. Vestibulum ac
-                                        diam sit amet quam vehicula elementum sed sit amet dui. Vestibulum ante
-                                        ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;
-                                        Donec velit neque, auctor sit amet aliquam vel, ullamcorper sit amet ligula.
-                                        Proin eget tortor risus.</p>
-                                    <p>Praesent sapien massa, convallis a pellentesque nec, egestas non nisi. Lorem
-                                        ipsum dolor sit amet, consectetur adipiscing elit. Mauris blandit aliquet
-                                        elit, eget tincidunt nibh pulvinar a. Cras ultricies ligula sed magna dictum
-                                        porta. Cras ultricies ligula sed magna dictum porta. Sed porttitor lectus
-                                        nibh. Mauris blandit aliquet elit, eget tincidunt nibh pulvinar a.</p>
-                                </div>
-                            </div>
-                            <div class="tab-pane" id="tabs-3" role="tabpanel">
-                                <div class="product__details__tab__desc">
-                                    <h6>Products Infomation</h6>
-                                    <p>Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui.
-                                        Pellentesque in ipsum id orci porta dapibus. Proin eget tortor risus.
-                                        Vivamus suscipit tortor eget felis porttitor volutpat. Vestibulum ac diam
-                                        sit amet quam vehicula elementum sed sit amet dui. Donec rutrum congue leo
-                                        eget malesuada. Vivamus suscipit tortor eget felis porttitor volutpat.
-                                        Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Praesent
-                                        sapien massa, convallis a pellentesque nec, egestas non nisi. Vestibulum ac
-                                        diam sit amet quam vehicula elementum sed sit amet dui. Vestibulum ante
-                                        ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;
-                                        Donec velit neque, auctor sit amet aliquam vel, ullamcorper sit amet ligula.
-                                        Proin eget tortor risus.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<!-- Add to Cart JavaScript -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const addCartForm = document.getElementById('addCartForm');
+    
+    if (addCartForm) {
+      addCartForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const productId = this.action.split('/').pop();
+        const quantity = formData.get('qty');
+        
+        fetch(this.action, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: `qty=${quantity}`
+        })
+        .then(response => {
+          if (response.ok) {
+            Swal.fire({
+              title: 'Thành công!',
+              text: 'Sản phẩm đã được thêm vào giỏ hàng',
+              icon: 'success',
+              confirmButtonText: 'Xem giỏ hàng',
+              showCancelButton: true,
+              cancelButtonText: 'Tiếp tục mua sắm'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                window.location.href = '/cart';
+              }
+            });
+            
+            // Cập nhật số lượng sản phẩm trong giỏ hàng (nếu có hiển thị)
+            updateCartCount();
+          } else {
+            Swal.fire({
+              title: 'Lỗi!',
+              text: 'Không thể thêm sản phẩm vào giỏ hàng',
+              icon: 'error',
+              confirmButtonText: 'Đóng'
+            });
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          Swal.fire({
+            title: 'Lỗi!',
+            text: 'Đã xảy ra lỗi khi thêm sản phẩm vào giỏ hàng',
+            icon: 'error',
+            confirmButtonText: 'Đóng'
+          });
+        });
+      });
+    }
+    
+    // Hàm cập nhật số lượng sản phẩm trong giỏ hàng
+    function updateCartCount() {
+      fetch('/cart/count')
+        .then(response => response.json())
+        .then(data => {
+          const cartCountElement = document.querySelector('.header__cart__price span');
+          if (cartCountElement) {
+            cartCountElement.textContent = data.count;
+          }
+        })
+        .catch(error => console.error('Error updating cart count:', error));
+    }
+  });
+</script>
+
+<!-- Related Product Section Begin -->
+<section class="related-product">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="section-title related__product__title">
+          <h2>Related Product</h2>
         </div>
-    </section>
-    <!-- Product Details Section End -->
-
-    <!-- Related Product Section Begin -->
-    <section class="related-product">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="section-title related__product__title">
-                        <h2>Related Product</h2>
-                    </div>
-                </div>
-            </div>
-           <div class="row">
-  {{#if listPro.length}}
-    {{#each listPro}}
+      </div>
+    </div>
+    <div class="row">
+      {{#if listPro.length}}
+      {{#each listPro}}
       <div class="col-lg-3 col-md-4 col-sm-6 mix">
         <div class="featured__item">
           <div class="featured__item__pic set-bg" data-setbg="{{this.thumbnail}}">
             <ul class="featured__item__pic__hover">
               <li><a href="#"><i class="fa fa-heart"></i></a></li>
               <li><a href="#"><i class="fa fa-retweet"></i></a></li>
-              <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
+              <li><a href="/product/{{this._id}}"><i class="fa fa-shopping-cart"></i></a></li>
             </ul>
           </div>
           <div class="featured__item__text">
@@ -172,11 +246,11 @@
           </div>
         </div>
       </div>
-    {{/each}}
-  {{else}}
-    <p>Không có sản phẩm nào.</p>
-  {{/if}}
-</div>
-        </div>
-    </section>
-    <!-- Related Product Section End -->
+      {{/each}}
+      {{else}}
+      <p>Không có sản phẩm nào.</p>
+      {{/if}}
+    </div>
+  </div>
+</section>
+<!-- Related Product Section End -->

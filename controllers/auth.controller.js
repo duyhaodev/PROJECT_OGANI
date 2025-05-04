@@ -1,3 +1,4 @@
+const { default: Swal } = require("sweetalert2");
 const User = require("../models/user.model")
 
 class AuthController {
@@ -40,6 +41,7 @@ class AuthController {
             const user = await User.findOne({ emailAddress });
             if (!user) {
                 return res.status(400).json({ message: "Email hoặc mật khẩu không đúng." });
+
             }
 
             // Kiểm tra mật khẩu
