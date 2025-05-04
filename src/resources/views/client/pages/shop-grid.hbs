@@ -42,9 +42,9 @@
           {{!-- Nếu có danh sách sản phẩm --}}
           {{#if products}}
           {{#each products}}
-          <div class="col-lg-4 col-md-6 col-sm-6 mb-4">
+          <div class="col-lg-4 col-md-6 col-sm-6 mb-4 mix">
             <div class="product__item">
-              <div class="product__item__pic set-bg" data-setbg="{{this.thumbnail}}"> </div>
+              <div class="product__item__pic set-bg" data-setbg="{{this.thumbnail}}"></div>
               <div class="product__item__text text-center">
                 <h6><a href="/product/{{this._id}}">{{this.title}}</a></h6>
                 <span class="text-success">{{this.sellPrice}} đ</span>
