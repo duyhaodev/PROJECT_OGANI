@@ -36,7 +36,7 @@
                                         </div>
                                     </div>
                                 {{else}}
-                                    <a href="/login"><i class="fa fa-user"></i>Đăng Xuất</a>
+                                    <a href="/login"><i class="fa fa-user"></i>Đăng nhập</a>
                                 {{/if}}
                             </div>
                         </div>
@@ -88,53 +88,59 @@
 
     <!-- Hero Section Begin -->
     <section class="hero hero-normal">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-3">
-    <div class="hero__categories">
-        <div class="hero__categories__all">
-            <i class="fa fa-bars"></i>
-            <span>All departments</span>
-        </div>
-        <ul>
-  {{#if catalogList}}
-    {{#each catalogList}}
-      <li><a href="/catalog/{{this.nameCat}}">{{this.nameCat}}</a></li>
-    {{/each}}
-  {{else}}
-    <li><a href="#">Không có danh mục nào</a></li>
-  {{/if}}
-</ul>
-
-    </div>
-</div>
-
-                <div class="col-lg-9">
-                   <div class="hero__search d-flex justify-content-between align-items-start flex-wrap">
-
-  <!-- Thanh tìm kiếm -->
-<div class="container mt-4 mb-4 flex-grow-1" style="max-width: 600px; z-index: 1050;">
-  <input type="text" id="searchInput" placeholder="Tìm sản phẩm..." class="form-control w-100" autocomplete="off">
-  <div id="searchResults"
-       class="list-group position-absolute w-100 bg-white shadow border rounded"
-       style="z-index: 1050; top: 100%; max-height: 300px; overflow-y: auto;">
-  </div>
-</div>
-  <!-- Phone support giữ nguyên -->
-  <div class="hero__search__phone mt-4 ms-3">
-    <div class="hero__search__phone__icon">
-      <i class="fa fa-phone"></i>
-    </div>
-    <div class="hero__search__phone__text">
-      <h5>+84 11.188.888</h5>
-      <span>Hỗ trợ 24/7</span>
-    </div>
-  </div>
-</div>
-                </div>
+  <div class="container">
+    <div class="row">
+      <!-- Main Content (Search Box and Phone Support) -->
+      <div class="col-12">
+        <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap py-3">
+          
+          <!-- Sidebar: Danh mục -->
+          <div class="col-lg-3">
+            <div class="hero__categories">
+              <div class="hero__categories__all">
+                <i class="fa fa-bars"></i>
+                <span>All departments</span>
+              </div>
+              <ul>
+                {{#if catalogList}}
+                  {{#each catalogList}}
+                    <li><a href="/catalog/{{this.nameCat}}">{{this.nameCat}}</a></li>
+                  {{/each}}
+                {{else}}
+                  <li><a href="#">Không có danh mục nào</a></li>
+                {{/if}}
+              </ul>
             </div>
+          </div>
+
+          <!-- Search Box -->
+          <div class="flex-grow-1 position-relative" style="max-width: 600px;">
+            <input type="text" id="searchInput" placeholder="Tìm sản phẩm..." class="form-control w-100" autocomplete="off">
+            <div id="searchResults"
+                 class="list-group position-absolute w-100 bg-white shadow border rounded"
+                 style="z-index: 1050; top: 100%; max-height: 300px; overflow-y: auto;">
+            </div>
+          </div>
+
+          <!-- Phone Support -->
+          <div class="hero__search__phone d-flex align-items-center ms-2">
+            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 40px; height: 40px;">
+              <i class="fa fa-phone text-success"></i>
+            </div>
+            <div class="text-start">
+              <h5 class="mb-0 fw-bold">+84 11.188.888</h5>
+              <span class="text-muted small">Hỗ trợ 24/7</span>
+            </div>
+          </div>
+          
         </div>
-    </section>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
     <!-- Hero Section End -->
     <!-- Script tìm kiếm -->
 <script>
