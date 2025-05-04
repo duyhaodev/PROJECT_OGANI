@@ -3,9 +3,18 @@ const modelCatalog = require("../../models/catalog.model.js");
 
 module.exports.index = async (req, res) => {
   try {
-    const user = req.session.user || null; // Lấy thông tin người dùng
-    const listPro = await Product.find({}).lean(); // Lấy tất cả sản phẩm
-    const listCat = await modelCatalog.list(); // Lấy danh sách danh mục
+    const user = req.session.user || null;
+    const allProducts = await Product.find({}).lean(); // Lấy tất cả sản phẩm
+    const listCat = await modelCatalog.list();
+
+    // Lọc các sản phẩm trùng (giữ lại duy nhất mỗi cặp title + import)
+    const seen = new Set();
+    const listPro = allProducts.filter((p) => {
+      const key = `${p.title}-${p.import}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
 
     res.render("client/pages/home", {
       layout: "main",
