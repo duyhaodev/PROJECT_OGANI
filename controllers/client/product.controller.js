@@ -4,28 +4,35 @@ const { Product } = require("../../models/product.model.js");
 const modelCatalog = require("../../models/catalog.model.js");
 
 class ProductController {
-  
-
   // Tìm kiếm sản phẩm
   async search(req, res) {
     try {
       const keyword = req.query.q || '';
       const regex = new RegExp(keyword, 'i');
-      const listPro = await Product.find({ title: regex }).lean();
-      const listCat = await modelCatalog.list();
-      const user = req.session.user || null;
-      res.render('client/partials/header', {
-        layout: 'main',
-        pageTitle: `Kết quả tìm kiếm cho "${keyword}"`,
-        listPro,
-        user,
-        listCat,
+      const allProducts = await Product.find({ title: regex }).lean();
+  
+      // Lọc trùng theo title + import
+      const seen = new Set();
+      const filteredProducts = allProducts.filter(p => {
+        const key = `${p.title}-${p.import}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
       });
+  
+      // Trả về JSON với các trường cần thiết
+      const result = filteredProducts.map(p => ({
+        id: p._id,
+        title: p.title
+      }));
+  
+      res.json(result);
     } catch (err) {
-      console.error(err);
-      res.status(500).send('Lỗi khi tìm kiếm sản phẩm');
+      console.error("Lỗi khi tìm kiếm sản phẩm:", err);
+      res.status(500).json({ error: 'Lỗi server khi tìm kiếm sản phẩm' });
     }
   }
+  
 // Trang chi tiết sản phẩm
 async show(req, res, next) {
   const id = req.params.id;
@@ -38,7 +45,16 @@ async show(req, res, next) {
   try {
     // Tìm sản phẩm theo ID, sử dụng phương thức lean để chuyển đổi Mongoose object thành plain object
     const product = await Product.findById(id).lean();
-    const listPro = await Product.find({}).lean();
+    const allProducts = await Product.find({}).lean();
+     // Lọc các sản phẩm trùng (giữ lại duy nhất mỗi cặp title + import)
+     const seen = new Set();
+     const listPro = allProducts.filter((p) => {
+       const key = `${p.title}-${p.import}`;
+       if (seen.has(key)) return false;
+       seen.add(key);
+       return true;
+     });
+    
     const user = req.session.user || null;
     // Nếu không tìm thấy sản phẩm
     if (!product) {

@@ -24,7 +24,6 @@ class CatalogController {
     const user = req.session.user || null;
   
     try {
-      // ✅ Lấy catalogList từ DB thay vì từ res.locals
       const catalogList = await modelCatalog.list();
       const catalog = catalogList.find(cat => cat.nameCat === nameCat);
   
@@ -39,19 +38,29 @@ class CatalogController {
   
       const products = await modelProduct.find({ categoryId: catalog._id })
   
+      // ✅ Lọc trùng theo title + import
+      const seen = new Set();
+      const uniqueProducts = products.filter(item => {
+        const key = `${item.title}-${item.import}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+  
       res.render('client/pages/shop-grid', {
         layout: "main",
         pageTitle: `${nameCat}`,
-        products,
+        products: uniqueProducts,
         categoryName: nameCat,
         user,
-        catalogList // Truyền vào view để render sidebar
+        catalogList
       });
     } catch (err) {
       console.error('Lỗi khi load sản phẩm theo danh mục:', err);
       res.status(500).send('Lỗi server');
     }
   }
+  
   
   
 
