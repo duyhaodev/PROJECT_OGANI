@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
+// Định nghĩa schema
 const productSchema = new mongoose.Schema({
-  id: { type: String, required: true, unique: true }, 
   title: { type: String, required: true },
   categoryId: { type: String, required: true },
   description: { type: String },
@@ -11,11 +11,29 @@ const productSchema = new mongoose.Schema({
   producer: { type: String },
   status: { type: String, enum: ["active", "inactive"], default: "active" },
   sellDate: { type: Date },
-  import: { type: String, required: true } 
+  import: { type: String, required: true },
+  thumbnail: { type: String },
+  views: { type: Number, default: 0 } // thêm views để dùng với hotProduct
 }, {
-  timestamps: true
+  timestamps: true // tự động thêm createdAt & updatedAt
 });
 
-const Product = mongoose.model("Product", productSchema);
 
-module.exports = Product;
+// Model
+const Product = mongoose.models.Product || mongoose.model("Product", productSchema, "products");
+
+// Các hàm tiện ích
+const list = async () => Product.find({});
+const detail = async (_id) => Product.findById(_id);
+const findByName = async (keyword) => {
+  const regex = new RegExp(keyword, "i");
+  return await Product.find({ title: regex }).lean();
+};
+
+// Export
+module.exports = {
+  Product,
+  list,
+  detail,
+  findByName,
+};
