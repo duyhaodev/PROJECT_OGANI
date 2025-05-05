@@ -16,7 +16,7 @@ const waitingRoute = require("./routes/waiting.route");
 const systemConfig = require("./config/system.js")
 const catalogMiddleware = require('./middleware/catalog.middleware.js');
 
-const port = 3000;
+const port = process.env.PORT;
 
 app.use(express.static(path.join(__dirname, 'src', 'public')));
 app.use(catalogMiddleware);

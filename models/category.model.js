@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 const categorySchema = new mongoose.Schema({
-  nameCat: {
-    type: String,
-    required: true
-    // Bạn có thể thêm: unique: true nếu muốn tên danh mục là duy nhất
-  },
+  categoryName: {type: String, required: true, unique: true },
+  status: {type: String, enum: ["active", "locked"], default: "active" },
+  thumbnail: { type: String }
+}, {
+  timestamps: true 
 });
 
 
@@ -18,12 +18,12 @@ const list = async () => {
 };
 
 // Tìm danh mục theo tên
-const findByNameCat = async (nameCat) => {
+const findByNameCat = async (categoryName) => {
   try {
-    const Category = await Category.findOne({ nameCat });
+    const Category = await Category.findOne({ categoryName });
     return Category;
   } catch (err) {
-    console.error("❌ Error finding Category by nameCat:", err);
+    console.error("❌ Error finding Category by categoryName:", err);
     throw err;
   }
 };
