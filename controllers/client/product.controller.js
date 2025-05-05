@@ -20,7 +20,7 @@ class ProductController {
 
       res.json(uniqueProducts.map(item => ({
         title: item.title,
-        id: item._id
+        slug: item.slug,
       })));
     } catch (err) {
       console.error("Lỗi khi tìm kiếm sản phẩm:", err);

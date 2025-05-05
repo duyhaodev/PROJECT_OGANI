@@ -29,4 +29,5 @@ module.exports.index = async (req, res) => {
     console.error("Lỗi khi tải trang chủ:", err);
     res.status(500).send("Lỗi server khi tải trang chủ");
   }
+  
 };

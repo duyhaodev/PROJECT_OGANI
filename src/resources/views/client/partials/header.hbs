@@ -173,7 +173,7 @@
                 } else {
                     data.forEach(item => {
                         const el = document.createElement("a");
-                        el.href = `/product/${item.id}`;
+                        el.href = `/product/${item.slug}`;
                         el.className = "list-group-item list-group-item-action";
                         el.textContent = item.title;
                         results.appendChild(el);
