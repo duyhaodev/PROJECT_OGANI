@@ -2,11 +2,15 @@ const mongoose = require('mongoose');
 
 module.exports.connect = async () => {
   try {
-    await mongoose.connect('mongodb://127.0.0.1:27017/BHX');
-    console.log("Connected Successful!")
+    const uri = process.env.MONGODB_URI;
+    if (!uri) {
+      throw new Error('MongoDB URL is not defined in .env file');
+    }
+    await mongoose.connect(uri); // Loại bỏ các tùy chọn không cần thiết
+    console.log('✅ Connected to MongoDB successfully!');
   } catch (error) {
-    console.log("Connected Failure")
+    console.error('❌ MongoDB connection failed:', error.message);
   }
-}
+};
 
 
