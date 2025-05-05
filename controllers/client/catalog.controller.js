@@ -38,15 +38,16 @@ class CatalogController {
       }
   
       const products = await modelProduct.find({ categoryId: catalog._id })
-  
+
       // ✅ Lọc trùng theo title + import
-      const seen = new Set();
-      const uniqueProducts = products.filter(item => {
-        const key = `${item.title}-${item.import}`;
-        if (seen.has(key)) return false;
-        seen.add(key);
-        return true;
-      });
+    const seen = new Set();
+    const uniqueProducts = products.filter(item => {
+      const key = `${item.title}-${item.import}`; 
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
   
       res.render('client/pages/shop-grid', {
         layout: "main",

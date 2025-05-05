@@ -30,16 +30,11 @@ class ProductController {
 
   // Trang chi tiết sản phẩm
   async show(req, res, next) {
-    const id = req.params.id;
-
-    // Kiểm tra tính hợp lệ của ID
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).send("ID không hợp lệ");
-    }
+    const slug = req.params.slug;
 
     try {
       // Tìm sản phẩm theo ID, sử dụng phương thức lean để chuyển đổi Mongoose object thành plain object
-      const product = await Product.findById(id).lean();
+      const product = await Product.findOne({ slug }).lean();
       const allProducts = await Product.find({}).lean();
       // Lọc các sản phẩm trùng (giữ lại duy nhất mỗi cặp title + import)
       const seen = new Set();
