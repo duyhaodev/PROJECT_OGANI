@@ -24,7 +24,7 @@
                 {{#if catalogList}}
                  {{#each catalogList}}
                     <div class="col-lg-3">
-                        <div class="categories__item set-bg" data-setbg="img/categories/cat-{{@index}}.jpg"> <!-- hình ảnh catalog-->
+                        <div class="categories__item set-bg" data-setbg="img/categories/cat-{{@index}}.jpg"> <!-- hình ảnh catalog {{this.thumbnail}} -->
                             <h5><a href="/catalog/{{this.nameCat}}">{{this.nameCat}}</a></h5>
                         </div>
                     </div>
