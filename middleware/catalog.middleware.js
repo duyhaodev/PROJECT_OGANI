@@ -1,8 +1,8 @@
-const modelCatalog = require('../models/catalog.model');
+const modelCategory = require('../models/category.model');
 
 const loadCatalogList = async (req, res, next) => {
   try {
-    const catalogList = await modelCatalog.list();
+    const catalogList = await modelCategory.list();
     res.locals.catalogList = catalogList; // Biến toàn cục cho mọi view
     next();
   } catch (error) {
