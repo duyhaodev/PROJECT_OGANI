@@ -7,7 +7,7 @@ const catalogController = require('../../controllers/client/catalog.controller')
 router.get('/catalog', catalogController.index);
 
 // Route động - tên danh mục
-router.get('/catalog/:nameCat', catalogController.show);
+router.get('/catalog/:categoryName', catalogController.show);
 
 
 module.exports = router;

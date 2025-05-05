@@ -60,20 +60,20 @@
             <div class="card-body">
               <div class="info-row">
                 <div class="info-label"><i class="fas fa-id-card me-2"></i>Họ tên:</div>
-                <div class="info-value">{{order.customer.fullName}}</div>
+                <div class="info-value">{{order.userId.fullName}}</div>
               </div>
               <div class="info-row">
                 <div class="info-label"><i class="fas fa-envelope me-2"></i>Email:</div>
-                <div class="info-value">{{order.customer.emailAddress}}</div>
+                <div class="info-value">{{order.userId.emailAddress}}</div>
               </div>
               <div class="info-row">
                 <div class="info-label"><i class="fas fa-phone me-2"></i>Số điện thoại:</div>
-                <div class="info-value">{{order.customer.phoneNumber}}</div>
+                <div class="info-value">{{order.userId.phoneNumber}}</div>
               </div>
               <div class="info-row">
                 <div class="info-label"><i class="fas fa-crown me-2"></i>Hạng thành viên:</div>
                 <div class="info-value">
-                  {{#if (eq order.customer.membership "GOLD")}}
+                  {{#if (eq order.userId.rank "GOLD")}}
                     <span class="membership membership-gold"><i class="fas fa-medal me-1"></i>{{order.customer.membership}}</span>
                   {{else if (eq order.customer.membership "SILVER")}}
                     <span class="membership membership-silver"><i class="fas fa-medal me-1"></i>{{order.customer.membership}}</span>
@@ -135,7 +135,7 @@
                 </tr>
               </thead>
               <tbody>
-                {{#each order.product}}
+                {{#each order.items}}
                 <tr>
                   <td class="product-name">{{this.name}}</td>
                   <td>

@@ -5,6 +5,7 @@ const customerRoute = require ("./customer.route")
 const staffRoute = require ("./staff.route")
 const supportRoute = require ("./support.route")
 
+const productRoute = require("./product.route");
 
 function routeAdmin(app) {
     const PATH_ADMIN = systemConfig.prefixAdmin;
@@ -16,6 +17,8 @@ function routeAdmin(app) {
     app.use(PATH_ADMIN + "/staff", staffRoute);
 
     app.use(PATH_ADMIN + "/customer", customerRoute);
+    
+    app.use(PATH_ADMIN + "/product", productRoute);
 
     app.use(PATH_ADMIN + "/support", supportRoute);
 

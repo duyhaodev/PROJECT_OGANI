@@ -16,7 +16,7 @@
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             <!-- Navbar Brand-->
-            <a class="navbar-brand ps-3" href="/admin">Admin Page</a>
+            <a class="navbar-brand ps-3" href="/admin">Trang quản lý </a>
             <!-- Sidebar Toggle-->
             <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
             <!-- Navbar Search-->
@@ -29,21 +29,22 @@
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="#!">{{user.username}}</a></li>
                         <li><hr class="dropdown-divider" /></li>
-                        <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                        <li><a class="dropdown-item" href="/logout">Đăng xuất</a></li>
                     </ul>
                 </li>
             </ul>
         </nav>
+
         <div id="layoutSidenav">
             <div id="layoutSidenav_nav">
                 <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                     <div class="sb-sidenav-menu">
                         <div class="nav">
                             <div class="nav">
-                            <div class="sb-sidenav-menu-heading">Manage</div>
+                            <div class="sb-sidenav-menu-heading">Quản lý</div>
                             <a class="nav-link" href="/admin/category">
                                 <div class="sb-nav-link-icon"><i class="fa-solid fa-list"></i></div>
-                                Quản lý loại hàng 
+                                Quản lý danh mục
                             </a>
                             <a class="nav-link" href="/admin/order">
                                 <div class="sb-nav-link-icon"><i class="fa-solid fa-money-bill"></i></div>
@@ -65,7 +66,7 @@
                         </div>
                     </div>
                     <div class="sb-sidenav-footer">
-                        <div class="small">Welcome,</div>
+                        <div class="small">Xin chào,</div>
                         {{user.username}}
                     </div>
                 </nav>
@@ -147,13 +148,13 @@
                                                 <td><span class="order-id">#{{this._id}}</span></td>
                                                 <td>
                                                     <div class="customer-info">
-                                                        <div class="customer-name">{{this.customer.fullName}}</div>
-                                                        <div class="customer-email text-muted small">{{this.customer.emailAddress}}</div>
+                                                        <div class="customer-name">{{this.userId.username}}</div>
+                                                        <div class="customer-email text-muted small">{{this.userId.emailAddress}}</div>
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="product-list">
-                                                        {{#each this.product}}
+                                                        {{#each this.items}}
                                                         <div class="product-item">
                                                             <span class="product-name">{{this.name}}</span>
                                                             <span class="product-details text-muted small">

@@ -21,12 +21,12 @@ class CatalogController {
   }
 
   async show(req, res) {
-    const nameCat = req.params.nameCat;
+    const categoryName = req.params.categoryName;
     const user = req.session.user || null;
   
     try {
       const catalogList = await modelCategory.list();
-      const catalog = catalogList.find(cat => cat.nameCat === nameCat);
+      const catalog = catalogList.find(cat => cat.categoryName === categoryName);
   
       if (!catalog) {
         return res.status(404).render('client/pages/404', {
@@ -51,9 +51,9 @@ class CatalogController {
   
       res.render('client/pages/shop-grid', {
         layout: "main",
-        pageTitle: `${nameCat}`,
+        pageTitle: `${categoryName}`,
         products: uniqueProducts,
-        categoryName: nameCat,
+        categoryName: categoryName,
         user,
         catalogList,
         currentPage: "catalog"

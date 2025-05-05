@@ -1,4 +1,6 @@
 const Order = require("../../models/order.model");
+const User = require("../../models/user.model");
+
 const { calculateTotalAmount, formatOrder } = require("../../config/helper");
 
 
@@ -10,7 +12,9 @@ module.exports.order = async (req, res) => {
       if (req.query.status) {
         find.status = req.query.status;
       }
-    const orders = await Order.find(find).lean()
+    const orders = await Order.find(find)
+    .populate('userId', 'username emailAddress')
+    .lean()
     const ordersWithTotal = orders.map(order => formatOrder(order));
 
        res.render("admin/manage_order", {
@@ -32,24 +36,27 @@ module.exports.getOrderDetail = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const order = await Order.findById(id).lean();
+    // Lấy order và populate fullName + emailAddress từ userId
+    const order = await Order.findById(id)
+      .populate('userId', 'fullName emailAddress phoneNumber rank')
+      .lean();
 
     if (!order) {
       return res.status(404).send("Không tìm thấy đơn hàng");
     }
 
     const formattedOrder = formatOrder(order);
-
     res.render("admin/order_detail", {
       pageTitle: "Chi tiết đơn hàng",
-      order: formattedOrder
+      order: formattedOrder,
+      customerName: order.userId.fullName,
+      customerEmail: order.userId.emailAddress
     });
   } catch (error) {
     console.error("Lỗi khi lấy chi tiết đơn hàng:", error);
     res.status(500).send("Lỗi máy chủ");
   }
 };
-
 
 
 
