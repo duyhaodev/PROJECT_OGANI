@@ -4,11 +4,13 @@ const searchRoute = require("./search.route")
 const catalogRoute = require("./catalog.route")
 const cartRoute = require("./cart.route")
 const infoRoute = require("./info.route")
+const orderRoute = require("./order.route")
 
 function routeClient(app) {
     app.use("/product", productRoute);
     app.use("/cart", cartRoute);
     app.use("/info", infoRoute);
+    app.use("/order", orderRoute);
     app.use("/", homeRoute);
     app.use("/", searchRoute);
     app.use('/', catalogRoute); // Gắn route với path gốc

@@ -33,6 +33,7 @@
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="userDropdown">
                                     <a class="dropdown-item" href="/info">Thông tin cá nhân</a>
+                                    <a class="dropdown-item" href="/order/history">Đơn hàng của tôi</a>
                                     <a class="dropdown-item" href="/logout">Đăng xuất</a>
                                 </div>
                             </div>
@@ -55,16 +56,19 @@
             <div class="col-lg-6">
                 <nav class="header__menu">
                     <ul>
-                        <li class="active"><a href="/">Trang chủ</a></li>
-                        <li><a href="/catalog">Danh mục</a></li>
-                        <li><a href="#">Trang</a>
+                        <li {{#if (eq currentPage "home" )}}class="active" {{/if}}><a href="/">Trang chủ</a></li>
+                        <li {{#if (eq currentPage "catalog" )}}class="active" {{/if}}><a href="/catalog">Danh mục</a>
+                        </li>
+                        <li {{#if (eq currentPage "pages" )}}class="active" {{/if}}><a href="#">Trang</a>
                             <ul class="header__menu__dropdown">
-                                <li><a href="/">Sản Phẩm</a></li>
-                                <li><a href="/cart">Giỏ hàng</a></li>
+                                <li {{#if (eq currentPage "cart" )}}class="active" {{/if}}><a href="/cart">Giỏ hàng</a>
+                                </li>
+                                <li><a href="/order/history">Đơn hàng của tôi</a></li>
                             </ul>
                         </li>
-                        <li><a href="./blog.html">Blog</a></li>
-                        <li><a href="./contact.html">Liên hệ</a></li>
+                        <li {{#if (eq currentPage "blog" )}}class="active" {{/if}}><a href="./blog.html">Blog</a></li>
+                        <li {{#if (eq currentPage "contact" )}}class="active" {{/if}}><a href="./contact.html">Liên
+                                hệ</a></li>
                     </ul>
                 </nav>
             </div>
@@ -96,7 +100,7 @@
                     <!-- Sidebar: Danh mục -->
                     <div class="col-lg-3">
                         <div class="hero__categories">
-                            <div class="hero__categories__all">
+                            <div class="hero__categories__all" style="padding-left: 15px;">
                                 <i class="fa fa-bars"></i>
                                 <span>Danh mục sản phẩm </span>
                             </div>

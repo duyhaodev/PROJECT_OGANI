@@ -1,18 +1,20 @@
 const mongoose = require("mongoose");
 
 const OrderItemSchema = new mongoose.Schema({
-    productId: { type: String, required: true }, 
+    productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true }, 
     name: { type: String, required: true },
     quantity: { type: Number, required: true },
-    price: { type: Number, required: true }
+    price: { type: Number, required: true },
+    thumbnail: { type: String }, 
+    total: { type: Number } 
 });
 
-const ShippingSchema =new mongoose.Schema({
+const ShippingSchema = new mongoose.Schema({
     address: { type: String, required: true },
     receiverName: { type: String, required: true },
     phoneNumber: { type: String, required: true },
-    shippingMethod: { type: String },
-    shippingFee: { type: Number }
+    shippingMethod: { type: String, default: 'Standard' },
+    shippingFee: { type: Number, default: 0 }
 });
 
 const PromotionSchema = new mongoose.Schema({
@@ -22,25 +24,42 @@ const PromotionSchema = new mongoose.Schema({
     code: { type: String }
 });
 
-const CustomerSchema = new mongoose.Schema({
-    fullName: String,
-    emailAddress: { type: String },
-    phoneNumber: { type: String },
-    membership: { type: String }, // VIP, GOLD, SILVER...
-});
 const orderSchema = new mongoose.Schema(
     {
-    product: [OrderItemSchema],           
-    customer: CustomerSchema,             
-    shipping: ShippingSchema,             
-    vat: { type: Number, required: true }, 
-    promotions: [PromotionSchema],         
-    note: {type: String },
-    status: {type: String, },                  //['Pending', 'Confirmed', 'Shipping', 'Completed', 'Cancelled']
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, 
+    items: [OrderItemSchema], 
+    shipping: ShippingSchema,
+    vat: { type: Number, default: 0 }, 
+    promotions: [PromotionSchema],
+    note: { type: String },
+    status: { 
+        type: String, 
+        enum: ['Pending', 'Confirmed', 'Shipping', 'Completed', 'Cancelled'],
+        default: 'Pending'
+    },
+    subtotal: { type: Number, required: true }, 
+    discount: { type: Number, default: 0 }, 
+    totalAmount: { type: Number, required: true }, 
+    paymentMethod: { type: String, enum: ['COD', 'Banking', 'Momo', 'ZaloPay'], default: 'COD' },
+    paymentStatus: { type: String, enum: ['Unpaid', 'Paid'], default: 'Unpaid' },
     orderDate: { type: Date, default: Date.now }
-});
+}, { timestamps: true }); 
 
+orderSchema.methods.calculateTotals = function() {
+    this.subtotal = this.items.reduce((total, item) => {
+        item.total = item.price * item.quantity;
+        return total + item.total;
+    }, 0);
+    
+    this.discount = this.promotions.reduce((total, promo) => {
+        return total + (this.subtotal * (promo.percentDiscount || 0) / 100);
+    }, 0);
+    
+    this.totalAmount = this.subtotal + this.vat + (this.shipping?.shippingFee || 0) - this.discount;
+    
+    return this.totalAmount;
+};
 
-const Order = mongoose.model("Order", orderSchema, "order")
+const Order = mongoose.model("Order", orderSchema, "orders");
 
 module.exports = Order;
