@@ -1,5 +1,7 @@
 const Order = require("../../models/order.model");
-const { calculateTotalAmount, formatOrder } = require("../../config/helper");
+const { calculateTotalAmount, formatOrder, calculateTotals } = require("../../config/helper");
+
+// Không cần định nghĩa lại calculateTotals vì đã import từ helper.js
 
 
 //lấy danh sách đơn hàng 
@@ -78,13 +80,17 @@ module.exports.updateOrderStatus = async (req, res) => {
           console.log(`Đơn hàng ${id} đã được đặt lại trạng thái thanh toán thành chưa thanh toán`);
       }
       
+      // Sử dụng hàm calculateTotals để cập nhật lại các giá trị tổng tiền
+      calculateTotals(order);
+      
       await order.save();
 
       return res.json({ 
           success: true, 
           message: 'Cập nhật trạng thái thành công', 
           updatedStatus: status,
-          paymentStatus: order.paymentStatus
+          paymentStatus: order.paymentStatus,
+          totalAmount: order.totalAmount
       });
   } catch (error) {
       console.error(error);

@@ -14,12 +14,11 @@ const routeAdmin = require("./routes/admin/index.route");
 const authRoute = require("./routes/auth.route");
 const waitingRoute = require("./routes/waiting.route");
 const systemConfig = require("./config/system.js")
-const catalogMiddleware = require('./middleware/catalog.middleware.js');
-
+const loadCatalogList = require('./middleware/catalog.middleware.js');
 const port = process.env.PORT;
 
 app.use(express.static(path.join(__dirname, 'src', 'public')));
-app.use(catalogMiddleware);
+app.use(loadCatalogList);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 

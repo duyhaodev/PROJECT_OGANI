@@ -1,21 +1,26 @@
-const { Product } = require("../../models/product.model.js");
-const modelCategory = require("../../models/category.model.js");
+const Product = require("../../models/product.model");
+const Category = require("../../models/category.model");
 
 module.exports.index = async (req, res) => {
   try {
     const user = req.session.user || null;
-    const allProducts = await Product.find({}).lean(); // Lấy tất cả sản phẩm
-    const listCat = await modelCategory.list();
 
-    // Lọc các sản phẩm trùng (giữ lại duy nhất mỗi cặp title + import)
+    // Lấy tất cả sản phẩm từ database
+    const allProducts = await Product.find({}).lean();
+
+    // Lấy danh sách tất cả danh mục có trạng thái 'active'
+    const listCat = await Category.find({ status: "active" }).lean();
+
+    // Loại bỏ sản phẩm trùng theo cặp 'title' và 'import'
     const seen = new Set();
-    const listPro = allProducts.filter((p) => {
-      const key = `${p.title}-${p.import}`;
+    const listPro = allProducts.filter(product => {
+      const key = `${product.title}-${product.import}`;
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
     });
 
+    // Render trang chủ
     res.render("client/pages/home", {
       layout: "main",
       pageTitle: "Trang chủ",
@@ -25,9 +30,8 @@ module.exports.index = async (req, res) => {
       breadcrumb: "Trang chủ",
       currentPage: "home"
     });
-  } catch (err) {
-    console.error("Lỗi khi tải trang chủ:", err);
+  } catch (error) {
+    console.error("❌ Lỗi khi tải trang chủ:", error);
     res.status(500).send("Lỗi server khi tải trang chủ");
   }
-  
 };

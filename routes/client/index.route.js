@@ -13,7 +13,7 @@ function routeClient(app) {
     app.use("/order", orderRoute);
     app.use("/", homeRoute);
     app.use("/", searchRoute);
-    app.use('/', catalogRoute); // Gắn route với path gốc
+    app.use('/catalog', catalogRoute); // Gắn route với path gốc
 }
 
 module.exports = routeClient;
