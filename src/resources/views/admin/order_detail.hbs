@@ -73,14 +73,22 @@
               <div class="info-row">
                 <div class="info-label"><i class="fas fa-crown me-2"></i>Hạng thành viên:</div>
                 <div class="info-value">
-                  {{#if (eq order.userId.rank "GOLD")}}
-                    <span class="membership membership-gold"><i class="fas fa-medal me-1"></i>{{order.customer.membership}}</span>
-                  {{else if (eq order.customer.membership "SILVER")}}
-                    <span class="membership membership-silver"><i class="fas fa-medal me-1"></i>{{order.customer.membership}}</span>
-                  {{else if (eq order.customer.membership "DIAMOND")}}
-                    <span class="membership membership-diamond"><i class="fas fa-gem me-1"></i>{{order.customer.membership}}</span>
-                  {{else if (eq order.customer.membership "BRONZE")}}
-                    <span class="membership membership-bronze"><i class="fas fa-medal me-1"></i>{{order.customer.membership}}</span>
+               {{#if (eq order.userId.rank "GOLD")}}
+                    <span class="membership membership-gold">
+                      <i class="fas fa-medal me-1"></i>VÀNG {{order.customer.membership}}
+                    </span>
+                  {{else if (eq order.userId.rank "SILVER")}}
+                    <span class="membership membership-silver">
+                      <i class="fas fa-medal me-1"></i>BẠC {{order.customer.membership}}
+                    </span>
+                  {{else if (eq order.userId.rank "DIAMOND")}}
+                    <span class="membership membership-diamond">
+                      <i class="fas fa-gem me-1"></i>KIM CƯƠNG  {{order.customer.membership}}
+                    </span>
+                  {{else if (eq order.userId.rank "BRONZE")}}
+                    <span class="membership membership-bronze">
+                      <i class="fas fa-medal me-1"></i>ĐỒNG  {{order.customer.membership}}
+                    </span>
                   {{/if}}
                 </div>
               </div>
@@ -181,7 +189,7 @@
             <div class="card-body">
               <div class="info-row">
                 <div class="info-label"><i class="fas fa-receipt me-2"></i>VAT:</div>
-                <div class="info-value">{{order.vat}}%</div>
+                <div class="info-value">{{formatCurrency order.vat}}</div>
               </div>
               <div class="info-row">
                 <div class="info-label"><i class="fas fa-sticky-note me-2"></i>Ghi chú:</div>

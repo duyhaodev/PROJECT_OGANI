@@ -45,21 +45,6 @@ const orderSchema = new mongoose.Schema(
     orderDate: { type: Date, default: Date.now }
 }, { timestamps: true }); 
 
-orderSchema.methods.calculateTotals = function() {
-    this.subtotal = this.items.reduce((total, item) => {
-        item.total = item.price * item.quantity;
-        return total + item.total;
-    }, 0);
-    
-    this.discount = this.promotions.reduce((total, promo) => {
-        return total + (this.subtotal * (promo.percentDiscount || 0) / 100);
-    }, 0);
-    
-    this.totalAmount = this.subtotal + this.vat + (this.shipping?.shippingFee || 0) - this.discount;
-    
-    return this.totalAmount;
-};
-
 const Order = mongoose.model("Order", orderSchema, "orders");
 
 module.exports = Order;

@@ -1,12 +1,41 @@
-const modelCategory = require('../../models/category.model.js');
-const modelProduct = require('../../models/product.model.js');
+const Category = require('../../models/category.model.js');
+const Product = require('../../models/product.model.js');
 
+// =============================
+// Các hàm tiện ích
+// =============================
+
+// Lấy danh sách sản phẩm theo categoryId
+const findProductsByCategory = async (categoryId) => {
+  try {
+    return await Product.find({ categoryId }).lean();
+  } catch (err) {
+    console.error("❌ Error finding Products by category:", err);
+    throw err;
+  }
+};
+
+// Lọc các sản phẩm duy nhất (không trùng lặp)
+const getUniqueProducts = (products) => {
+  const seen = new Set();
+  return products.filter(item => {
+    const key = `${item.title}-${item.import}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+};
+
+// =============================
+// Controller
+// =============================
 
 class CatalogController {
+  // Hiển thị danh sách tất cả danh mục sản phẩm
   async index(req, res) {
     try {
       const user = req.session.user || null;
-      const catalogList = await modelCategory.list(); // Sửa ở đây
+      const catalogList = res.locals.catalogList; // Lấy danh sách danh mục từ middleware;
       res.render("client/pages/shop-grid", {
         layout: "main",
         pageTitle: "Danh mục sản phẩm",
@@ -20,14 +49,15 @@ class CatalogController {
     }
   }
 
+  // Hiển thị sản phẩm theo danh mục
   async show(req, res) {
     const categoryName = req.params.categoryName;
     const user = req.session.user || null;
-  
+
     try {
-      const catalogList = await modelCategory.list();
+      const catalogList = res.locals.catalogList;
       const catalog = catalogList.find(cat => cat.categoryName === categoryName);
-  
+
       if (!catalog) {
         return res.status(404).render('client/pages/404', {
           layout: "main",
@@ -36,24 +66,16 @@ class CatalogController {
           catalogList
         });
       }
-  
-      const products = await modelProduct.find({ categoryId: catalog._id })
 
-      // ✅ Lọc trùng theo title + import
-    const seen = new Set();
-    const uniqueProducts = products.filter(item => {
-      const key = `${item.title}-${item.import}`; 
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
+      // Lấy sản phẩm theo categoryId
+      const products = await findProductsByCategory(catalog._id); // Sửa 'category' thành 'catalog'
+      const uniqueProducts = getUniqueProducts(products); // Lọc các sản phẩm duy nhất
 
-  
       res.render('client/pages/shop-grid', {
         layout: "main",
-        pageTitle: `${categoryName}`,
+        pageTitle: categoryName,
         products: uniqueProducts,
-        categoryName: categoryName,
+        categoryName,
         user,
         catalogList,
         currentPage: "catalog"
@@ -63,7 +85,6 @@ class CatalogController {
       res.status(500).send('Lỗi server');
     }
   }
-  
 }
 
 module.exports = new CatalogController();
