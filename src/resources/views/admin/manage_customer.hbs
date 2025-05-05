@@ -94,16 +94,7 @@
                                             <th>Thao tác</th>
                                         </tr>
                                     </thead>
-                                    <tfoot>
-                                        <tr>
-                                            <th>Tên đăng nhập</th>
-                                            <th>Họ và tên</th>
-                                            <th>Email</th>
-                                            <th>Trạng thái</th>
-                                            <th>Hạng</th>
-                                            <th>Thao tác</th>
-                                        </tr>
-                                    </tfoot>
+                    
                                     <tbody>
                                     {{#each customers}}
                                         <tr>
@@ -121,13 +112,13 @@
                                             <td class="text-center align-middle">
                                                 <div class="d-flex justify-content-center gap-2"></div>
                                                     {{#if this.rank}}
-                                                        {{#if (eq this.rank "Vàng")}}
-                                                        <span class="btn btn-warning btn-sm text-uppercase">{{this.rank}}</span>
+                                                        {{#if (eq this.rank "GOLD")}}
+                                                        <span class="btn btn-warning btn-sm text-uppercase">VÀNG</span>
                                                         {{else}}
-                                                        {{#if (eq this.rank "Kim cương")}}
-                                                            <span class="btn btn-primary btn-sm text-uppercase">{{this.rank}}</span>
+                                                        {{#if (eq this.rank "DIAMOND")}}
+                                                            <span class="btn btn-primary btn-sm text-uppercase">KIM CƯƠNG</span>
                                                         {{else}}
-                                                            <span class="btn btn-secondary btn-sm text-uppercase">{{this.rank}}</span>
+                                                            <span class="btn btn-secondary btn-sm text-uppercase">BẠC</span>
                                                         {{/if}}
                                                         {{/if}}
                                                     {{else}}

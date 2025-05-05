@@ -76,8 +76,8 @@ class AdminCustomerController {
       const user = await User.findById(userId);
       if (!user) return res.status(404).send("Không tìm thấy khách hàng");
   
-      const ranks = ["Bạc", "Vàng", "Kim cương"];
-      const currentIndex = ranks.indexOf(user.rank || "Bạc");
+      const ranks = ["SILVER", "GOLD", "DIAMOND"];
+      const currentIndex = ranks.indexOf(user.rank || "SILVER");
       const nextIndex = (currentIndex + 1) % ranks.length;
   
       user.rank = ranks[nextIndex];
