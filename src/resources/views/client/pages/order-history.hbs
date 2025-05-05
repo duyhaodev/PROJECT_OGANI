@@ -1,0 +1,134 @@
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-section set-bg" data-setbg="/img/breadcrumb.jpg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    <h2>Lịch sử đơn hàng</h2>
+                    <div class="breadcrumb__option">
+                        <a href="/">Trang chủ</a>
+                        <span>Đơn hàng của tôi</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Order History Section Begin -->
+<section class="order-history spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="order-history__header">
+                    <h4>Đơn hàng của tôi</h4>
+                </div>
+
+                {{#if orders.length}}
+                <div class="order-history__list mt-4">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Mã đơn hàng</th>
+                                    <th>Ngày đặt</th>
+                                    <th>Tổng tiền</th>
+                                    <th>Trạng thái</th>
+                                    <th>Thanh toán</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each orders}}
+                                <tr>
+                                    <td>#{{this._id}}</td>
+                                    <td>{{formatDate this.orderDate "DD/MM/YYYY HH:mm"}}</td>
+                                    <td>{{formatCurrency this.totalAmount}}</td>
+                                    <td>
+                                        <span class="badge 
+                                            {{#if (eq this.status 'Pending')}}badge-warning{{/if}}
+                                            {{#if (eq this.status 'Confirmed')}}badge-info{{/if}}
+                                            {{#if (eq this.status 'Shipping')}}badge-primary{{/if}}
+                                            {{#if (eq this.status 'Completed')}}badge-success{{/if}}
+                                            {{#if (eq this.status 'RequestCancelled')}}badge-danger{{/if}}
+                                            {{#if (eq this.status 'Cancelled')}}badge-danger{{/if}}
+                                        ">
+                                            {{this.status}}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge {{#if (eq this.paymentStatus 'Paid')}}badge-success{{else}}badge-secondary{{/if}}">
+                                            {{this.paymentStatus}}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="/order/detail/{{this._id}}" class="btn btn-sm btn-primary">Chi tiết</a>
+                                        {{#if (eq this.status 'Pending')}}
+                                        <form action="/order/cancel/{{this._id}}" method="POST" class="d-inline" onsubmit="return confirm('Bạn có chắc muốn gửi yêu cầu hủy đơn hàng này?');">
+                                            <button type="submit" class="btn btn-sm btn-danger">Hủy</button>
+                                        </form>
+                                        {{/if}}
+                                    </td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {{else}}
+                <div class="order-history__empty text-center py-5">
+                    <i class="fa fa-shopping-bag fa-4x mb-3 text-muted"></i>
+                    <h5>Bạn chưa có đơn hàng nào</h5>
+                    <p>Hãy tiếp tục mua sắm để tạo đơn hàng mới</p>
+                    <a href="/" class="primary-btn">Tiếp tục mua sắm</a>
+                </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Order History Section End -->
+
+<style>
+    .badge {
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-weight: 500;
+    }
+    
+    .badge-warning {
+        background-color: #ffc107;
+        color: #212529;
+    }
+    
+    .badge-info {
+        background-color: #17a2b8;
+        color: #fff;
+    }
+    
+    .badge-primary {
+        background-color: #007bff;
+        color: #fff;
+    }
+    
+    .badge-success {
+        background-color: #28a745;
+        color: #fff;
+    }
+    
+    .badge-danger {
+        background-color: #dc3545;
+        color: #fff;
+    }
+    
+    .badge-secondary {
+        background-color: #6c757d;
+        color: #fff;
+    }
+    
+    .order-history__empty {
+        background-color: #f5f5f5;
+        border-radius: 8px;
+    }
+</style>
