@@ -105,6 +105,41 @@ class AdminCateController {
       res.status(500).send("Server error");
     }
   }
+
+  async showEditForm(req, res) {
+    try {
+      const category = await Category.findById(req.params.id).lean();
+      if (!category) {
+        return res.redirect("/admin/category");
+      }
+  
+      res.render("admin/category_edit", {
+        user: req.session.user,
+        category
+      });
+    } catch (err) {
+      console.error("Lỗi khi hiển thị form chỉnh sửa:", err);
+      res.status(500).send("Lỗi server");
+    }
+  }
+
+  async updateCategory(req, res) {
+    try {
+      const { categoryName, status, thumbnail } = req.body;
+      await Category.findByIdAndUpdate(req.params.id, {
+        categoryName,
+        status,
+        thumbnail
+      });
+  
+      res.redirect("/admin/category");
+    } catch (err) {
+      console.error("Lỗi khi cập nhật danh mục:", err);
+      res.status(500).send("Lỗi server khi cập nhật");
+    }
+  }
+  
+
 }
 
 module.exports = new AdminCateController();
