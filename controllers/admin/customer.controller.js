@@ -15,7 +15,7 @@ class AdminCustomerController {
       console.error('Lỗi lấy danh sách khách hàng:', error);
       res.send('Đã xảy ra lỗi khi lấy danh sách khách hàng');
     }
-  }
+}
 
 
   async lockCustomer(req, res) {
