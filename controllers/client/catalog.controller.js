@@ -23,11 +23,11 @@ class CatalogController {
   async show(req, res) {
     const nameCat = req.params.nameCat;
     const user = req.session.user || null;
-  
+
     try {
       const catalogList = await modelCategory.list();
       const catalog = catalogList.find(cat => cat.nameCat === nameCat);
-  
+
       if (!catalog) {
         return res.status(404).render('client/pages/404', {
           layout: "main",
@@ -36,19 +36,19 @@ class CatalogController {
           catalogList
         });
       }
-  
+
       const products = await modelProduct.find({ categoryId: catalog._id })
 
-      // ✅ Lọc trùng theo title + import
-    const seen = new Set();
-    const uniqueProducts = products.filter(item => {
-      const key = `${item.title}-${item.import}`; 
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
+      //Lọc trùng theo title + import
+      const seen = new Set();
+      const uniqueProducts = products.filter(item => {
+        const key = `${item.title}-${item.import}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
 
-  
+
       res.render('client/pages/shop-grid', {
         layout: "main",
         pageTitle: `${nameCat}`,
@@ -63,7 +63,7 @@ class CatalogController {
       res.status(500).send('Lỗi server');
     }
   }
-  
+
 }
 
 module.exports = new CatalogController();
