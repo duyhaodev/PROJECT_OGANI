@@ -272,13 +272,66 @@ class OrderController {
             
             const userId = req.session.user._id;
             
-            // Lấy danh sách đơn hàng
-            const orders = await Order.find({ userId }).sort({ createdAt: -1 }).lean();
+            // Lấy trạng thái từ query parameter
+            const status = req.query.status;
+            
+            // Lấy tham số trang hiện tại, mặc định là 1
+            const page = parseInt(req.query.page) || 1;
+            const limit = 10; // Số đơn hàng mỗi trang
+            const skip = (page - 1) * limit;
+            
+            // Tạo điều kiện tìm kiếm
+            const findCondition = { userId };
+            
+            // Nếu có trạng thái, thêm vào điều kiện tìm kiếm
+            if (status) {
+                findCondition.status = status;
+            }
+            
+            console.log('Tìm đơn hàng với điều kiện:', findCondition);
+            
+            // Đếm tổng số đơn hàng phù hợp với điều kiện
+            const totalOrders = await Order.countDocuments(findCondition);
+            
+            // Tính tổng số trang
+            const totalPages = Math.ceil(totalOrders / limit);
+            
+            // Lấy danh sách đơn hàng theo điều kiện, có phân trang
+            const orders = await Order.find(findCondition)
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limit)
+                .lean();
+            
+            console.log(`Tìm thấy ${totalOrders} đơn hàng${status ? ` với trạng thái ${status}` : ''}, hiển thị trang ${page}/${totalPages}`);
+            
+            // Tạo mảng các trang để hiển thị phân trang
+            const pages = [];
+            for (let i = 1; i <= totalPages; i++) {
+                pages.push({
+                    number: i,
+                    active: i === page,
+                    url: `/order/history?${status ? `status=${status}&` : ''}page=${i}`
+                });
+            }
+            
+            // Tạo URL cho nút trang trước và trang sau
+            const prevPage = page > 1 ? `/order/history?${status ? `status=${status}&` : ''}page=${page - 1}` : null;
+            const nextPage = page < totalPages ? `/order/history?${status ? `status=${status}&` : ''}page=${page + 1}` : null;
             
             res.render('client/pages/order-history', {
                 layout: 'main',
                 pageTitle: "Lịch sử đơn hàng",
                 orders,
+                status, // Truyền trạng thái hiện tại vào view
+                pagination: {
+                    page,
+                    totalPages,
+                    totalOrders,
+                    pages,
+                    prevPage,
+                    nextPage
+                },
                 user: req.session.user,
                 currentPage: "cart"
             });
