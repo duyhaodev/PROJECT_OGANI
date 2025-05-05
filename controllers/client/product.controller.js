@@ -1,6 +1,35 @@
-const mongoose = require('mongoose');
-const { Product, findByName } = require("../../models/product.model.js");
+const Product = require("../../models/product.model");
 const Cart = require('../../models/cart.model');
+
+// =============================
+// Các hàm tiện ích
+// =============================
+
+const list = async () => Product.find({}).lean();
+
+const findBySlug = async (slug) => {
+  try {
+    return await Product.findOne({ slug }).lean();
+  } catch (err) {
+    console.error("❌ Lỗi khi tìm sản phẩm theo slug:", err);
+    throw err;
+  }
+};
+const findByName = async (keyword) => {
+  const regex = new RegExp(keyword, "i");
+  return await Product.find({ title: regex }).lean();
+};
+
+
+const getUniqueProducts = (products) => {
+  const seen = new Set();
+  return products.filter(item => {
+    const key = `${item.title}-${item.import}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+};
 
 class ProductController {
   // Tìm kiếm sản phẩm
@@ -8,15 +37,7 @@ class ProductController {
     const keyword = req.query.q || "";
     try {
       const result = await findByName(keyword);
-
-      // Lọc trùng theo title + import
-      const seen = new Set();
-      const uniqueProducts = result.filter(item => {
-        const key = `${item.title}-${item.import}`;
-        if (seen.has(key)) return false;
-        seen.add(key);
-        return true;
-      });
+      const uniqueProducts = getUniqueProducts(result);
 
       res.json(uniqueProducts.map(item => ({
         title: item.title,
@@ -33,43 +54,33 @@ class ProductController {
     const slug = req.params.slug;
 
     try {
-      // Tìm sản phẩm theo ID, sử dụng phương thức lean để chuyển đổi Mongoose object thành plain object
-      const product = await Product.findOne({ slug }).lean();
-      const allProducts = await Product.find({}).lean();
-      // Lọc các sản phẩm trùng (giữ lại duy nhất mỗi cặp title + import)
-      const seen = new Set();
-      const listPro = allProducts.filter((p) => {
-        const key = `${p.title}-${p.import}`;
-        if (seen.has(key)) return false;
-        seen.add(key);
-        return true;
-      });
-
-      const user = req.session.user || null;
-      // Nếu không tìm thấy sản phẩm
+      const product = await findBySlug(slug);
       if (!product) {
         return res.status(404).send("Không tìm thấy sản phẩm");
       }
-      // Tính tồn kho (đếm số lượng sản phẩm cùng import và status: active)
+
+      const allProducts = await list();
+      const listPro = getUniqueProducts(allProducts);
+
+      // Tính tồn kho
       const stockCount = await Product.countDocuments({
         import: product.import,
         status: 'active'
       });
       product.stock = stockCount;
-      // Lấy số lượng sản phẩm trong giỏ hàng nếu đã đăng nhập
+      const user = req.session.user || null;
       let cartCount = 0;
       if (user) {
         const cart = await Cart.findOne({ userId: user._id }).lean() || { items: [] };
         cartCount = cart.items.reduce((total, item) => total + item.quantity, 0);
       }
 
-      // Hiển thị chi tiết sản phẩm
       res.render('client/pages/product-details', {
         layout: 'main',
         pageTitle: "Product details",
         listPro,
         user,
-        product: product,
+        product,
         cartCount,
       });
     } catch (err) {
@@ -77,7 +88,6 @@ class ProductController {
       res.status(500).send("Lỗi khi hiển thị sản phẩm");
     }
   }
-
 }
 
 module.exports = new ProductController();
