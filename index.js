@@ -85,8 +85,8 @@ routeAdmin(app);
 routeClient(app);
 app.use("/", authRoute);
 app.use("/", waitingRoute);
-app.use('/', catalogRouter);
 app.use("/", forgotRoute);
+app.use('/', catalogRouter);
 
 app.locals.prefixAdmin = systemConfig.prefixAdmin;
 

@@ -24,7 +24,7 @@ router.get("/resetPassword", (req, res) => {
 router.post("/forgot-password/send-otp", ForgotController.sendOTP);
 
 // Xác minh mã OTP
-router.post("/forgot-password/verifyOTP", ForgotController.verifyOTP);
+router.post("/forgot-password/verify-otp", ForgotController.verifyOTP);
 
 // Đặt lại mật khẩu
 router.post("/forgot-password/reset-password", ForgotController.resetPassword);
