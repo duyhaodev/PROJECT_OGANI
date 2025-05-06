@@ -5,7 +5,7 @@ const ForgotController = require("../controllers/forgot.controller");
 router.get("/verifyOTP", (req, res) => {
     const message = req.session.message || null;
     req.session.message = null; // Xóa thông báo sau khi hiển thị
-    res.render("verifyOTP", { 
+    res.render("verifyOTP", {
         message,
         isSuccess: true
     });

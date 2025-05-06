@@ -19,13 +19,13 @@ class AdminProductController {
     async addProduct(req, res) {
         try {
         const {title, categoryId, description, sellPrice, mfg, exp, producer, status, sellDate, thumbnail, quantity} = req.body;
-        const importId = uuidv4(); // dùng chung cho các sản phẩm cùng lô
+        const importId = uuidv4(); // dùng cho các sản phẩm cùng lô
         const quantityNumber = parseInt(quantity);
         const slug = generateSlug(title);
         
         const products = [];
         for (let i = 0; i < quantityNumber; i++) {
-            products.push({id: uuidv4(), title, slug, categoryId, description, sellPrice, mfg, exp, producer, status, sellDate, thumbnail, import: importId});
+            products.push({title, slug, categoryId, description, sellPrice, mfg, exp, producer, status, sellDate, thumbnail, import: importId});
         }
         console.log("Dữ liệu sản phẩm chuẩn bị lưu:", products);
         await Product.insertMany(products);

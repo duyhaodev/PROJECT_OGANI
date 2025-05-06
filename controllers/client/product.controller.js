@@ -5,11 +5,11 @@ const Cart = require('../../models/cart.model');
 // Các hàm tiện ích
 // =============================
 
-const list = async () => Product.find({}).lean();
+const list = async () => Product.find({ active: "active" }).lean();
 
 const findBySlug = async (slug) => {
   try {
-    return await Product.findOne({ slug }).lean();
+    return await Product.findOne({ slug, active: "active" }).lean();
   } catch (err) {
     console.error("❌ Lỗi khi tìm sản phẩm theo slug:", err);
     throw err;

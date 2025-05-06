@@ -26,7 +26,7 @@ const calculateTotalAmount = (order) => {
   // Hàm format order
 const formatOrder = (order) => {
   try {
-    // Nếu đơn hàng đã có totalAmount, sử dụng giá trị đó
+    // Nếu đơn hàng đã có totalAmount, sử dụng giá trị 
     const totalAmount = order.totalAmount || calculateTotalAmount(order);
 
     return {
