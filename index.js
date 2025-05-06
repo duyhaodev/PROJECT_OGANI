@@ -14,7 +14,7 @@ const routeAdmin = require("./routes/admin/index.route");
 const authRoute = require("./routes/auth.route");
 const waitingRoute = require("./routes/waiting.route");
 const forgotRoute = require("./routes/forgot.route");
-const systemConfig = require ("./config/system.js")
+const systemConfig = require("./config/system.js")
 const loadCatalogList = require('./middleware/catalog.middleware.js');
 
 
@@ -85,8 +85,8 @@ routeAdmin(app);
 routeClient(app);
 app.use("/", authRoute);
 app.use("/", waitingRoute);
-app.use('/', catalogRouter);
 app.use("/", forgotRoute);
+app.use('/', catalogRouter);
 
 app.locals.prefixAdmin = systemConfig.prefixAdmin;
 
