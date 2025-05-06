@@ -19,7 +19,7 @@ class AdminProductController {
     async addProduct(req, res) {
         try {
         const {title, categoryId, description, sellPrice, mfg, exp, producer, status, sellDate, thumbnail, quantity} = req.body;
-        const importId = uuidv4(); // dùng chung cho các sản phẩm cùng lô
+        const importId = uuidv4(); // dùng cho các sản phẩm cùng lô
         const quantityNumber = parseInt(quantity);
         const slug = generateSlug(title);
         
