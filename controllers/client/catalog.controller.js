@@ -8,7 +8,7 @@ const Product = require('../../models/product.model.js');
 // Lấy danh sách sản phẩm theo categoryId
 const findProductsByCategory = async (categoryId) => {
   try {
-    return await Product.find({ categoryId }).lean();
+    return await Product.find({ categoryId, active: "active" }).lean();
   } catch (err) {
     console.error("❌ Error finding Products by category:", err);
     throw err;
@@ -51,19 +51,22 @@ class CatalogController {
 
   // Hiển thị sản phẩm theo danh mục
   async show(req, res) {
-    const categoryName = req.params.categoryName;
+    const categorySlug = req.params.slug;
     const user = req.session.user || null;
 
     try {
       const catalogList = res.locals.catalogList;
-      const catalog = catalogList.find(cat => cat.categoryName === categoryName);
+      const catalog = catalogList.find(cat => cat.slug === categorySlug);
+      //
+
 
       if (!catalog) {
         return res.status(404).render('client/pages/404', {
           layout: "main",
           message: 'Danh mục không tồn tại',
           user,
-          catalogList
+          catalogList,
+
         });
       }
 
@@ -73,9 +76,9 @@ class CatalogController {
 
       res.render('client/pages/shop-grid', {
         layout: "main",
-        pageTitle: categoryName,
+        pageTitle: catalog.categoryName,
         products: uniqueProducts,
-        categoryName,
+        categorySlug,
         user,
         catalogList,
         currentPage: "catalog"

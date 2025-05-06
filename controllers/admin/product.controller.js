@@ -25,7 +25,7 @@ class AdminProductController {
         
         const products = [];
         for (let i = 0; i < quantityNumber; i++) {
-            products.push({id: uuidv4(), title, slug, categoryId, description, sellPrice, mfg, exp, producer, status, sellDate, thumbnail, import: importId});
+            products.push({title, slug, categoryId, description, sellPrice, mfg, exp, producer, status, sellDate, thumbnail, import: importId});
         }
         console.log("Dữ liệu sản phẩm chuẩn bị lưu:", products);
         await Product.insertMany(products);
