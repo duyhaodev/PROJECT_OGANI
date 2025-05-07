@@ -53,35 +53,44 @@ class CatalogController {
   async show(req, res) {
     const categorySlug = req.params.slug;
     const user = req.session.user || null;
-
+  
     try {
       const catalogList = res.locals.catalogList;
       const catalog = catalogList.find(cat => cat.slug === categorySlug);
-      //
-
-
+  
       if (!catalog) {
         return res.status(404).render('client/pages/404', {
           layout: "main",
           message: 'Danh mục không tồn tại',
           user,
           catalogList,
-
         });
       }
-
-      // Lấy sản phẩm theo categoryId
-      const products = await findProductsByCategory(catalog._id); // Sửa 'category' thành 'catalog'
-      const uniqueProducts = getUniqueProducts(products); // Lọc các sản phẩm duy nhất
-
+  
+      // Phân trang
+      const page = parseInt(req.query.page) || 1; // Trang hiện tại (mặc định là 1)
+      const limit = 12; // Số sản phẩm mỗi trang
+      const skip = (page - 1) * limit; // Số sản phẩm cần bỏ qua
+  
+      // Lấy sản phẩm theo categoryId với phân trang
+      const products = await Product.find({ categoryId: catalog._id, active: "active" })
+        .skip(skip)
+        .limit(limit)
+        .lean();
+  
+      // Tổng số sản phẩm
+      const totalProducts = await Product.countDocuments({ categoryId: catalog._id, active: "active" });
+      const totalPages = Math.ceil(totalProducts / limit); // Tổng số trang
+  
       res.render('client/pages/shop-grid', {
         layout: "main",
         pageTitle: catalog.categoryName,
-        products: uniqueProducts,
+        products,
         categorySlug,
         user,
         catalogList,
-        currentPage: "catalog"
+        currentPage: page,
+        totalPages,
       });
     } catch (err) {
       console.error('Lỗi khi load sản phẩm theo danh mục:', err);
