@@ -109,6 +109,17 @@
 }
 
 .authfy-panel-left, .authfy-panel-right {
-            display: flex;
-            flex-direction: column;
-        }
+    display: flex;
+    flex-direction: column;
+}
+
+/* Thêm responsive cho màn hình laptop */
+@media (min-width: 1440px) and (max-width: 1699px) {
+
+    .food-icons {
+        flex-wrap: nowrap;
+    }
+    .food-icon-item{
+      width: auto;
+    }
+}
