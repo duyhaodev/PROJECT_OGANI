@@ -18,7 +18,7 @@ class CartController {
             // 2. Lấy cart, populate chỉ lấy đúng các trường cần thiết
             const cart = await Cart
                 .findOne({ userId })
-                .populate('items.productId', 'title sellPrice thumbnail')
+                .populate('items.productId', 'title sellPrice thumbnail slug')
                 .lean();
 
             console.log('Cart found:', cart ? 'Yes' : 'No');
@@ -46,13 +46,23 @@ class CartController {
                     title: item.productId?.title || '—',
                     sellPrice: item.productId?.sellPrice || 0,
                     thumbnail: item.productId?.thumbnail || '',      // dùng trường thumbnail từ Product
+                    slug: item.productId?.slug || '',               // thêm slug để link đến trang chi tiết sản phẩm
                     quantity: item.quantity,
                     total: item.quantity * (item.productId?.sellPrice || 0)
                 };
             });
 
-            // 4. Tính subtotal
-            const subtotal = cartItems.reduce((sum, i) => sum + i.total, 0);
+            // 4. Tính toán tổng tiền và VAT
+            const subtotal = cartItems.reduce((total, item) => total + item.total, 0);
+            const vat = subtotal * 0.1; // 10% VAT
+            
+            // Miễn phí vận chuyển cho đơn hàng từ 100.000đ
+            let shippingFee = 30000; // Phí vận chuyển mặc định
+            if (subtotal >= 100000) {
+                shippingFee = 0; // Miễn phí vận chuyển
+            }
+            
+            const totalAmount = subtotal + vat + shippingFee;
 
             // 5. Tính tổng số lượng sản phẩm trong giỏ hàng
             const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);

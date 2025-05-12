@@ -27,7 +27,7 @@
                         <div class="col-md-6">
                             <h4>Mã đơn hàng: #{{order._id}}</h4>
                             <p>Ngày đặt hàng: {{formatDate order.orderDate "DD/MM/YYYY HH:mm"}}</p>
-                            <p>Trạng thái: 
+                            <p>Trạng thái:
                                 <span class="badge 
                                     {{#if (eq order.status 'Pending')}}badge-warning {{/if}}
                                     {{#if (eq order.status 'Confirmed')}}badge-info{{/if}}
@@ -36,14 +36,21 @@
                                      {{#if (eq order.status 'RequestCancelled')}}badge-danger{{/if}}
                                     {{#if (eq order.status 'Cancelled')}}badge-danger{{/if}}
                                 ">
-                                    {{order.status}}
+                                    {{#if (eq order.status 'Pending')}}Chờ xác nhận{{/if}}
+                                    {{#if (eq order.status 'Confirmed')}}Đã xác nhận{{/if}}
+                                    {{#if (eq order.status 'Shipping')}}Đang giao hàng{{/if}}
+                                    {{#if (eq order.status 'Completed')}}Đã hoàn thành{{/if}}
+                                    {{#if (eq order.status 'RequestCancelled')}}Yêu cầu hủy{{/if}}
+                                    {{#if (eq order.status 'Cancelled')}}Đã hủy{{/if}}
                                 </span>
                             </p>
                         </div>
                         <div class="col-md-6 text-right">
-                            <span class="back-to-history"><a href="/order/history"><i class="fa fa-arrow-left"></i> Trở lại</a></span>
+                            <span class="back-to-history"><a href="/order/history"><i class="fa fa-arrow-left"></i> Trở
+                                    lại</a></span>
                             {{#if (eq order.status 'Pending')}}
-                            <form action="/order/cancel/{{order._id}}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?');" class="mt-2">
+                            <form action="/order/cancel/{{order._id}}" method="POST"
+                                onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?');" class="mt-2">
                                 <button type="submit" class="btn btn-danger">Hủy đơn hàng</button>
                             </form>
                             {{/if}}
@@ -60,9 +67,19 @@
                             <p><strong>Địa chỉ:</strong> {{order.shipping.address}}</p>
                         </div>
                         <div class="col-md-6">
-                            <p><strong>Phương thức vận chuyển:</strong> {{order.shipping.shippingMethod}}</p>
-                            <p><strong>Phương thức thanh toán:</strong> {{order.paymentMethod}}</p>
-                            <p><strong>Trạng thái thanh toán:</strong> {{order.paymentStatus}}</p>
+                            <p><strong>Phương thức vận chuyển:</strong>
+                                {{#if (eq order.shipping.shippingMethod 'Standard')}}Tiêu chuẩn{{/if}}
+                                {{#if (eq order.shipping.shippingMethod 'Express')}}Nhanh{{/if}}
+                            </p>
+                            <p><strong>Phương thức thanh toán:</strong>
+                                {{#if (eq order.paymentMethod 'COD')}}Thanh toán khi nhận hàng (COD){{/if}}
+                                {{#if (eq order.paymentMethod 'Banking')}}Chuyển khoản ngân hàng{{/if}}
+                            </p>
+                            <p><strong>Trạng thái thanh toán:</strong>
+                                {{#if (eq order.paymentStatus 'Unpaid')}}Đang chờ thanh toán{{/if}}
+                                {{#if (eq order.paymentStatus 'Paid')}}Đã thanh toán{{/if}}
+                                {{#if (eq order.paymentStatus 'Refunded')}}Hoàn tiền{{/if}}
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -84,8 +101,15 @@
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <img src="{{this.thumbnail}}" alt="{{this.name}}" style="max-width: 80px; max-height: 80px; object-fit: contain; margin-right: 15px;">
-                                            <span>{{this.name}}</span>
+                                            <img src="{{this.thumbnail}}" alt="{{this.name}}"
+                                                style="max-width: 80px; max-height: 80px; object-fit: contain; margin-right: 15px;">
+                                            <span>
+                                                {{#if this.slug}}
+                                                <a href="/product/{{this.slug}}" class="product-link">{{this.name}}</a>
+                                                {{else}}
+                                                {{this.name}}
+                                                {{/if}}
+                                            </span>
                                         </div>
                                     </td>
                                     <td>{{formatCurrency this.price}}</td>
@@ -109,7 +133,8 @@
                                     {{#if order.discount}}
                                     <li>Giảm giá <span>-{{formatCurrency order.discount}}</span></li>
                                     {{/if}}
-                                    <li class="order-total">Tổng cộng <span>{{formatCurrency order.totalAmount}} </span></li>
+                                    <li class="order-total">Tổng cộng <span>{{formatCurrency order.totalAmount}} </span>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
@@ -129,19 +154,28 @@
 <!-- Order Detail Section End -->
 
 <style>
+    .product-link {
+        color: #333;
+        transition: color 0.3s ease;
+    }
+    .product-link:hover {
+        color: #7fad39;
+        text-decoration: underline;
+    }
+    
     .order-detail__total ul {
         list-style: none;
         padding: 0;
         border: 1px solid #ebebeb;
         padding: 20px;
     }
-    
+
     .order-detail__total ul li {
         display: flex;
         justify-content: space-between;
         margin-bottom: 10px;
     }
-    
+
     .order-detail__total ul li.order-total {
         font-weight: 700;
         color: #dd2222;
@@ -149,48 +183,48 @@
         padding-top: 15px;
         margin-top: 15px;
     }
-    
+
     .badge {
         padding: 5px 10px;
         border-radius: 4px;
         font-weight: 500;
     }
-    
+
     .badge-warning {
         background-color: #ffc107;
         color: #212529;
     }
-    
+
     .badge-info {
         background-color: #17a2b8;
         color: #fff;
     }
-    
+
     .badge-primary {
         background-color: #007bff;
         color: #fff;
     }
-    
+
     .badge-success {
         background-color: #28a745;
         color: #fff;
     }
-    
+
     .badge-danger {
         background-color: #dc3545;
         color: #fff;
     }
-    
+
     .back-to-history {
         display: inline-block;
         margin-bottom: 10px;
     }
-    
+
     .back-to-history a {
         color: #7fad39;
         font-weight: 500;
     }
-    
+
     .back-to-history a:hover {
         text-decoration: underline;
     }

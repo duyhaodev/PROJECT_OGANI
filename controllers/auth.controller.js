@@ -55,6 +55,14 @@ class AuthController {
                 });
             }
 
+            // Kiểm tra trạng thái tài khoản
+            if (user.status === "locked") {
+                return res.render("login", {
+                    message: "Tài khoản của bạn đã bị khóa.",
+                    isSuccess: false
+                });
+            }
+
             // Kiểm tra mật khẩu
             const isMatch = await user.comparePassword(password);
             if (!isMatch) {

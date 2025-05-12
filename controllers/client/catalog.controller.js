@@ -5,16 +5,6 @@ const Product = require('../../models/product.model.js');
 // Các hàm tiện ích
 // =============================
 
-// Lấy danh sách sản phẩm theo categoryId
-const findProductsByCategory = async (categoryId) => {
-  try {
-    return await Product.find({ categoryId, active: "active" }).lean();
-  } catch (err) {
-    console.error("❌ Error finding Products by category:", err);
-    throw err;
-  }
-};
-
 // Lọc các sản phẩm duy nhất (không trùng lặp)
 const getUniqueProducts = (products) => {
   const seen = new Set();
@@ -53,11 +43,11 @@ class CatalogController {
   async show(req, res) {
     const categorySlug = req.params.slug;
     const user = req.session.user || null;
-  
+
     try {
       const catalogList = res.locals.catalogList;
       const catalog = catalogList.find(cat => cat.slug === categorySlug);
-  
+
       if (!catalog) {
         return res.status(404).render('client/pages/404', {
           layout: "main",
@@ -66,26 +56,31 @@ class CatalogController {
           catalogList,
         });
       }
-  
+
       // Phân trang
       const page = parseInt(req.query.page) || 1; // Trang hiện tại (mặc định là 1)
       const limit = 12; // Số sản phẩm mỗi trang
       const skip = (page - 1) * limit; // Số sản phẩm cần bỏ qua
-  
-      // Lấy sản phẩm theo categoryId với phân trang
-      const products = await Product.find({ categoryId: catalog._id, active: "active" })
-        .skip(skip)
-        .limit(limit)
-        .lean();
-  
-      // Tổng số sản phẩm
-      const totalProducts = await Product.countDocuments({ categoryId: catalog._id, active: "active" });
-      const totalPages = Math.ceil(totalProducts / limit); // Tổng số trang
-  
+
+      // Lấy tất cả sản phẩm theo categoryId
+      const allProducts = await Product.find({ categoryId: catalog._id, active: "active" }).lean();
+
+      // Lọc các sản phẩm duy nhất
+      const uniqueProducts = getUniqueProducts(allProducts);
+
+      // Tổng số sản phẩm duy nhất
+      const totalProducts = uniqueProducts.length;
+
+      // Phân trang trên danh sách sản phẩm duy nhất
+      const paginatedProducts = uniqueProducts.slice(skip, skip + limit);
+
+      // Tổng số trang
+      const totalPages = Math.ceil(totalProducts / limit);
+
       res.render('client/pages/shop-grid', {
         layout: "main",
         pageTitle: catalog.categoryName,
-        products,
+        products: paginatedProducts, // Sử dụng danh sách sản phẩm đã được lọc và phân trang
         categorySlug,
         user,
         catalogList,

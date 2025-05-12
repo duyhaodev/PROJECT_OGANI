@@ -205,7 +205,8 @@
       fetch('/cart/count')
         .then(response => response.json())
         .then(data => {
-          const cartCountElement = document.querySelector('.header__cart__price span');
+          // Cập nhật số lượng trong biểu tượng giỏ hàng ở header
+          const cartCountElement = document.querySelector('.header__cart ul li:nth-child(2) span');
           if (cartCountElement) {
             cartCountElement.textContent = data.count;
           }
