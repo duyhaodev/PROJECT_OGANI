@@ -127,9 +127,9 @@
           <div class="product__item__pic set-bg" data-setbg="{{this.thumbnail}}"></div>
           <div class="product__item__text text-center">
             <h6>
-              <a href="/product/{{this.slug}}">{{this.title}}</a> {{!-- ✅ Dùng slug --}}
+              <a href="/product/{{this.slug}}">{{this.title}}</a> 
             </h6>
-            <span class="text-success">{{this.sellPrice}} đ</span>
+            <span class="text-success">{{formatCurrency this.sellPrice}}</span>
           </div>
         </div>
       </div>
