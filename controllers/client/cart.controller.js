@@ -192,9 +192,11 @@ class CartController {
             console.log(`Kiểm tra sản phẩm trong giỏ hàng: ${existingItemIndex >= 0 ? 'Có' : 'Không'}`);
             
             if (existingItemIndex >= 0) {
-                // Nếu sản phẩm đã có trong giỏ hàng, cập nhật số lượng (không cộng dồn)
-                console.log(`Sản phẩm đã có trong giỏ hàng, số lượng hiện tại: ${cart.items[existingItemIndex].quantity}, số lượng mới: ${qty}`);
-                cart.items[existingItemIndex].quantity = qty; // Cập nhật số lượng mới thay vì cộng dồn
+                // Nếu sản phẩm đã có trong giỏ hàng, cộng dồn số lượng mới vào số lượng hiện tại
+                console.log(`Sản phẩm đã có trong giỏ hàng, số lượng hiện tại: ${cart.items[existingItemIndex].quantity}, số lượng thêm: ${qty}`);
+                // Cộng dồn số lượng mới vào số lượng hiện tại
+                cart.items[existingItemIndex].quantity += qty;
+                console.log(`Tổng số lượng sau khi cộng dồn: ${cart.items[existingItemIndex].quantity}`)
             } else {
                 // Nếu sản phẩm chưa có trong giỏ hàng, thêm mới
                 console.log(`Thêm sản phẩm mới vào giỏ hàng với số lượng: ${qty}`);
