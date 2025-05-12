@@ -50,14 +50,20 @@ app.engine('hbs', hbs.engine({
       if (!number) return '0';
       return number.toLocaleString("vi-VN") + 'đ';
     },
-    multiply: (a, b) => {
-      return a * b;
-    },
+    multiply: (a, b) => a * b,
     formatDate: (date, format) => {
       const safeFormat = typeof format === 'string' ? format : 'DD/MM/YYYY';
       return moment(date).format(safeFormat);
-    }
-  }
+    },
+    range: (start, end) => {
+      const range = [];
+      for (let i = start; i <= end; i++) {
+        range.push(i);
+      }
+      return range;
+    },
+    isActive: (page, currentPage) => (page === currentPage ? 'active' : ''),
+  },
 }));
 
 // Middleware tính cartCount
