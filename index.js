@@ -11,6 +11,7 @@ const app = express();
 const hbs = require('express-handlebars');
 const routeClient = require("./routes/client/index.route");
 const routeAdmin = require("./routes/admin/index.route");
+const routeStaff = require("./routes/staff/index.route")
 const authRoute = require("./routes/auth.route");
 const waitingRoute = require("./routes/waiting.route");
 const forgotRoute = require("./routes/forgot.route");
@@ -82,6 +83,7 @@ app.use(async (req, res, next) => {
 });
 
 routeAdmin(app);
+routeStaff(app);
 routeClient(app);
 app.use("/", authRoute);
 app.use("/", waitingRoute);
