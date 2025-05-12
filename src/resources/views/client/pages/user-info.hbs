@@ -33,9 +33,9 @@
                 <div class="card-body text-center p-4">
                     <div class="position-relative mb-4 mx-auto" style="width: 120px; height: 120px;">
                         <img class="rounded-circle border shadow-sm" width="120" height="120" id="profileImage"
-                            src="{{#if user.avatar}}{{user.avatar}}{{else}}/img/user-default.jpg{{/if}}" alt="Profile"
+                            src="{{#if user.avatar}}{{user.avatar}}{{else}}/img/user-default.png{{/if}}" alt="Profile"
                             style="object-fit: cover;">
-                        <div class="position-absolute bottom-0 end-0">
+                        <div class="position-absolute" style="bottom: 0; right: 0;">
                             <button id="changeBtn" class="btn btn-sm btn-success rounded-circle"
                                 style="width: 32px; height: 32px;" title="Thay đổi ảnh đại diện">
                                 <i class="fa fa-camera"></i>
@@ -50,10 +50,10 @@
                         <a href="/info" class="list-group-item list-group-item-action active border-0">
                             <i class="fa fa-user me-2"></i> Thông tin cá nhân
                         </a>
-                        <a href="/orders" class="list-group-item list-group-item-action border-0">
+                        <a href="/order/history" class="list-group-item list-group-item-action border-0">
                             <i class="fa fa-shopping-bag me-2"></i> Đơn hàng của tôi
                         </a>
-                        <a href="/wishlist" class="list-group-item list-group-item-action border-0">
+                        <a href="#" class="list-group-item list-group-item-action border-0">
                             <i class="fa fa-heart me-2"></i> Sản phẩm yêu thích
                         </a>
                         <a href="/logout" class="list-group-item list-group-item-action text-danger border-0">
@@ -156,7 +156,7 @@
 
                         <div class="text-end mt-3">
                             <button class="btn btn-success px-4" type="submit">
-                                <i class="fa fa-save me-2"></i>Lưu thông tin
+                                <i class="fa fa-save me-2"></i> Lưu thông tin
                             </button>
                         </div>
                     </form>
@@ -209,7 +209,7 @@
 
                         <div class="text-end mt-3">
                             <button class="btn btn-success px-4" type="submit">
-                                <i class="fa fa-refresh me-2"></i>Cập nhật mật khẩu
+                                <i class="fa fa-refresh me-2"></i> Cập nhật mật khẩu
                             </button>
                         </div>
                     </form>

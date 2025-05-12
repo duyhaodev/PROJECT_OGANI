@@ -11,7 +11,7 @@
                 <div class="col-lg-6 col-md-6">
                     <div class="header__top__left">
                         <ul>
-                            <li><i class="fa fa-envelope"></i> dichoonline@gmail.com</li>
+                            <li><i class="fa fa-envelope"></i> bachhoaxanhdev@gmail.com</li>
                             <li>Miễn phí ship cho đơn hàng trên 100K</li>
                         </ul>
                     </div>
@@ -26,8 +26,8 @@
                         </div>
                         <div class="header__top__right__auth">
                             {{#if user}}
-                            <div class="dropdown">
-                                <a href="/info" class="dropdown-toggle" id="userDropdown" data-toggle="dropdown"
+                            <div class="dropdown user-dropdown">
+                                <a href="#" class="dropdown-toggle" id="userDropdown" data-toggle="dropdown"
                                     aria-haspopup="true" aria-expanded="false">
                                     <i class="fa fa-user"></i> {{user.fullName}}
                                 </a>
@@ -37,6 +37,23 @@
                                     <a class="dropdown-item" href="/logout">Đăng xuất</a>
                                 </div>
                             </div>
+                            <style>
+                                .user-dropdown:hover .dropdown-menu {
+                                    display: block;
+                                }
+                                .dropdown-menu {
+                                    margin-top: 0;
+                                }
+                            </style>
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    // Ngăn chặn dropdown đóng khi click vào toggle
+                                    document.querySelector('#userDropdown').addEventListener('click', function(e) {
+                                        e.preventDefault();
+                                        $('.user-dropdown .dropdown-menu').toggleClass('show');
+                                    });
+                                });
+                            </script>
                             {{else}}
                             <a href="/login"><i class="fa fa-user"></i> Đăng nhập</a>
                             {{/if}}
@@ -50,10 +67,10 @@
         <div class="row">
             <div class="col-lg-3">
                 <div class="header__logo">
-                    <a href="/"><img src="img/logo.png" alt=""></a>
+                    <a href="/"><img src="/img/logo.png" alt=""></a>
                 </div>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-7">
                 <nav class="header__menu">
                     <ul>
                         <li {{#if (eq currentPage "home" )}}class="active" {{/if}}><a href="/">Trang chủ</a></li>
@@ -66,13 +83,12 @@
                                 <li><a href="/order/history">Đơn hàng của tôi</a></li>
                             </ul>
                         </li>
-                        <li {{#if (eq currentPage "blog" )}}class="active" {{/if}}><a href="./blog.html">Blog</a></li>
-                        <li {{#if (eq currentPage "contact" )}}class="active" {{/if}}><a href="./contact.html">Liên
-                                hệ</a></li>
+                        <li {{#if (eq currentPage "blog" )}}class="active" {{/if}}><a href="#">Blog</a></li>
+                        <li {{#if (eq currentPage "contact" )}}class="active" {{/if}}><a href="#">Liên hệ</a></li>
                     </ul>
                 </nav>
             </div>
-            <div class="col-lg-3">
+            <div class="col-lg-2">
                 <div class="header__cart">
                     <ul>
                         <li><a href="#"><i class="fa fa-heart"></i> <span>1</span></a></li>
@@ -107,7 +123,7 @@
                             <ul>
                                 {{#if catalogList}}
                                 {{#each catalogList}}
-                                <li><a href="/catalog/{{this.categoryName}}">{{this.categoryName}}</a></li>
+                                <li><a href="/catalog/{{this.slug}}">{{this.categoryName}}</a></li>
                                 {{/each}}
                                 {{else}}
                                 <li><a href="#">Không có danh mục nào</a></li>

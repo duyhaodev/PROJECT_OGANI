@@ -41,7 +41,13 @@ class OrderController {
                 
                 const subtotal = cartItems.reduce((sum, i) => sum + i.total, 0);
                 const vat = subtotal * 0.1; // 10% VAT
-                const shippingFee = 30000; // Phí vận chuyển mặc định
+            
+                // Miễn phí vận chuyển cho đơn hàng từ 100.000đ
+                let shippingFee = 30000; // Phí vận chuyển mặc định
+                if (subtotal >= 100000) {
+                    shippingFee = 0; // Miễn phí vận chuyển
+                }
+                
                 const totalAmount = subtotal + vat + shippingFee;
                 
                 // Lấy thông tin người dùng từ database thay vì từ session
@@ -132,6 +138,7 @@ class OrderController {
                     quantity: item.quantity,
                     price: item.productId.sellPrice,
                     thumbnail: item.productId.thumbnail,
+                    slug: item.productId.slug, // Thêm slug để có thể liên kết đến trang chi tiết sản phẩm
                     total: item.quantity * item.productId.sellPrice
                 }));
                 
@@ -142,12 +149,19 @@ class OrderController {
                 const vat = subtotal * 0.1; // 10% VAT
                 
                 // Lấy thông tin shipping từ form
+                let shippingFee = req.body.shippingMethod === 'Express' ? 50000 : 30000;
+            
+                // Miễn phí vận chuyển cho đơn hàng từ 100.000đ
+                if (subtotal >= 100000) {
+                    shippingFee = 0; // Miễn phí vận chuyển
+                }
+                
                 const shipping = {
                     address: req.body.address,
                     receiverName: req.body.receiverName,
                     phoneNumber: req.body.phoneNumber,
                     shippingMethod: req.body.shippingMethod || 'Standard',
-                    shippingFee: req.body.shippingMethod === 'Express' ? 50000 : 30000
+                    shippingFee: shippingFee
                 };
                 
                 console.log('Shipping info:', shipping);
@@ -247,6 +261,23 @@ class OrderController {
             
             if (!order) {
                 return res.status(404).send('Không tìm thấy đơn hàng');
+            }
+            
+            // Lấy thông tin slug của sản phẩm từ database
+            if (order.items && order.items.length > 0) {
+                for (let i = 0; i < order.items.length; i++) {
+                    const item = order.items[i];
+                    if (item.productId) {
+                        try {
+                            const product = await Product.findById(item.productId).lean();
+                            if (product) {
+                                order.items[i].slug = product.slug;
+                            }
+                        } catch (err) {
+                            console.error(`Lỗi khi lấy thông tin sản phẩm ${item.productId}:`, err);
+                        }
+                    }
+                }
             }
             
             res.render('client/pages/order-detail', {

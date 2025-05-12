@@ -48,3 +48,59 @@
 .shoping__cart__quantity .pro-qty .qtybtn {
     width: 15px;
 }
+
+/* Giới hạn kích thước hình ảnh trong trang chi tiết sản phẩm */
+.product__details__pic__item img.product__details__pic__item--large {
+    max-width: 100%;
+    max-height: 500px;
+    object-fit: contain;
+    margin: 0 auto;
+    display: block;
+}
+
+.product__details__pic__slider img {
+    max-width: 100px;
+    max-height: 100px;
+    object-fit: contain;
+}
+
+/* Giới hạn kích thước hình ảnh trong carousel sản phẩm đề cử */
+.featured__item__pic {
+    height: 270px;
+    position: relative;
+    overflow: hidden;
+    background-position: center center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+/* Làm đậm chữ trong các ô input trên trang thanh toán */
+.checkout__input input[type="text"],
+.checkout__input input[type="tel"],
+.checkout__input input[type="email"],
+.checkout__input textarea {
+    color: #333;
+    font-weight: 500;
+    font-size: 16px;
+}
+
+/* Tăng độ đậm cho placeholder */
+.checkout__input input::placeholder,
+.checkout__input textarea::placeholder {
+    color: #666;
+    font-weight: 400;
+}
+
+/* Làm đậm chữ trong các phần khác của trang thanh toán */
+.checkout__order__products,
+.checkout__order__subtotal,
+.checkout__order__total {
+    font-weight: 500;
+}
+
+.checkout__order__products span,
+.checkout__order__subtotal span,
+.checkout__order__total span {
+    font-weight: 600;
+    color: #333;
+}

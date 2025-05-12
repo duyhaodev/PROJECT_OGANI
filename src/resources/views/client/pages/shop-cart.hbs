@@ -24,6 +24,14 @@
         object-fit: contain;
         margin-right: 15px;
     }
+    .product-link {
+        color: #333;
+        transition: color 0.3s ease;
+    }
+    .product-link:hover {
+        color: #7fad39;
+        text-decoration: underline;
+    }
 </style>
 <section class="shoping-cart spad">
     <div class="container">
@@ -45,7 +53,7 @@
                             <tr data-item-id="{{this._id}}">
                                 <td class="shoping__cart__item">
                                     <img src="{{this.thumbnail}}" alt="{{this.title}}" />
-                                    <h5>{{this.title}}</h5>
+                                    <h5><a href="/product/{{this.slug}}" class="product-link">{{this.title}}</a></h5>
                                 </td>
                                 <td class="shoping__cart__price" data-price="{{this.sellPrice}}">
                                     {{formatCurrency this.sellPrice}}

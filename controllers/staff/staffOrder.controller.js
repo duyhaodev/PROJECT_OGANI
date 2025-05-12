@@ -1,12 +1,12 @@
 const Order = require("../../models/order.model");
 const User = require("../../models/user.model");
-
+const mongoose = require('mongoose');
 const { calculateTotalAmount, formatOrder, calculateTotals } = require("../../config/helper");
 
 
 
 //lấy danh sách đơn hàng 
-module.exports.order = async (req, res) => {
+module.exports.orderStaff = async (req, res) => {
   try {
     const user = req.session.user || null;
     let find = {};
@@ -16,10 +16,10 @@ module.exports.order = async (req, res) => {
     const orders = await Order.find(find)
     .populate('userId', 'username emailAddress')
     .lean()
-    const ordersWithTotal =   orders.map(order => formatOrder(order));
+    const ordersWithTotal = orders.map(order => formatOrder(order));
 
-       res.render("admin/manage_order", {
-      pageTitle: "Trang quản lý đơn hàng",
+       res.render("staff/manage_order", {
+      pageTitle: "Trang nhân viên quản lý ",
       user,
       orders: ordersWithTotal
     });
@@ -36,8 +36,12 @@ module.exports.order = async (req, res) => {
 module.exports.getOrderDetail = async (req, res) => {
   const { id } = req.params;
 
+  // Kiểm tra id có phải ObjectId hợp lệ không
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).send("ID không hợp lệ");
+  }
+
   try {
-    // Lấy order và populate fullName + emailAddress từ userId
     const order = await Order.findById(id)
       .populate('userId', 'fullName emailAddress phoneNumber rank')
       .lean();
@@ -47,7 +51,7 @@ module.exports.getOrderDetail = async (req, res) => {
     }
 
     const formattedOrder = formatOrder(order);
-    res.render("admin/order_detail", {
+    res.render("staff/order_detail", {
       pageTitle: "Chi tiết đơn hàng",
       order: formattedOrder,
       customerName: order.userId.fullName,
@@ -58,7 +62,6 @@ module.exports.getOrderDetail = async (req, res) => {
     res.status(500).send("Lỗi máy chủ");
   }
 };
-
 
 
 // API cập nhật trạng thái đơn hàng
