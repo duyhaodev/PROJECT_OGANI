@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Tables - SB Admin</title>
+        <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+        <link href="/css/styles_admin.css" rel="stylesheet" />
+        <link href="/css/style_order_management.css" rel="stylesheet" />
+
+        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    </head>
+    <body class="sb-nav-fixed">
+        <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+            <!-- Navbar Brand-->
+            <a class="navbar-brand ps-3" href="/staff">Trang nhân viên </a>
+            <!-- Sidebar Toggle-->
+            <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
+            <!-- Navbar Search-->
+            <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+            </form>
+            <!-- Navbar-->
+            <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#!">{{user.username}}</a></li>
+                        <li><hr class="dropdown-divider" /></li>
+                        <li><a class="dropdown-item" href="/logout">Đăng xuất</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+
+        <div id="layoutSidenav">
+            <div id="layoutSidenav_nav">
+                <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                    <div class="sb-sidenav-menu">
+                        <div class="nav">
+                            <div class="nav">
+                            <div class="sb-sidenav-menu-heading">Quản lý</div>
+                            <a class="nav-link" href="/staff">
+                                <div class="sb-nav-link-icon"><i class="fa-solid fa-money-bill"></i></div>
+                                Quản lý đơn hàng 
+                             <a class="nav-link" href="/support">
+                                <div class="sb-nav-link-icon"><i class="fa-solid fa-user-tie"></i></div>
+                                Trung tâm hỗ trợ
+                            </a>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="sb-sidenav-footer">
+                        <div class="small">Xin chào,</div>
+                        {{user.username}}
+                    </div>
+                </nav>
+            </div>
+
+        <div id="layoutSidenav_content">
+            <main>
+                <div class="container-fluid px-4">
+                    <h1 class="mt-4">Quản lý đơn hàng</h1>
+
+                    <ul class="nav nav-pills mb-4 gap-2 flex-wrap status-filters" id="orderTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link status-filter active" data-status="">Tất cả</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link status-filter status-pending" data-status="Pending">Chờ xác nhận</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link status-filter status-confirmed" data-status="Confirmed">Đã xác nhận</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link status-filter status-shipping" data-status="Shipping">Đang vận chuyển</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link status-filter status-completed" data-status="Completed">Hoàn tất đơn hàng</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link status-filter status-cancelled" data-status="RequestCancelled">Yêu cầu hủy</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link status-filter status-cancelled" data-status="Cancelled">Đã hủy</button>
+                        </li>
+                    </ul>
+
+                    <div class="card orders-card mb-4">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title"><i class="fas fa-table me-1"></i>Orders List</h5>
+                               
+                            </div>
+                        </div>
+                        
+                        <div class="card-body tab-content" id="orderTabsContent">
+                            <div class="tab-pane fade show active" id="all" role="tabpanel">
+                                <div class="row mb-3">
+                                    <div class="col-md-6 d-flex align-items-center gap-2">
+                                        <select id="bulkAction" class="form-select form-select-sm w-auto">
+                                            <option value="Pending">Chờ xác nhận</option>
+                                            <option value="Confirmed">Đã xác nhận</option>
+                                            <option value="Shipping">Đang vận chuyển</option>
+                                            <option value="Completed">Hoàn tất</option>
+                                            <option value="Cancelled">Hủy đơn</option>
+                                        </select>
+                                        <button class="btn btn-sm btn-primary" id="applyBulkAction">Áp dụng</button>
+                                    </div>
+                                    <div class="col-md-6 text-md-end">
+                                    
+                                    </div>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <table id="datatablesSimple" class="table table-hover align-middle">
+                                        <thead>
+                                            <tr>
+                                                <th>Chọn</th>
+                                                <th>ID Đơn hàng</th>
+                                                <th>Tên khách hàng</th>
+                                                <th>Tên sản phẩm</th>
+                                                <th>Ngày đặt hàng</th>
+                                                <th>Trạng thái</th>
+                                                <th>Tổng tiền</th>
+                                                <th>Hành Động</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {{#each orders}}
+                                            <tr>
+                                                <td><input type="checkbox" class="order-checkbox" value="{{this._id}}" /></td>
+                                                <td><span class="order-id">#{{this._id}}</span></td>
+                                                <td>
+                                                    <div class="customer-info">
+                                                        <div class="customer-name">{{this.userId.username}}</div>
+                                                        <div class="customer-email text-muted small">{{this.userId.emailAddress}}</div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="product-list">
+                                                        {{#each this.items}}
+                                                        <div class="product-item">
+                                                            <span class="product-name">{{this.name}}</span>
+                                                            <span class="product-details text-muted small">
+                                                                SL: {{this.quantity}} | {{formatCurrency this.price}}
+                                                            </span>
+                                                        </div>
+                                                        {{/each}}
+                                                    </div>
+                                                </td>
+                                                <td>{{this.formattedOrderDate}}</td>
+                                                <td>
+                                                    {{#if (eq this.status "Pending")}}
+                                                        <span class="status-badge status-pending">
+                                                            <i class=""></i>Chờ xác nhận
+                                                        </span>
+                                                    {{else if (eq this.status "Confirmed")}}
+                                                        <span class="status-badge status-confirmed">
+                                                            <i class=""></i>Đã xác nhận
+                                                        </span>
+                                                    {{else if (eq this.status "Shipping")}}
+                                                        <span class="status-badge status-shipping">
+                                                            <i class=""></i>Đang vận chuyển
+                                                        </span>
+                                                    {{else if (eq this.status "Completed")}}
+                                                        <span class="status-badge status-completed">
+                                                            <i class=""></i>Hoàn tất
+                                                        </span>
+                                                    {{else if (eq this.status "Cancelled")}}
+                                                        <span class="status-badge status-cancelled">
+                                                            <i class=""></i>Đã hủy
+                                                        </span>
+                                                    {{else if (eq this.status "RequestCancelled")}}
+                                                    <span class="status-badge status-cancelled">
+                                                        <i class=""></i>Yêu cầu hủy
+                                                    </span>
+                                                    {{else}}
+                                                        <span class="status-badge status-unknown">
+                                                            <i class=""></i>Không rõ
+                                                        </span>
+                                                    {{/if}}
+                                                    
+                                                </td>
+                                                <td>
+                                                    <div class="order-amount">{{formatCurrency this.totalAmount}}</div>
+                                                </td>
+                                                <td>
+                                                    <div class="action-buttons">
+                                                        <button class="btn btn-sm btn-info btn-order-detail" data-id="{{this._id}}">Chi tiết</button>
+                                                        
+                                                        {{#if (eq this.status "Pending")}}
+                                                        <button class="btn btn-sm btn-success btn-update-status" data-id="{{this._id}}" data-status="Confirmed">Xác nhận</button>
+                                                         <button class="btn btn-sm btn-danger btn-update-status" data-id="{{this._id}}" data-status="Cancelled">Hủy đơn </button>
+                                                        {{else if (eq this.status "Confirmed")}}
+                                                        <button class="btn btn-sm btn-primary btn-update-status" data-id="{{this._id}}" data-status="Shipping">Vận chuyển</button>
+                                                        {{else if (eq this.status "Shipping")}}
+                                                        <button class="btn btn-sm btn-success btn-update-status" data-id="{{this._id}}" data-status="Completed">Hoàn tất</button>
+                                                        {{else if (eq this.status "RequestCancelled")}}
+                                                        <button class="btn btn-sm btn-danger btn-update-status" data-id="{{this._id}}" data-status="Cancelled">Xác nhận hủy</button>
+                                                        {{/if}}
+    
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {{/each}}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <footer class="py-4 bg-light mt-auto">
+                <div class="container-fluid px-4">
+                    <div class="d-flex align-items-center justify-content-between small">
+                            <div class="text-muted">Copyright &copy; Admin page của nhóm 1</div>
+                        <div>
+                            <a href="#">Privacy Policy</a>
+                            &middot;
+                            <a href="#">Terms &amp; Conditions</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="/js/staffScript.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
+    <script src="/js/datatables-simple-demo.js"></script>
+</body>
+</html>

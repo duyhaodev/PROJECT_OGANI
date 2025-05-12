@@ -46,7 +46,7 @@
             <span>(18 đánh giá)</span>
           </div>
 
-          <div class="product__details__price">{{product.sellPrice}}₫</div>
+          <div class="product__details__price">{{formatCurrency product.sellPrice}}</div>
 
           <p>{{product.description}}</p>
           <form id="addCartForm" action="/cart/add/{{product._id}}" method="POST">
@@ -63,7 +63,7 @@
           </form>
 
           <ul>
-            <li><b>Tồn kho</b> <span>{{product.stock}}</span></li>
+            <li><b>Tồn kho</b> <span id="product-stock-count">{{product.stock}}</span></li>
             <li><b>Trạng thái</b> <span>
                 {{#if product.stock}}
                 Còn hàng
@@ -145,7 +145,8 @@
 
         const formData = new FormData(this);
         const quantity = parseInt(formData.get('qty'), 10);
-        const stock = parseInt(document.querySelector('ul li span').textContent, 10); // Lấy tồn kho từ thẻ <li><b>Tồn kho</b> <span>{{product.stock}}</span></li>
+        // Lấy tồn kho từ phần tử có ID cụ thể
+        const stock = parseInt(document.getElementById('product-stock-count').textContent, 10);
 
         if (quantity > stock) {
           Swal.fire({
@@ -241,7 +242,7 @@
           </div>
           <div class="featured__item__text">
             <h6><a href="/product/{{this.slug}}">{{this.title}}</a></h6>
-            <h5>{{this.sellPrice}}₫</h5>
+            <h5>{{formatCurrency this.sellPrice}}</h5>
           </div>
         </div>
       </div>

@@ -102,19 +102,29 @@ class CartController {
             const product = await Product.findById(prodId).lean();
             if (!product) {
                 console.log('Product not found');
-                return res.status(404).send('Product not found');
+                return res.status(404).send('Không tìm thấy sản phẩm');
             }
 
             console.log('Product found:', product.title);
 
-            // Tính tồn kho
-            const stockCount = await Product.countDocuments({
+            // 2. Kiểm tra tồn kho - Truy vấn trực tiếp sản phẩm khả dụng từ database
+            const availableProducts = await Product.find({
                 import: product.import,
-                status: { $in: ['IN_STOCK', 'ON_SALE'] }
+                status: { $in: ['IN_STOCK', 'ON_SALE'] },
+                active: 'active'
+            }).lean();
+            
+            // Số lượng tồn kho chính là số lượng sản phẩm khả dụng
+            const stockCount = availableProducts.length;
+            
+            console.log(`Tồn kho hiện tại: ${stockCount} sản phẩm với mã import ${product.import}`);
+            console.log('Chi tiết sản phẩm khả dụng:');
+            availableProducts.forEach((p, index) => {
+                console.log(`Sản phẩm khả dụng ${index + 1}: id=${p._id}, status=${p.status}, active=${p.active}`);
             });
 
-            // Kiểm tra số lượng tồn kho
-            if (!stockCount || stockCount <= 0) {
+            // 3. Kiểm tra số lượng tồn kho
+            if (stockCount <= 0) {
                 console.log('Product out of stock');
                 return res.status(400).json({
                     success: false,
@@ -122,25 +132,53 @@ class CartController {
                 });
             }
 
-            // Kiểm tra nếu số lượng yêu cầu vượt quá số lượng tồn kho
-            if (qty > stockCount) {
-                console.log(`Requested quantity (${qty}) exceeds available stock (${stockCount})`);
+            // 4. Kiểm tra số lượng đã có trong giỏ hàng
+            const existingCart = await Cart.findOne({ userId });
+            let currentQtyInCart = 0;
+            
+            if (existingCart && existingCart.items) {
+                // Tìm sản phẩm trong giỏ hàng
+                const existingItem = existingCart.items.find(i => i.productId && i.productId.toString() === prodId);
+                if (existingItem) {
+                    currentQtyInCart = existingItem.quantity;
+                }
+            }
+            
+            console.log(`Số lượng hiện có trong giỏ: ${currentQtyInCart}`);
+            console.log(`Số lượng yêu cầu thêm: ${qty}`);
+            console.log(`Tổng số lượng sau khi thêm: ${currentQtyInCart + qty}`);
+            
+            // 5. Kiểm tra tổng số lượng (hiện tại + yêu cầu) có vượt quá tồn kho không
+            console.log(`So sánh: currentQtyInCart (${currentQtyInCart}) + qty (${qty}) = ${currentQtyInCart + qty} với stockCount = ${stockCount}`);
+            
+            // Chỉ kiểm tra nếu tổng số lượng vượt quá tồn kho
+            if (currentQtyInCart + qty > stockCount) {
+                console.log(`Tổng số lượng yêu cầu (${currentQtyInCart + qty}) vượt quá tồn kho (${stockCount})`);
+                const remainingStock = stockCount - currentQtyInCart;
+                const message = remainingStock > 0 ? 
+                    `Chỉ còn ${remainingStock} sản phẩm trong kho có thể thêm vào giỏ hàng` : 
+                    `Bạn đã thêm hết số lượng sản phẩm có sẵn vào giỏ hàng`;
+                
                 return res.status(400).json({
                     success: false,
-                    message: `Chỉ còn ${stockCount} sản phẩm trong kho`
+                    message: message,
+                    availableStock: remainingStock
                 });
+            } else {
+                console.log(`Đủ tồn kho để thêm ${qty} sản phẩm vào giỏ hàng`);
             }
 
-            // 2. Lấy hoặc khởi tạo cart
-            let cart = await Cart.findOne({ userId });
-            if (!cart) {
+            // 6. Sử dụng giỏ hàng đã tìm ở trên hoặc tạo mới nếu chưa có
+            let cart;
+            if (!existingCart) {
                 console.log('Creating new cart');
                 cart = new Cart({
                     userId,
                     items: []
                 });
             } else {
-                console.log('Found existing cart:', cart._id);
+                console.log('Found existing cart:', existingCart._id);
+                cart = existingCart;
             }
 
             // Đảm bảo items là một mảng
@@ -148,15 +186,22 @@ class CartController {
                 cart.items = [];
             }
 
-            // 3. Nếu đã có item thì tăng quantity, ngược lại push mới
-            const idx = cart.items.findIndex(i => i.productId && i.productId.toString() === prodId);
-            if (idx > -1) {
-                console.log('Updating existing item in cart');
-                cart.items[idx].quantity += qty;
+            // 7. Thêm sản phẩm vào giỏ hàng
+            const existingItemIndex = cart.items.findIndex(i => i.productId && i.productId.toString() === prodId);
+            
+            console.log(`Kiểm tra sản phẩm trong giỏ hàng: ${existingItemIndex >= 0 ? 'Có' : 'Không'}`);
+            
+            if (existingItemIndex >= 0) {
+                // Nếu sản phẩm đã có trong giỏ hàng, cộng dồn số lượng mới vào số lượng hiện tại
+                console.log(`Sản phẩm đã có trong giỏ hàng, số lượng hiện tại: ${cart.items[existingItemIndex].quantity}, số lượng thêm: ${qty}`);
+                // Cộng dồn số lượng mới vào số lượng hiện tại
+                cart.items[existingItemIndex].quantity += qty;
+                console.log(`Tổng số lượng sau khi cộng dồn: ${cart.items[existingItemIndex].quantity}`)
             } else {
-                console.log('Adding new item to cart');
+                // Nếu sản phẩm chưa có trong giỏ hàng, thêm mới
+                console.log(`Thêm sản phẩm mới vào giỏ hàng với số lượng: ${qty}`);
                 cart.items.push({
-                    productId: product._id,
+                    productId: prodId,
                     quantity: qty
                 });
             }
@@ -267,14 +312,24 @@ class CartController {
                 return res.status(404).json({ success: false, message: 'Không tìm thấy thông tin sản phẩm' });
             }
 
-            // Tính tồn kho
-            const stockCount = await Product.countDocuments({
+            // Kiểm tra tồn kho - Truy vấn trực tiếp sản phẩm khả dụng từ database
+            const availableProducts = await Product.find({
                 import: product.import,
-                status: { $in: ['IN_STOCK', 'ON_SALE'] }
+                status: { $in: ['IN_STOCK', 'ON_SALE'] },
+                active: 'active'
+            }).lean();
+            
+            // Số lượng tồn kho chính là số lượng sản phẩm khả dụng
+            const stockCount = availableProducts.length;
+            
+            console.log(`Tồn kho hiện tại: ${stockCount} sản phẩm với mã import ${product.import}`);
+            console.log('Chi tiết sản phẩm khả dụng:');
+            availableProducts.forEach((p, index) => {
+                console.log(`Sản phẩm khả dụng ${index + 1}: id=${p._id}, status=${p.status}, active=${p.active}`);
             });
 
             // Kiểm tra số lượng tồn kho
-            if (!stockCount || stockCount <= 0) {
+            if (stockCount <= 0) {
                 return res.status(400).json({ success: false, message: 'Sản phẩm đã hết hàng' });
             }
 

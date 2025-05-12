@@ -66,6 +66,7 @@ app.engine('hbs', hbs.engine({
   },
 }));
 
+
 // Middleware tính cartCount
 app.use(async (req, res, next) => {
   try {
