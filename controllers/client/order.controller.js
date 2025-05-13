@@ -285,7 +285,7 @@ class OrderController {
                 pageTitle: "Chi tiết đơn hàng",
                 order,
                 user: req.session.user,
-                currentPage: "cart"
+                currentPage: "order"
             });
         } catch (error) {
             console.error('Lỗi khi hiển thị chi tiết đơn hàng:', error);
@@ -391,7 +391,7 @@ class OrderController {
             }
             
             // Kiểm tra trạng thái đơn hàng
-            if (order.status !== 'Pending' && order.status !== 'Confirmed') {
+            if (order.status !== 'Pending') {
                 return res.status(400).send('Không thể hủy đơn hàng ở trạng thái này');
             }
             
