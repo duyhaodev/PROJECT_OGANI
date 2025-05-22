@@ -21,7 +21,7 @@ class ProductFactory {
       exp: data.exp || null,
       producer: data.producer || '',
       status: data.status || 'IN_STOCK',
-      sellDate: data.sellDate || null,
+      sellDate: data.sellDate || new Date() ,
       thumbnail: data.thumbnail || '',
       import: data.import, // Phải dùng đúng tên trường 'import' như trong model
       active: 'active',

@@ -1,7 +1,7 @@
 const Product = require("../../models/product.model");
 const ProductFactory = require("../../utils/factories/product-factory");
 const generateSlug = require('../../utils/generators/slug-generator');
-
+const ProductCommand = require("../../utils/command/product-command");
 class AdminProductController {
   async showAddForm(req, res) {
     try {
@@ -50,7 +50,8 @@ class AdminProductController {
   async lockByImport(req, res) {
     try {
       const importId = req.params.importId;
-      await Product.updateMany({ import: importId }, { active: "inactive" });
+      const command = new ProductCommand(importId);
+      await command.executelock();
       res.redirect(req.get("Referrer") || "/");
 
     } catch (error) {
@@ -62,7 +63,8 @@ class AdminProductController {
   async unlockByImport(req, res) {
     try {
       const importId = req.params.importId;
-      await Product.updateMany({ import: importId }, { active: "active" });
+      const command = new ProductCommand(importId);
+      await command.executeunlock();
       res.redirect(req.get("Referrer") || "/");
 
     } catch (error) {
