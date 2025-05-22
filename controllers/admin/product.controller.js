@@ -24,6 +24,7 @@ class AdminProductController {
         const slug = generateSlug(title);
         
         const products = [];
+        
         for (let i = 0; i < quantityNumber; i++) {
             products.push({title, slug, categoryId, description, sellPrice, mfg, exp, producer, status, sellDate, thumbnail, import: importId});
         }
