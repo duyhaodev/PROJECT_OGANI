@@ -23,8 +23,8 @@ class ForgotController {
             const transporter = nodemailer.createTransport({
                 service : "gmail",
                 auth: {
-                    user: "rjack1356@gmail.com",
-                    pass: "uhsw kifw dnxw gzfq"
+                    user: "bachhoaxanhdev@gmail.com",
+                    pass: "vnyd vdhr rwte usvo"
                 }
             })
             

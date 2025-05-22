@@ -62,13 +62,26 @@
           </div>
           <div class="featured__item__text">
             <h6><a href="/product/{{this.slug}}">{{this.title}}</a></h6>
-            <h5>{{this.sellPrice}}₫</h5>
+            <h5>{{formatCurrency this.sellPrice}}</h5>
           </div>
         </div>
       </div>
       {{/each}}
       {{else}}
       <p>Không có sản phẩm nào.</p>
+      {{/if}}
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+      {{#if totalPages}}
+      <ul>
+        {{#each (range 1 totalPages)}}
+        <li class="{{#if ../currentPage}}{{isActive this ../currentPage}}{{/if}}">
+          <a href="?page={{this}}">{{this}}</a>
+        </li>
+        {{/each}}
+      </ul>
       {{/if}}
     </div>
 
@@ -113,7 +126,7 @@
               </div>
               <div class="latest-product__item__text">
                 <h6><a href="/product/{{this.slug}}">{{this.title}}</a></h6>
-                <h5>{{this.sellPrice}}₫</h5>
+                <h5>{{formatCurrency this.sellPrice}}</h5>
               </div>
             </div>
             {{/each}}
@@ -136,7 +149,7 @@
               </div>
               <div class="latest-product__item__text">
                 <h6><a href="/product/{{this.slug}}">{{this.title}}</a></h6>
-                <h5>{{this.sellPrice}}₫</h5>
+                <h5>{{formatCurrency this.sellPrice}}</h5>
               </div>
             </div>
             {{/each}}
@@ -159,7 +172,7 @@
               </div>
               <div class="latest-product__item__text">
                 <h6><a href="/product/{{this.slug}}">{{this.title}}</a></h6>
-                <h5>{{this.sellPrice}}₫</h5>
+                <h5>{{formatCurrency this.sellPrice}}</h5>
               </div>
             </div>
             {{/each}}

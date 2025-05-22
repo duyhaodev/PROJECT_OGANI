@@ -21,7 +21,7 @@
 
 .form-control:focus {
     box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
-    border-color: #28a745;
+    border-color: #7fad39;
 }
 
 .list-group-item {
@@ -31,27 +31,27 @@
 
 .list-group-item:hover:not(.active) {
     background-color: #f8f9fa;
-    color: #28a745;
+    color: #7fad39;
 }
 
 .list-group-item.active {
-    background-color: #28a745;
-    border-color: #28a745;
+    background-color: #7fad39;
+    border-color: #7fad39;
 }
 
 .badge.bg-success {
-    background-color: #28a745 !important;
+    background-color: #7fad39 !important;
 }
 
 .btn-success {
-    background-color: #28a745;
-    border-color: #28a745;
+    background-color: #7fad39;
+    border-color: #7fad39;
     transition: all 0.3s ease;
 }
 
 .btn-success:hover {
-    background-color: #218838;
-    border-color: #1e7e34;
+    background-color: #7fad39;
+    border-color: #7fad39;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }

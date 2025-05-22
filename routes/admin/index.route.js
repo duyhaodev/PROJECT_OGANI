@@ -25,8 +25,7 @@ function routeAdmin(app) {
 
     app.use(PATH_ADMIN + "/support", supportRoute);
 
-
-     app.use(PATH_ADMIN, cateRoute);
+    app.use(PATH_ADMIN, cateRoute);
 
 
 }

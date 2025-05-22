@@ -1,4 +1,22 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-section set-bg" data-setbg="/img/breadcrumb.jpg">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12 text-center">
+        <div class="breadcrumb__text">
+          <h2>OGANI</h2>
+          <div class="breadcrumb__option">
+            <a href="/">Sản phẩm</a>
+            <span>OGANI</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Breadcrumb Section End -->
+
 <section class="product-details spad">
   <div class="container">
     <div class="row">
@@ -28,7 +46,7 @@
             <span>(18 đánh giá)</span>
           </div>
 
-          <div class="product__details__price">{{product.sellPrice}}₫</div>
+          <div class="product__details__price">{{formatCurrency product.sellPrice}}</div>
 
           <p>{{product.description}}</p>
           <form id="addCartForm" action="/cart/add/{{product._id}}" method="POST">
@@ -45,7 +63,7 @@
           </form>
 
           <ul>
-            <li><b>Tồn kho</b> <span>{{product.stock}}</span></li>
+            <li><b>Tồn kho</b> <span id="product-stock-count">{{product.stock}}</span></li>
             <li><b>Trạng thái</b> <span>
                 {{#if product.stock}}
                 Còn hàng
@@ -117,7 +135,7 @@
 
 
 <!-- Add to Cart JavaScript -->
- <script>
+<script>
   document.addEventListener('DOMContentLoaded', function () {
     const addCartForm = document.getElementById('addCartForm');
 
@@ -127,7 +145,8 @@
 
         const formData = new FormData(this);
         const quantity = parseInt(formData.get('qty'), 10);
-        const stock = parseInt(document.querySelector('ul li span').textContent, 10); // Lấy tồn kho từ thẻ <li><b>Tồn kho</b> <span>{{product.stock}}</span></li>
+        // Lấy tồn kho từ phần tử có ID cụ thể
+        const stock = parseInt(document.getElementById('product-stock-count').textContent, 10);
 
         if (quantity > stock) {
           Swal.fire({
@@ -187,7 +206,8 @@
       fetch('/cart/count')
         .then(response => response.json())
         .then(data => {
-          const cartCountElement = document.querySelector('.header__cart__price span');
+          // Cập nhật số lượng trong biểu tượng giỏ hàng ở header
+          const cartCountElement = document.querySelector('.header__cart ul li:nth-child(2) span');
           if (cartCountElement) {
             cartCountElement.textContent = data.count;
           }
@@ -222,7 +242,7 @@
           </div>
           <div class="featured__item__text">
             <h6><a href="/product/{{this.slug}}">{{this.title}}</a></h6>
-            <h5>{{this.sellPrice}}₫</h5>
+            <h5>{{formatCurrency this.sellPrice}}</h5>
           </div>
         </div>
       </div>

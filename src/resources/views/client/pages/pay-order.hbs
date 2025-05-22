@@ -30,7 +30,7 @@
             <h4>Thông tin thanh toán</h4>
             <form action="/order/place-order" method="POST">
                 <div class="row">
-                    <div class="col-lg-8 col-md-6">
+                    <div class="col-lg-7 col-md-6">
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="checkout__input">
@@ -90,7 +90,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-4 col-md-6">
+                    <div class="col-lg-5 col-md-6">
                         <div class="checkout__order">
                             <h4>Đơn hàng của bạn</h4>
                             <div class="checkout__order__products">Sản phẩm <span>Thành tiền</span></div>
@@ -102,15 +102,17 @@
                             <div class="checkout__order__subtotal">Tạm tính <span>{{formatCurrency subtotal}}</span>
                             </div>
                             <div class="checkout__order__subtotal">VAT (10%) <span>{{formatCurrency vat}}</span></div>
-                           <div class="checkout__order__subtotal">Phí vận chuyển <span class="shipping-fee">{{formatCurrency shippingFee}}</span></div>
-                            <div class="checkout__order__total">Tổng cộng <span class="total-amount">{{formatCurrency totalAmount}}</span></div>
-                                <button type="submit" class="site-btn">ĐẶT HÀNG</button>
-                            </div>
+                            <div class="checkout__order__subtotal">Phí vận chuyển <span
+                                    class="shipping-fee">{{formatCurrency shippingFee}}</span></div>
+                            <div class="checkout__order__total">Tổng cộng <span class="total-amount">{{formatCurrency
+                                    totalAmount}}</span></div>
+                            <button type="submit" class="site-btn">ĐẶT HÀNG</button>
                         </div>
                     </div>
                 </div>
-            </form>
         </div>
+        </form>
+    </div>
     </div>
 </section>
 <!-- Checkout Section End -->
@@ -124,26 +126,34 @@
         const subtotal = {{subtotal}};
         const vat = {{vat}};
 
-        function formatCurrency(number) {
-            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(number);
+    function formatCurrency(number) {
+        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(number);
+    }
+
+    function updateFees() {
+        let shippingFee = 30000; // mặc định
+        if (document.getElementById('express').checked) {
+            shippingFee = 50000;
+        }
+        
+        // Miễn phí vận chuyển cho đơn hàng từ 100.000đ
+        if (subtotal >= 100000) {
+            shippingFee = 0;
+            // Cập nhật text cho radio buttons
+            document.querySelector('label[for="standard"]').innerHTML = 'Tiêu chuẩn (Miễn phí) <input type="radio" id="standard" name="shippingMethod" value="Standard" checked><span class="checkmark"></span>';
+            document.querySelector('label[for="express"]').innerHTML = 'Nhanh (Miễn phí) <input type="radio" id="express" name="shippingMethod" value="Express"><span class="checkmark"></span>';
         }
 
-        function updateFees() {
-            let shippingFee = 30000; // mặc định
-            if (document.getElementById('express').checked) {
-                shippingFee = 50000;
-            }
+        const totalAmount = subtotal + vat + shippingFee;
 
-            const totalAmount = subtotal + vat + shippingFee;
+        shippingFeeEl.textContent = formatCurrency(shippingFee);
+        totalAmountEl.textContent = formatCurrency(totalAmount);
+    }
 
-            shippingFeeEl.textContent = formatCurrency(shippingFee);
-            totalAmountEl.textContent = formatCurrency(totalAmount);
-        }
+    shippingRadios.forEach(radio => {
+        radio.addEventListener('change', updateFees);
+    });
 
-        shippingRadios.forEach(radio => {
-            radio.addEventListener('change', updateFees);
-        });
-
-        updateFees(); // Khởi tạo lần đầu
+    updateFees(); // Khởi tạo lần đầu
     });
 </script>

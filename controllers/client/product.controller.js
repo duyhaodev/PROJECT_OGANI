@@ -62,11 +62,20 @@ class ProductController {
       const allProducts = await list();
       const listPro = getUniqueProducts(allProducts);
 
-      // Tính tồn kho
-      const stockCount = await Product.countDocuments({
+      // Tính tồn kho - Đồng bộ với logic trong cart.controller.js
+      const availableProducts = await Product.find({
         import: product.import,
-        status: { $in: ['IN_STOCK', 'ON_SALE'] }
+        status: { $in: ['IN_STOCK', 'ON_SALE'] },
+        active: 'active'
+      }).lean();
+      const stockCount = availableProducts.length;
+
+      console.log(`Chi tiết tồn kho cho sản phẩm ${product.title} (import: ${product.import}):`);
+      console.log(`Tổng số sản phẩm khả dụng: ${stockCount}`);
+      availableProducts.forEach((p, index) => {
+        console.log(`Sản phẩm khả dụng ${index + 1}: id=${p._id}, status=${p.status}, active=${p.active}`);
       });
+
       product.stock = stockCount;
       const user = req.session.user || null;
       let cartCount = 0;

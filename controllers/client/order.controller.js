@@ -3,6 +3,7 @@ const Cart = require('../../models/cart.model');
 const User = require('../../models/user.model');
 const Product = require('../../models/product.model');
 const { calculateTotals } = require('../../config/helper');
+const OrderStateManager = require('../../utils/states/order-state-manager');
 
 class OrderController {
     // Hiển thị trang thanh toán
@@ -41,7 +42,13 @@ class OrderController {
                 
                 const subtotal = cartItems.reduce((sum, i) => sum + i.total, 0);
                 const vat = subtotal * 0.1; // 10% VAT
-                const shippingFee = 30000; // Phí vận chuyển mặc định
+            
+                // Miễn phí vận chuyển cho đơn hàng từ 100.000đ
+                let shippingFee = 30000; // Phí vận chuyển mặc định
+                if (subtotal >= 100000) {
+                    shippingFee = 0; // Miễn phí vận chuyển
+                }
+                
                 const totalAmount = subtotal + vat + shippingFee;
                 
                 // Lấy thông tin người dùng từ database thay vì từ session
@@ -132,6 +139,7 @@ class OrderController {
                     quantity: item.quantity,
                     price: item.productId.sellPrice,
                     thumbnail: item.productId.thumbnail,
+                    slug: item.productId.slug, // Thêm slug để có thể liên kết đến trang chi tiết sản phẩm
                     total: item.quantity * item.productId.sellPrice
                 }));
                 
@@ -142,12 +150,19 @@ class OrderController {
                 const vat = subtotal * 0.1; // 10% VAT
                 
                 // Lấy thông tin shipping từ form
+                let shippingFee = req.body.shippingMethod === 'Express' ? 50000 : 30000;
+            
+                // Miễn phí vận chuyển cho đơn hàng từ 100.000đ
+                if (subtotal >= 100000) {
+                    shippingFee = 0; // Miễn phí vận chuyển
+                }
+                
                 const shipping = {
                     address: req.body.address,
                     receiverName: req.body.receiverName,
                     phoneNumber: req.body.phoneNumber,
                     shippingMethod: req.body.shippingMethod || 'Standard',
-                    shippingFee: req.body.shippingMethod === 'Express' ? 50000 : 30000
+                    shippingFee: shippingFee
                 };
                 
                 console.log('Shipping info:', shipping);
@@ -249,12 +264,29 @@ class OrderController {
                 return res.status(404).send('Không tìm thấy đơn hàng');
             }
             
+            // Lấy thông tin slug của sản phẩm từ database
+            if (order.items && order.items.length > 0) {
+                for (let i = 0; i < order.items.length; i++) {
+                    const item = order.items[i];
+                    if (item.productId) {
+                        try {
+                            const product = await Product.findById(item.productId).lean();
+                            if (product) {
+                                order.items[i].slug = product.slug;
+                            }
+                        } catch (err) {
+                            console.error(`Lỗi khi lấy thông tin sản phẩm ${item.productId}:`, err);
+                        }
+                    }
+                }
+            }
+            
             res.render('client/pages/order-detail', {
                 layout: 'main',
                 pageTitle: "Chi tiết đơn hàng",
                 order,
                 user: req.session.user,
-                currentPage: "cart"
+                currentPage: "order"
             });
         } catch (error) {
             console.error('Lỗi khi hiển thị chi tiết đơn hàng:', error);
@@ -352,25 +384,19 @@ class OrderController {
             const userId = req.session.user._id;
             const orderId = req.params.orderId;
             
-            // Lấy thông tin đơn hàng
-            const order = await Order.findOne({ _id: orderId, userId });
+            // Sử dụng OrderStateManager để yêu cầu hủy đơn hàng
+            const result = await OrderStateManager.requestCancelOrder(orderId, userId);
             
-            if (!order) {
-                return res.status(404).send('Không tìm thấy đơn hàng');
+            if (!result.success) {
+                return res.status(400).send(result.message || 'Không thể hủy đơn hàng');
             }
             
-            // Kiểm tra trạng thái đơn hàng
-            if (order.status !== 'Pending' && order.status !== 'Confirmed') {
-                return res.status(400).send('Không thể hủy đơn hàng ở trạng thái này');
-            }
-            
-            // Cập nhật trạng thái đơn hàng
-            order.status = 'RequestCancelled';
-            await order.save();
-            
-            console.log(`Đơn hàng ${orderId} đã bị hủy bởi người dùng ${userId}`);
+            console.log(`Đơn hàng ${orderId} đã yêu cầu hủy bởi người dùng ${userId}`);
             
             // Khôi phục trạng thái sản phẩm
+            // Lưu ý: Việc khôi phục trạng thái sản phẩm có thể được chuyển vào OrderStateManager
+            // hoặc giữ nguyên ở đây nếu cần xử lý đặc biệt
+            const order = await Order.findOne({ _id: orderId, userId });
             console.log('Restoring product status');
             for (const item of order.items) {
                 try {

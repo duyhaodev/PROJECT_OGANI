@@ -1,13 +1,13 @@
 const Order = require("../../models/order.model");
 const User = require("../../models/user.model");
-
+const mongoose = require('mongoose');
 const { calculateTotalAmount, formatOrder, calculateTotals } = require("../../config/helper");
 const OrderStateManager = require('../../utils/states/order-state-manager');
 
 
 
 //lấy danh sách đơn hàng 
-module.exports.order = async (req, res) => {
+module.exports.orderStaff = async (req, res) => {
   try {
     const user = req.session.user || null;
     let find = {};
@@ -17,10 +17,10 @@ module.exports.order = async (req, res) => {
     const orders = await Order.find(find)
     .populate('userId', 'username emailAddress')
     .lean()
-    const ordersWithTotal =   orders.map(order => formatOrder(order));
+    const ordersWithTotal = orders.map(order => formatOrder(order));
 
-       res.render("admin/manage_order", {
-      pageTitle: "Trang quản lý đơn hàng",
+       res.render("staff/manage_order", {
+      pageTitle: "Trang nhân viên quản lý ",
       user,
       orders: ordersWithTotal
     });
@@ -37,8 +37,12 @@ module.exports.order = async (req, res) => {
 module.exports.getOrderDetail = async (req, res) => {
   const { id } = req.params;
 
+  // Kiểm tra id có phải ObjectId hợp lệ không
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).send("ID không hợp lệ");
+  }
+
   try {
-    // Lấy order và populate fullName + emailAddress từ userId
     const order = await Order.findById(id)
       .populate('userId', 'fullName emailAddress phoneNumber rank')
       .lean();
@@ -48,7 +52,7 @@ module.exports.getOrderDetail = async (req, res) => {
     }
 
     const formattedOrder = formatOrder(order);
-    res.render("admin/order_detail", {
+    res.render("staff/order_detail", {
       pageTitle: "Chi tiết đơn hàng",
       order: formattedOrder,
       customerName: order.userId.fullName,
@@ -59,7 +63,6 @@ module.exports.getOrderDetail = async (req, res) => {
     res.status(500).send("Lỗi máy chủ");
   }
 };
-
 
 
 // API cập nhật trạng thái đơn hàng
@@ -99,20 +102,30 @@ module.exports.applyBulkAction = async (req, res) => {
   }
 
   try {
-    // Sử dụng Promise.all để cập nhật từng đơn hàng riêng biệt sử dụng State Pattern
-    const updatePromises = orderIds.map(orderId => 
-      OrderStateManager.updateOrderStatus(orderId, newStatus)
+    let updateData = { status: newStatus };
+    
+    // Cập nhật paymentStatus dựa trên trạng thái mới
+    if (newStatus === 'Completed') {
+      updateData.paymentStatus = 'Paid';
+      console.log(`Tất cả đơn hàng được chọn sẽ được đánh dấu là đã thanh toán khi hoàn thành`);
+    } else {
+      updateData.paymentStatus = 'Unpaid';
+      console.log(`Tất cả đơn hàng được chọn sẽ được đặt lại trạng thái thanh toán thành chưa thanh toán`);
+    }
+    
+    const result = await Order.updateMany(
+      { _id: { $in: orderIds } },
+      { $set: updateData }
     );
-    
-    const results = await Promise.all(updatePromises);
-    
-    // Đếm số đơn hàng được cập nhật thành công
-    const successCount = results.filter(result => result.success).length;
-    
+
+    if (result.modifiedCount === 0) {
+      return res.status(404).json({ success: false, message: 'Không có đơn hàng nào được cập nhật' });
+    }
+
     return res.status(200).json({
       success: true,
-      message: `Đã cập nhật trạng thái cho ${successCount} đơn hàng và ${newStatus === 'Completed' ? 'đánh dấu là đã thanh toán' : 'đặt lại trạng thái thanh toán thành chưa thanh toán'}`,
-      updatedCount: successCount
+      message: `Đã cập nhật trạng thái cho ${result.modifiedCount} đơn hàng và ${newStatus === 'Completed' ? 'đánh dấu là đã thanh toán' : 'đặt lại trạng thái thanh toán thành chưa thanh toán'}`,
+      updatedCount: result.modifiedCount
     });
   } catch (error) {
     console.error("Lỗi khi cập nhật đơn hàng:", error);

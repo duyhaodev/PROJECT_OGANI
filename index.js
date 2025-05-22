@@ -11,6 +11,7 @@ const app = express();
 const hbs = require('express-handlebars');
 const routeClient = require("./routes/client/index.route");
 const routeAdmin = require("./routes/admin/index.route");
+const routeStaff = require("./routes/staff/index.route")
 const authRoute = require("./routes/auth.route");
 const waitingRoute = require("./routes/waiting.route");
 const forgotRoute = require("./routes/forgot.route");
@@ -49,15 +50,22 @@ app.engine('hbs', hbs.engine({
       if (!number) return '0';
       return number.toLocaleString("vi-VN") + 'đ';
     },
-    multiply: (a, b) => {
-      return a * b;
-    },
+    multiply: (a, b) => a * b,
     formatDate: (date, format) => {
       const safeFormat = typeof format === 'string' ? format : 'DD/MM/YYYY';
       return moment(date).format(safeFormat);
-    }
-  }
+    },
+    range: (start, end) => {
+      const range = [];
+      for (let i = start; i <= end; i++) {
+        range.push(i);
+      }
+      return range;
+    },
+    isActive: (page, currentPage) => (page === currentPage ? 'active' : ''),
+  },
 }));
+
 
 // Middleware tính cartCount
 app.use(async (req, res, next) => {
@@ -82,6 +90,7 @@ app.use(async (req, res, next) => {
 });
 
 routeAdmin(app);
+routeStaff(app);
 routeClient(app);
 app.use("/", authRoute);
 app.use("/", waitingRoute);

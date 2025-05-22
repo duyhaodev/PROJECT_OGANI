@@ -9,8 +9,10 @@ module.exports.waiting = (req, res) => {
     // Phân loại người dùng dựa trên role
     if (user.role === 1) {
         return res.redirect("/"); // Chuyển hướng đến trang chủ cho User
-    } else if (user.role === 2 || user.role === 3) {
+    } else if (user.role === 3) {
         return res.redirect("/admin"); // Chuyển hướng đến trang admin cho Staff và Manager
+    } else if (user.role === 2){
+        return res.redirect("/staff")
     }
 
     // Nếu role không hợp lệ, chuyển hướng về trang login
