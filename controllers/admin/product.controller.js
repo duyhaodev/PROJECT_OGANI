@@ -1,5 +1,6 @@
 const Product = require("../../models/product.model");
-const { v4: uuidv4 } = require("uuid");
+const ProductFactory = require("../../utils/factories/product-factory");
+const generateSlug = require('../../utils/generators/slug-generator');
 
 class AdminProductController {
   async showAddForm(req, res) {
@@ -19,16 +20,24 @@ class AdminProductController {
   async addProduct(req, res) {
     try {
       const { title, categoryId, description, sellPrice, mfg, exp, producer, status, sellDate, thumbnail, quantity } = req.body;
-      const importId = uuidv4(); // dùng cho các sản phẩm cùng lô
       const quantityNumber = parseInt(quantity);
-      const slug = generateSlug(title);
 
-      const products = [];
-      for (let i = 0; i < quantityNumber; i++) {
-        products.push({ title, slug, categoryId, description, sellPrice, mfg, exp, producer, status, sellDate, thumbnail, import: importId });
-      }
-      console.log("Dữ liệu sản phẩm chuẩn bị lưu:", products);
-      await Product.insertMany(products);
+      // Sử dụng ProductFactory để tạo sản phẩm
+      const result = ProductFactory.createBatchProducts({
+        title,
+        categoryId,
+        description,
+        sellPrice,
+        mfg,
+        exp,
+        producer,
+        status,
+        sellDate,
+        thumbnail
+      }, quantityNumber);
+
+      console.log("Dữ liệu sản phẩm chuẩn bị lưu:", result.products);
+      await Product.insertMany(result.products);
 
       console.log(`Đã thêm ${quantityNumber} sản phẩm ${title}`);
       res.redirect(`/admin/category/view/${categoryId}`);
@@ -98,13 +107,26 @@ class AdminProductController {
     try {
       const importId = req.params.importId;
       const { title, description, sellPrice, mfg, exp, producer, thumbnail, categoryId } = req.body;
-      const slug = generateSlug(title);
+      const slug = generateSlug(title)
+      
+      // Sử dụng ProductFactory để tạo slug
+      const productData = {
+        title,
+        description,
+        sellPrice,
+        mfg,
+        exp,
+        producer,
+        thumbnail,
+        import: importId
+      };
+      
       await Product.updateMany(
         { import: importId },
         {
           $set: {
             title,
-            slug,
+            slug: slug,
             description,
             sellPrice,
             mfg,
@@ -121,20 +143,6 @@ class AdminProductController {
       res.status(500).send("Server error");
     }
   }
-}
-
-function generateSlug(title, existingSlugs = []) {
-  if (!title) return '';
-  let slug = title.toLowerCase();
-  slug = slug.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  slug = slug.replace(/[^a-z0-9\s-]/g, '');
-  slug = slug.trim().replace(/\s+/g, '-').replace(/-+/g, '-');
-  let uniqueSlug = slug;
-  let counter = 1;
-  while (existingSlugs.includes(uniqueSlug)) {
-    uniqueSlug = `${slug}-${counter++}`;
-  }
-  return uniqueSlug;
 }
 
 module.exports = new AdminProductController();
