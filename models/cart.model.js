@@ -14,4 +14,7 @@ const cartSchema = new mongoose.Schema({
     collection: 'carts'
 });
 
+//Phuc edit
+cartSchema.index({ userId: 1 }, { unique: true });
+
 module.exports = mongoose.model('Cart', cartSchema);

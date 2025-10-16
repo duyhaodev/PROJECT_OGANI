@@ -116,6 +116,8 @@
                                         </div>
                                         <!-- ./remember-row -->
                                         <div class="form-group">
+                                            {{!-- Phuc edit --}}
+                                            <input type="hidden" name="_csrf" value="{{csrfToken}}">
                                             <button class="btn btn-lg btn-primary btn-block" type="submit">Login with email</button>
                                         </div>
                                     </form>
@@ -147,6 +149,8 @@
                                             <p class="term-policy text-muted small">I agree to the <a href="#">privacy policy</a> and <a href="#">terms of service</a>.</p>
                                         </div>
                                         <div class="form-group">
+                                            {{!-- Phuc edit --}}
+                                            <input type="hidden" name="_csrf" value="{{csrfToken}}">
                                             <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up with email</button>
                                         </div>
                                     </form>
@@ -164,6 +168,7 @@
                                         <p>Fill in your e-mail address below and we will send you an email with further instructions.</p>
                                     </div>
                                     <form name="forgetForm" class="forgetForm" action="/forgot-password/send-otp" method="POST">
+                                    <input type="hidden" name="_csrf" value="{{csrfToken}}">
                                         <div class="form-group">
                                             <input type="email" class="form-control" name="emailAddress" placeholder="Email address">
                                         </div>

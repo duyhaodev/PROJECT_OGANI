@@ -14,6 +14,7 @@ class AuthController {
             const existingUser = await User.findOne({ $or: [{ username }, { emailAddress }] });
             if (existingUser) {
                 return res.render("login", { 
+                    csrfToken: req.csrfToken(),
                     message: "Username hoặc Email đã được sử dụng.",
                     isSuccess: false
                 });
@@ -31,11 +32,13 @@ class AuthController {
             await user.save();
 
             res.render("login", {
+                csrfToken: req.csrfToken(),
                 message: "Đăng ký thành công.",
                 isSuccess: true
             });
         } catch (error) {
             res.render("login", {
+                csrfToken: req.csrfToken(),
                 message: "Lỗi server. Vui lòng thử lại sau.",
                 isSuccess: false
             });
@@ -50,6 +53,7 @@ class AuthController {
             const user = await User.findOne({ emailAddress });
             if (!user) {
                 return res.render("login", { 
+                    csrfToken: req.csrfToken(),
                     message: "Email hoặc mật khẩu không đúng.",
                     isSuccess: false
                 });
@@ -58,6 +62,7 @@ class AuthController {
             // Kiểm tra trạng thái tài khoản
             if (user.status === "locked") {
                 return res.render("login", {
+                    csrfToken: req.csrfToken(),
                     message: "Tài khoản của bạn đã bị khóa.",
                     isSuccess: false
                 });
@@ -67,6 +72,7 @@ class AuthController {
             const isMatch = await user.comparePassword(password);
             if (!isMatch) {
                 return res.render("login", { 
+                    csrfToken: req.csrfToken(),
                     message: "Email hoặc mật khẩu không đúng.",
                     isSuccess: false
                 });
@@ -85,6 +91,7 @@ class AuthController {
             res.redirect("/waiting");
         } catch (error) {
             return res.render("login", { 
+                csrfToken: req.csrfToken(),
                 message: "Email hoặc mật khẩu không đúng.", 
                 isSuccess: false
             });

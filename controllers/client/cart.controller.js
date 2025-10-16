@@ -1,6 +1,7 @@
-const path = require('path');
+// const path = require('path');
 const Cart = require('../../models/cart.model');
 const Product = require('../../models/product.model');
+const mongoose = require('mongoose');
 
 class CartController {
 
@@ -72,6 +73,7 @@ class CartController {
             const user = req.session.user || null;
             // 6. Render view với dữ liệu
             res.render('client/pages/shop-cart', {
+                csrfToken: req.csrfToken(),
                 layout: 'main',
                 pageTitle: "Cart",
                 cartItems,
@@ -227,16 +229,20 @@ class CartController {
         }
     }
 
-    // GET /cart/remove/:itemId
+    // POST /cart/remove/:itemId
     async removeItem(req, res) {
         try {
             if (!req.session.user) {
-                return res.redirect('/login');
+                return res.status(401).json({ success: false, error: 'Not authenticated' });
             }
             const userId = req.session.user._id;
             const { itemId } = req.params;
 
-            console.log('Removing item from cart:', { userId, itemId });
+            // // Kiểm tra ID hợp lệ (tránh ObjectId Injection)
+            // if (!mongoose.Types.ObjectId.isValid(itemId)) {
+            // console.warn(`⚠️ Invalid item ID attempt: ${itemId} from user ${req.session.user?.emailAddress || 'guest'}`);
+            // return res.status(400).send('Invalid item ID');
+            // }
 
             const cart = await Cart.findOne({ userId });
             if (cart) {
@@ -245,10 +251,24 @@ class CartController {
                 console.log('Item removed successfully');
             } else {
                 console.log('Cart not found');
+                return res.status(404).json({ success: false, error: 'Cart not found' });
             }
+
+            // Tính tổng số lượng sản phẩm trong giỏ hàng sau khi xóa
+            const cartCount = cart.items.reduce((total, item) => total + item.quantity, 0);
+
+            // Nếu request là AJAX, trả về JSON response
+            if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+                return res.json({ success: true, cartCount });
+            }
+
+            // Nếu không phải AJAX, redirect như cũ
             res.redirect('/cart');
         } catch (error) {
             console.error('Error in removeItem:', error);
+            if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+                return res.status(500).json({ success: false, error: 'Server error' });
+            }
             res.status(500).send('Đã xảy ra lỗi khi xóa sản phẩm khỏi giỏ hàng');
         }
     }

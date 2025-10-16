@@ -1,22 +1,24 @@
 <!-- Breadcrumb Section Begin -->
 <section class="breadcrumb-section set-bg" data-setbg="img/breadcrumb.jpg">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12 text-center">
-                <div class="breadcrumb__text">
-                    <h2>Giỏ hàng</h2>
-                    <div class="breadcrumb__option">
-                        <a href="/">Trang chủ</a>
-                        <span>Shopping Cart</span>
-                    </div>
-                </div>
-            </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12 text-center">
+        <div class="breadcrumb__text">
+          <h2>Giỏ hàng</h2>
+          <div class="breadcrumb__option">
+            <a href="/">Trang chủ</a>
+            <span>Shopping Cart</span>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </section>
 <!-- Breadcrumb Section End -->
 
-<!-- Shoping Cart Section Begin -->
+<!-- CSRF Token Meta Tag -->
+<meta name="csrf-token" content="{{csrfToken}}">
+{{!-- Phuc edit --}}
 <style>
     .shoping__cart__item img {
         max-width: 100px;
@@ -59,16 +61,26 @@
                                     {{formatCurrency this.sellPrice}}
                                 </td>
                                 <td class="shoping__cart__quantity">
-                                    <div class="pro-qty">
-                                        <input type="text" value="{{this.quantity}}" class="item-quantity"
-                                            data-item-id="{{this._id}}">
+                                    <div class="quantity">
+                                        <div class="pro-qty">
+                                            <input type="number" 
+                                                value="{{this.quantity}}" 
+                                                min="1" 
+                                                data-item-id="{{this._id}}"
+                                                class="item-quantity">
+                                        </div>
                                     </div>
                                 </td>
                                 <td class="shoping__cart__total" data-item-id="{{this._id}}">
                                     {{formatCurrency this.total}}
                                 </td>
                                 <td class="shoping__cart__item__close">
-                                    <span class="icon_close remove-item" data-item-id="{{this._id}}"></span>
+                                    <form action="/cart/remove/{{this._id}}" method="POST" class="remove-item-form" style="display: inline;">
+                                        <input type="hidden" name="_csrf" value="{{../csrfToken}}">
+                                        <button type="submit" class="btn btn-link p-0 border-0 bg-transparent">
+                                            <span class="icon_close"></span>
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                             {{/each}}
@@ -149,23 +161,16 @@
             });
         });
 
-        // Xử lý sự kiện khi nhấn nút xóa
-        const removeButtons = document.querySelectorAll('.remove-item');
-        removeButtons.forEach(btn => {
-            btn.addEventListener('click', function () {
-                const itemId = this.getAttribute('data-item-id');
-                removeCartItem(itemId);
-            });
-        });
-
         // Hàm cập nhật số lượng sản phẩm
         function updateCartItemQuantity(itemId, quantity) {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
             fetch(`/cart/update/${itemId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRF-Token': csrfToken
                 },
-                body: `quantity=${quantity}`
+                body: `quantity=${quantity}&_csrf=${csrfToken}`
             })
                 .then(response => response.json())
                 .then(data => {
@@ -226,7 +231,27 @@
                 cancelButtonText: 'Hủy'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = `/cart/remove/${itemId}`;
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+                    fetch(`/cart/remove/${itemId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-CSRF-Token': csrfToken
+                        },
+                        body: `_csrf=${csrfToken}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            Swal.fire('Lỗi', data.error || 'Có lỗi xảy ra', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire('Lỗi', 'Không thể xóa sản phẩm', 'error');
+                    });
                 }
             });
         }

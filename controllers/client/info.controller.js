@@ -39,7 +39,8 @@ class InfoController {
                 genderText: user.gender === 1 ? 'Nam' : 'Nữ',
                 pageTitle: 'Thông tin cá nhân',
                 layout: 'main', // Chỉ định sử dụng layout main.hbs
-                message: message
+                message: message,
+                csrfToken: req.csrfToken()
             });
         } catch (error) {
             console.error('Error in showInfo:', error);
