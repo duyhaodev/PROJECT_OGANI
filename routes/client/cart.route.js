@@ -2,20 +2,14 @@
 const express = require('express');
 const router = express.Router();
 const cartController = require('../../controllers/client/cart.controller');
-const csrf = require('csurf');
-const csrfProtection = csrf({ cookie: true });
 
 // Public route - doesn't need CSRF
 router.get('/count', cartController.getCartCount);
 
 // Protected routes - require CSRF
-router.post('/remove/:itemId', csrfProtection, cartController.removeItem);
-router.post('/update/:itemId', csrfProtection, cartController.updateItemQuantity);
-router.post('/add/:productId', csrfProtection, cartController.addToCart);
-
-// router.post('/remove/:itemId', cartController.removeItem);
-// router.post('/update/:itemId', cartController.updateItemQuantity);
-// router.post('/add/:productId', cartController.addToCart);
+router.post('/remove/:itemId', cartController.removeItem);
+router.post('/update/:itemId', cartController.updateItemQuantity);
+router.post('/add/:productId', cartController.addToCart);
 
 // View routes - don't need CSRF
 router.get('/:id', cartController.showCart);

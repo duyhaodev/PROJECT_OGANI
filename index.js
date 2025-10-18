@@ -22,6 +22,8 @@ const authRoute = require("./routes/auth.route");
 const waitingRoute = require("./routes/waiting.route");
 const forgotRoute = require("./routes/forgot.route");
 const catalogRouter = require('./routes/client/catalog.route');
+const helmet = require('helmet');
+
 
 const app = express();
 
@@ -105,21 +107,34 @@ app.engine('hbs', hbs.engine({
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'src/resources/views'));
 
+// =============== HELMET & CSP ===============
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: [
+        "'self'",
+        "https://cdn.jsdelivr.net",
+        "https://cdn.jsdelivr.net/npm/sweetalert2@11"
+      ],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
+      imgSrc: ["'self'", "data:", "blob:"],
+      connectSrc: ["'self'"],
+    },
+  },
+}));
+
 // =============== MIDDLEWARE GIỎ HÀNG ===============
-app.use(async (req, res, next) => {
-  try {
-    if (req.session.user) {
-      const cart = await Cart.findOne({ userId: req.session.user._id }).lean();
-      res.locals.cartCount = cart ? cart.items.reduce((sum, i) => sum + i.quantity, 0) : 0;
-    } else {
-      res.locals.cartCount = 0;
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      imgSrc: ["'self'", "data:", "https:"],
+      scriptSrc: ["'self'", "https://cdn.jsdelivr.net"],
+      styleSrc: ["'self'", "https://cdn.jsdelivr.net", "'unsafe-inline'"]
     }
-  } catch (err) {
-    console.error('Error in cartCount middleware:', err);
-    res.locals.cartCount = 0;
   }
-  next();
-});
+}));
 
 // =============== ROUTES ===============
 routeAdmin(app);

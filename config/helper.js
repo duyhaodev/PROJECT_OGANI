@@ -1,3 +1,10 @@
+const Handlebars = require('handlebars');
+
+Handlebars.registerHelper('safeText', function (text) {
+  const safe = Handlebars.Utils.escapeExpression(text || '');
+  return new Handlebars.SafeString(safe);
+});
+
 // Hàm tính tổng tiền từ object order
 const calculateTotalAmount = (order) => {
     // Kiểm tra nếu order hoặc order.items không tồn tại

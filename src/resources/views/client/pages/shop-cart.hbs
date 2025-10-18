@@ -55,7 +55,7 @@
                             <tr data-item-id="{{this._id}}">
                                 <td class="shoping__cart__item">
                                     <img src="{{this.thumbnail}}" alt="{{this.title}}" />
-                                    <h5><a href="/product/{{this.slug}}" class="product-link">{{this.title}}</a></h5>
+                                    <h5><a href="/product/{{this.slug}}" class="product-link">{{safeText this.title}}</a></h5>
                                 </td>
                                 <td class="shoping__cart__price" data-price="{{this.sellPrice}}">
                                     {{formatCurrency this.sellPrice}}
