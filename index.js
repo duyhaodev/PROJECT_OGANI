@@ -17,6 +17,7 @@ const waitingRoute = require("./routes/waiting.route");
 const forgotRoute = require("./routes/forgot.route");
 const systemConfig = require("./config/system.js")
 const loadCatalogList = require('./middleware/catalog.middleware.js');
+const cookieParser = require('cookie-parser');
 
 
 const port = process.env.PORT;
@@ -25,6 +26,8 @@ app.use(express.static(path.join(__dirname, 'src', 'public')));
 app.use(loadCatalogList);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+app.use(cookieParser());
 
 app.use(session({
   secret: "HuuThong15082004", // Thay bằng một chuỗi bí mật của bạn

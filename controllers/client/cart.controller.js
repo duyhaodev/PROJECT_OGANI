@@ -78,7 +78,7 @@ class CartController {
                 subtotal,
                 cartCount,
                 user,
-                currentPage: "cart"
+                currentPage: "cart",
             });
         } catch (error) {
             console.error('Error in showCart:', error);
@@ -227,7 +227,7 @@ class CartController {
         }
     }
 
-    // GET /cart/remove/:itemId
+    // POST /cart/remove/:itemId
     async removeItem(req, res) {
         try {
             if (!req.session.user) {
