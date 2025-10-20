@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const cartController = require('../../controllers/client/cart.controller')
-const { csrfProtection, csrfToken } = require('../../middleware/csrf.middleware');
+const { csrfProtection, csrfToken } = require('../../middleware/csrf2.middleware');
 
 
 router.get('/count', csrfProtection, csrfToken, cartController.getCartCount);
