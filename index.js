@@ -28,6 +28,8 @@ app.use(express.json());
 // DÙNG cookie-parser để csurf có thể đặt token vào cookie.
 app.use(cookieParser());// Cho phép csurf lưu secret/token trong cookie
 
+app.use(cookieParser());
+
 app.use(session({
   // Dùng ENV để tránh lộ secret trong code
   secret: process.env.SESSION_SECRET || "dev_secret_change_me",

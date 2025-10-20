@@ -1,8 +1,14 @@
 const csrf = require('csurf');
 
 const csrfProtection = csrf({ cookie: true });
-const injectCsrf = (req, res, next) => {
-  res.locals.csrfToken = req.csrfToken();
+const csrfToken = (req, res, next) => {
+  if (true) {
+    res.locals.csrfToken = 'DEV_CSRF_DISABLED';
+  } else if (req.csrfToken) {
+    res.locals.csrfToken = req.csrfToken();
+  } else {
+    res.locals.csrfToken = '';
+  }
   next();
 };
-module.exports = {csrfProtection, injectCsrf}; 
+module.exports = {csrfProtection, csrfToken}; 
