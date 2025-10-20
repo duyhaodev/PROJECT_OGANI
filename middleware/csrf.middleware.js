@@ -1,5 +1,4 @@
 const csrf = require('csurf');
-const cookieParser = require('cookie-parser');
 
 let csrfProtection = (req, res, next) => next(); // mặc định không làm gì
 
