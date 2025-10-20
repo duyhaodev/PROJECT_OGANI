@@ -1,2 +1,8 @@
 const csrf = require('csurf');
-module.exports = csrf({ cookie: true }); // 1 instance dùng chung
+
+const csrfProtection = csrf({ cookie: true });
+const injectCsrf = (req, res, next) => {
+  res.locals.csrfToken = req.csrfToken();
+  next();
+};
+module.exports = {csrfProtection, injectCsrf}; 
