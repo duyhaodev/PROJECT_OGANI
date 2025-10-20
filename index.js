@@ -19,7 +19,8 @@ const systemConfig = require("./config/system.js")
 const loadCatalogList = require('./middleware/catalog.middleware.js');
 const port = process.env.PORT;
 const cookieParser = require('cookie-parser');
-
+const fs = require('fs');
+const https = require('https');
 app.use(express.static(path.join(__dirname, 'src', 'public')));
 app.use(loadCatalogList);
 app.use(express.urlencoded({ extended: true }));
@@ -109,6 +110,16 @@ app.locals.prefixAdmin = systemConfig.prefixAdmin;
 
 database.connect();
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+//app.listen(port, () => {
+//  console.log(`Example app listening on port ${port}`)
+//})
+const httpsOptions = {
+  key: fs.readFileSync(path.join(__dirname, 'certs/dev-selfsigned.key')),
+  cert: fs.readFileSync(path.join(__dirname, 'certs/dev-selfsigned.crt')),
+};
+
+const PORT = 3000;
+
+https.createServer(httpsOptions, app).listen(PORT, () => {
+  console.log(`HTTPS server running at https://localhost:${PORT}`);
+});
