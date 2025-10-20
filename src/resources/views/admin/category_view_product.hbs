@@ -139,11 +139,24 @@
                                     </td>
                                     <td>{{formatDate this.sellDate}}</td>
                                     <td class="text-center align-middle">
-                                        <a href="/admin/product/delete/{{this.import}}" class="btn btn-dark btn-sm" title="Xóa sản phẩm" onclick="return confirm('Bạn có muốn xóa sản phẩm này không?')"><i class="fa-solid fa-trash"></i> Xóa</a>
+                                        <form action="/admin/product/delete/{{this.import}}" method="POST" style="display:inline;" 
+                                                onsubmit="return confirm('Bạn có muốn xóa sản phẩm này không?')">
+                                            <input type="hidden" name="_csrf" value="{{../csrfToken}}">
+                                            <button type="submit" class="btn btn-dark btn-sm" title="Xóa sản phẩm">
+                                            <i class="fa-solid fa-trash"></i> Xóa
+                                            </button>
+                                        </form>
                                         {{#if (eq this.active "active")}}
-                                        <a href="/admin/product/lock/{{this.import}}" class="btn btn-danger btn-sm" title="Ngừng bán" onclick="return confirm('Bạn có muốn ngừng bán sản phẩm này không?')">Ngừng bán</a>
+                                            <form action="/admin/product/lock/{{this.import}}" method="POST" style="display:inline;"
+                                                onsubmit="return confirm('Bạn có muốn ngừng bán sản phẩm này không?')">
+                                            <input type="hidden" name="_csrf" value="{{../csrfToken}}">
+                                            <button type="submit" class="btn btn-danger btn-sm" title="Ngừng bán">Ngừng bán</button>
+                                            </form>
                                         {{else}}
-                                        <a href="/admin/product/unlock/{{this.import}}" class="btn btn-success btn-sm" title="Mở bán lại">Mở bán</a>
+                                            <form action="/admin/product/unlock/{{this.import}}" method="POST" style="display:inline;">
+                                            <input type="hidden" name="_csrf" value="{{../csrfToken}}">
+                                            <button type="submit" class="btn btn-success btn-sm" title="Mở bán lại">Mở bán</button>
+                                            </form>
                                         {{/if}}
                                         <a href="/admin/product/edit/{{this.import}}" class="btn btn-primary btn-sm" title="Chỉnh sửa sản phẩm"><i class="fa-solid fa-pen"></i> Sửa</a>
                                     </td>

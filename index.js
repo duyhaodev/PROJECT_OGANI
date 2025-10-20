@@ -17,20 +17,28 @@ const waitingRoute = require("./routes/waiting.route");
 const forgotRoute = require("./routes/forgot.route");
 const systemConfig = require("./config/system.js")
 const loadCatalogList = require('./middleware/catalog.middleware.js');
-
-
 const port = process.env.PORT;
+const cookieParser = require('cookie-parser');
 
 app.use(express.static(path.join(__dirname, 'src', 'public')));
 app.use(loadCatalogList);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+// DÙNG cookie-parser để csurf có thể đặt token vào cookie.
+app.use(cookieParser());// Cho phép csurf lưu secret/token trong cookie
 
 app.use(session({
-  secret: "HuuThong15082004", // Thay bằng một chuỗi bí mật của bạn
+  // Dùng ENV để tránh lộ secret trong code
+  secret: process.env.SESSION_SECRET || "dev_secret_change_me",
   resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false } // Đặt `secure: true` nếu sử dụng HTTPS
+  // Không tạo session khi chưa cần (giảm rủi ro & rác)
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true,                             // chặn JS đọc cookie (giảm XSS)
+    secure: process.env.NODE_ENV === 'production', // chỉ gửi qua HTTPS khi chạy production
+    sameSite: 'lax',                            // giảm CSRF qua cross-site
+    maxAge: 7 * 24 * 60 * 60 * 1000            // 7 ngày 
+  }
 }));
 
 app.set('view engine', 'hbs')
