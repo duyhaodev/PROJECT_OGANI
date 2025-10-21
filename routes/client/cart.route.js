@@ -1,31 +1,21 @@
 const express = require('express');
 const router = express.Router();
-const cartController = require('../../controllers/client/cart.controller')
-const { csrfProtection, csrfToken } = require('../../middleware/csrf.middleware');
+const cartController = require('../../controllers/client/cart.controller');
+const { csrfMiddleware } = require('../../middleware/csrf.middleware');
 
+// Apply CSRF protection to all routes
+router.use(csrfMiddleware);
 
-router.get('/count', csrfProtection, csrfToken, cartController.getCartCount);
+// Public route - doesn't need CSRF token in request
+router.get('/count', cartController.getCartCount);
 
-router.post('/remove/:itemId', csrfProtection, csrfToken, cartController.removeItem);
+// Protected routes - require CSRF token
+router.post('/remove/:itemId', cartController.removeItem);
+router.post('/update/:itemId', cartController.updateItemQuantity);
+router.post('/add/:productId', cartController.addToCart);
 
-router.post('/update/:itemId', csrfProtection, csrfToken, cartController.updateItemQuantity);
-
-router.post('/add/:productId', csrfProtection, csrfToken, cartController.addToCart);
-
-router.get('/:id', csrfProtection, csrfToken, cartController.showCart);
-
-router.get('/', csrfProtection, csrfToken, cartController.showCart);
-
-// router.get('/count', csrfToken, cartController.getCartCount);
-
-// router.post('/remove/:itemId', csrfToken, cartController.removeItem);
-
-// router.post('/update/:itemId', csrfToken, cartController.updateItemQuantity);
-
-// router.post('/add/:productId', csrfToken, cartController.addToCart);
-
-// router.get('/:id', csrfToken, cartController.showCart);
-
-// router.get('/', csrfToken, cartController.showCart);
+// View routes - use CSRF token in views
+router.get('/:id', cartController.showCart);
+router.get('/', cartController.showCart);
 
 module.exports = router;
