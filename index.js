@@ -21,6 +21,9 @@ const port = process.env.PORT;
 const cookieParser = require('cookie-parser');
 const fs = require('fs');
 const https = require('https');
+const mongoSanitize = require('express-mongo-sanitize');
+
+app.use(mongoSanitize());
 app.use(express.static(path.join(__dirname, 'src', 'public')));
 app.use(loadCatalogList);
 app.use(express.urlencoded({ extended: true }));

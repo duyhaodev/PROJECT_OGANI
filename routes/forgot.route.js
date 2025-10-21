@@ -1,8 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const ForgotController = require("../controllers/forgot.controller");
+const { checkOTPSession, checkResetPasswordSession } = require("../middleware/forgot.middleware");
 
-router.get("/verifyOTP", (req, res) => {
+
+router.get("/verifyOTP", checkOTPSession, (req, res) => {
     const message = req.session.message || null;
     req.session.message = null; // Xóa thông báo sau khi hiển thị
     res.render("verifyOTP", {
@@ -11,7 +13,7 @@ router.get("/verifyOTP", (req, res) => {
     });
 })
 
-router.get("/resetPassword", (req, res) => {
+router.get("/resetPassword", checkResetPasswordSession, (req, res) => {
     const message = req.session.message || null;
     req.session.message = null; // Xóa thông báo sau khi hiển thị
     res.render("resetPassword", {
