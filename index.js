@@ -19,9 +19,8 @@ const systemConfig = require("./config/system.js")
 const loadCatalogList = require('./middleware/catalog.middleware.js');
 const cookieParser = require('cookie-parser');
 
-
 const port = process.env.PORT;
-
+app.use(express.json());
 app.use(express.static(path.join(__dirname, 'src', 'public')));
 app.use(loadCatalogList);
 app.use(express.urlencoded({ extended: true }));

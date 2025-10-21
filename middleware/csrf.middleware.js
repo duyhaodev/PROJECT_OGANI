@@ -1,17 +1,17 @@
-const csrf = require('csurf');
+// const csrf = require('csurf');
 
 let csrfProtection = (req, res, next) => next(); // mặc định không làm gì
 
-if (process.env.NODE_ENV === 'production') {
-  csrfProtection = csrf({
-    cookie: {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'strict'
-    },
-    value: (req) => req.headers['x-csrf-token'] || req.body._csrf
-  });
-}
+// if (process.env.NODE_ENV === 'production') {
+//   csrfProtection = csrf({
+//     cookie: {
+//       httpOnly: true,
+//       secure: true,
+//       sameSite: 'strict'
+//     },
+//     value: (req) => req.headers['x-csrf-token'] || req.body._csrf
+//   });
+// }
 
 const csrfToken = (req, res, next) => {
   if (process.env.NODE_ENV === 'development') {
