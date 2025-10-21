@@ -101,8 +101,7 @@ class ForgotController {
         } catch (error) {
             console.error("Lỗi khi xác minh OTP:", error);
             res.status(500).json({ message: "Lỗi server.", error });
-        }
-        
+        } 
     }
 
     showResetForm = async (req, res) => {
