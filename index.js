@@ -17,13 +17,13 @@ const waitingRoute = require("./routes/waiting.route");
 const forgotRoute = require("./routes/forgot.route");
 const systemConfig = require("./config/system.js")
 const loadCatalogList = require('./middleware/catalog.middleware.js');
-const port = process.env.PORT;
 const cookieParser = require('cookie-parser');
 const fs = require('fs');
 const https = require('https');
 const mongoSanitize = require('express-mongo-sanitize');
 
 app.use(mongoSanitize());
+app.use(express.json());
 app.use(express.static(path.join(__dirname, 'src', 'public')));
 app.use(loadCatalogList);
 app.use(express.urlencoded({ extended: true }));

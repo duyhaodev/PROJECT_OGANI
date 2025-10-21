@@ -276,8 +276,129 @@ class CartController {
     }
 
     // POST /cart/update/:itemId
+//     async updateItemQuantity(req, res) {
+//         try {
+//               const errors = validationResult(req);
+//             if (!errors.isEmpty()) {
+//                 return res.status(400).json({
+//                 success: false,
+//                 message: 'Validation failed',
+//                 errors: errors.array(),
+//                 });
+//             }
+//             if (!req.session.user) {
+//                 return res.status(401).json({ success: false, message: 'Bạn cần đăng nhập' });
+//             }
+
+//             const userId = req.session.user._id;
+//             const { itemId } = req.params;
+//             const { quantity } = req.body;
+
+//             // Đảm bảo quantity là số và lớn hơn 0
+//             const qty = parseInt(quantity);
+//             if (isNaN(qty) || qty < 1) {
+//                 return res.status(400).json({ success: false, message: 'Số lượng không hợp lệ' });
+//             }
+
+//             console.log('Updating cart item quantity:', { userId, itemId, qty });
+
+//             // Tìm giỏ hàng
+//             const cart = await Cart.findOne({ userId });
+//             if (!cart) {
+//                 return res.status(404).json({ success: false, message: 'Không tìm thấy giỏ hàng' });
+//             }
+
+//             // Tìm sản phẩm trong giỏ hàng
+//             const itemIndex = cart.items.findIndex(item => item._id.toString() === itemId);
+//             if (itemIndex === -1) {
+//                 return res.status(404).json({ success: false, message: 'Không tìm thấy sản phẩm trong giỏ hàng' });
+//             }
+
+//             // Lấy thông tin sản phẩm để kiểm tra tồn kho
+//             const product = await Product.findById(cart.items[itemIndex].productId).lean();
+//             if (!product) {
+//                 return res.status(404).json({ success: false, message: 'Không tìm thấy thông tin sản phẩm' });
+//             }
+
+//             // Kiểm tra tồn kho - Truy vấn trực tiếp sản phẩm khả dụng từ database
+//             const availableProducts = await Product.find({
+//                 import: product.import,
+//                 status: { $in: ['IN_STOCK', 'ON_SALE'] },
+//                 active: 'active'
+//             }).lean();
+            
+//             // Số lượng tồn kho chính là số lượng sản phẩm khả dụng
+//             const stockCount = availableProducts.length;
+            
+//             console.log(`Tồn kho hiện tại: ${stockCount} sản phẩm với mã import ${product.import}`);
+//             console.log('Chi tiết sản phẩm khả dụng:');
+//             availableProducts.forEach((p, index) => {
+//                 console.log(`Sản phẩm khả dụng ${index + 1}: id=${p._id}, status=${p.status}, active=${p.active}`);
+//             });
+
+//             // Kiểm tra số lượng tồn kho
+//             if (stockCount <= 0) {
+//                 return res.status(400).json({ success: false, message: 'Sản phẩm đã hết hàng' });
+//             }
+
+//             // Kiểm tra nếu số lượng yêu cầu vượt quá số lượng tồn kho
+//             if (qty > stockCount) {
+//                 return res.status(400).json({
+//                     success: false,
+//                     message: `Chỉ còn ${stockCount} sản phẩm trong kho`,
+//                     availableStock: stockCount
+//                 });
+//             }
+
+//             // Cập nhật số lượng
+//             cart.items[itemIndex].quantity = qty;
+//             await cart.save();
+
+//             // Tính lại tổng tiền của sản phẩm
+//             const total = qty * (product?.sellPrice || 0);
+
+//             // Tính lại tổng tiền của giỏ hàng
+//             let subtotal = 0;
+//             for (const item of cart.items) {
+//                 const prod = await Product.findById(item.productId).lean();
+//                 subtotal += item.quantity * (prod?.sellPrice || 0);
+//             }
+
+//             // Tính tổng số lượng sản phẩm trong giỏ hàng
+//             const cartCount = cart.items.reduce((total, item) => total + item.quantity, 0);
+
+//             return res.json({
+//                 success: true,
+//                 message: 'Cập nhật số lượng thành công',
+//                 itemTotal: total,
+//                 subtotal: subtotal,
+//                 cartCount: cartCount
+//             });
+//         } catch (error) {
+//             console.error('Error in updateItemQuantity:', error);
+//             return res.status(500).json({
+//                 success: false,
+//                 message: 'Đã xảy ra lỗi khi cập nhật số lượng',
+//                 error: error.message
+//             });
+//         }
+//     }
+// }
+// POST /cart/update/:itemId
     async updateItemQuantity(req, res) {
         try {
+            // 👉 CHÈN Ở ĐÂY (1) - Kiểm tra validation từ express-validator
+            const { validationResult } = require('express-validator');
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Validation failed',
+                    errors: errors.array(),
+                });
+            }
+
+            // 👉 CHÈN Ở ĐÂY (2) - Kiểm tra đăng nhập
             if (!req.session.user) {
                 return res.status(401).json({ success: false, message: 'Bạn cần đăng nhập' });
             }
@@ -286,54 +407,52 @@ class CartController {
             const { itemId } = req.params;
             const { quantity } = req.body;
 
-            // Đảm bảo quantity là số và lớn hơn 0
+            // 👉 CHÈN Ở ĐÂY (3) - Kiểm tra ObjectId hợp lệ
+            const mongoose = require('mongoose');
+            if (!mongoose.Types.ObjectId.isValid(itemId)) {
+                return res.status(400).json({ success: false, message: 'Mã sản phẩm không hợp lệ' });
+            }
+
+            // 👉 CHÈN Ở ĐÂY (4) - Kiểm tra và giới hạn số lượng
             const qty = parseInt(quantity);
-            if (isNaN(qty) || qty < 1) {
-                return res.status(400).json({ success: false, message: 'Số lượng không hợp lệ' });
+            if (isNaN(qty) || qty < 1 || qty > 100) {
+                return res.status(400).json({ success: false, message: 'Số lượng không hợp lệ (1 - 100)' });
             }
 
             console.log('Updating cart item quantity:', { userId, itemId, qty });
 
-            // Tìm giỏ hàng
+            // 👉 CHÈN Ở ĐÂY (5) - Tìm giỏ hàng của user
             const cart = await Cart.findOne({ userId });
             if (!cart) {
                 return res.status(404).json({ success: false, message: 'Không tìm thấy giỏ hàng' });
             }
 
-            // Tìm sản phẩm trong giỏ hàng
+            // 👉 CHÈN Ở ĐÂY (6) - Tìm item trong giỏ
             const itemIndex = cart.items.findIndex(item => item._id.toString() === itemId);
             if (itemIndex === -1) {
                 return res.status(404).json({ success: false, message: 'Không tìm thấy sản phẩm trong giỏ hàng' });
             }
 
-            // Lấy thông tin sản phẩm để kiểm tra tồn kho
+            // 👉 CHÈN Ở ĐÂY (7) - Kiểm tra tồn kho
             const product = await Product.findById(cart.items[itemIndex].productId).lean();
             if (!product) {
                 return res.status(404).json({ success: false, message: 'Không tìm thấy thông tin sản phẩm' });
             }
 
-            // Kiểm tra tồn kho - Truy vấn trực tiếp sản phẩm khả dụng từ database
             const availableProducts = await Product.find({
                 import: product.import,
                 status: { $in: ['IN_STOCK', 'ON_SALE'] },
                 active: 'active'
             }).lean();
-            
-            // Số lượng tồn kho chính là số lượng sản phẩm khả dụng
-            const stockCount = availableProducts.length;
-            
-            console.log(`Tồn kho hiện tại: ${stockCount} sản phẩm với mã import ${product.import}`);
-            console.log('Chi tiết sản phẩm khả dụng:');
-            availableProducts.forEach((p, index) => {
-                console.log(`Sản phẩm khả dụng ${index + 1}: id=${p._id}, status=${p.status}, active=${p.active}`);
-            });
 
-            // Kiểm tra số lượng tồn kho
+            const stockCount = availableProducts.length;
+
+            console.log(`Tồn kho hiện tại: ${stockCount} sản phẩm với mã import ${product.import}`);
+
             if (stockCount <= 0) {
                 return res.status(400).json({ success: false, message: 'Sản phẩm đã hết hàng' });
             }
 
-            // Kiểm tra nếu số lượng yêu cầu vượt quá số lượng tồn kho
             if (qty > stockCount) {
                 return res.status(400).json({
                     success: false,
@@ -342,21 +461,19 @@ class CartController {
                 });
             }
 
-            // Cập nhật số lượng
+            // 👉 CHÈN Ở ĐÂY (8) - Cập nhật giỏ hàng
             cart.items[itemIndex].quantity = qty;
             await cart.save();
 
-            // Tính lại tổng tiền của sản phẩm
+            // 👉 CHÈN Ở ĐÂY (9) - Tính lại tổng tiền
             const total = qty * (product?.sellPrice || 0);
 
-            // Tính lại tổng tiền của giỏ hàng
             let subtotal = 0;
             for (const item of cart.items) {
                 const prod = await Product.findById(item.productId).lean();
                 subtotal += item.quantity * (prod?.sellPrice || 0);
             }
 
-            // Tính tổng số lượng sản phẩm trong giỏ hàng
             const cartCount = cart.items.reduce((total, item) => total + item.quantity, 0);
 
             return res.json({
@@ -376,5 +493,6 @@ class CartController {
         }
     }
 }
+
 
 module.exports = new CartController();
