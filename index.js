@@ -22,16 +22,13 @@ const fs = require('fs');
 const https = require('https');
 const mongoSanitize = require('express-mongo-sanitize');
 
-app.use(mongoSanitize());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'src', 'public')));
 app.use(loadCatalogList);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-// DÙNG cookie-parser để csurf có thể đặt token vào cookie.
 app.use(cookieParser());// Cho phép csurf lưu secret/token trong cookie
-
-app.use(cookieParser());
+app.use(mongoSanitize());
 
 app.use(session({
   // Dùng ENV để tránh lộ secret trong code
@@ -49,7 +46,6 @@ app.use(session({
 
 app.set('view engine', 'hbs')
 app.set('views', path.join(__dirname, 'src/resources/views'));
-
 
 //Template engine
 app.engine('hbs', hbs.engine({
@@ -157,7 +153,7 @@ const httpsOptions = {
   cert: fs.readFileSync(path.join(__dirname, 'certs/dev-selfsigned.crt')),
 };
 
-const PORT = 3000;
+const PORT = 4000;
 
 https.createServer(httpsOptions, app).listen(PORT, () => {
   console.log(`HTTPS server running at https://localhost:${PORT}`);
