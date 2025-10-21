@@ -1,30 +1,32 @@
 const csrf = require('csurf');
 
-let csrfProtection = (req, res, next) => next(); // mặc định không làm gì
-
-if (process.env.NODE_ENV === 'production') {
-  csrfProtection = csrf({
-    cookie: {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'strict'
-    },
-    value: (req) => req.headers['x-csrf-token'] || req.body._csrf
-  });
-}
-
-const csrfToken = (req, res, next) => {
-  if (process.env.NODE_ENV === 'development') {
-    res.locals.csrfToken = 'DEV_CSRF_DISABLED';
-  } else if (req.csrfToken) {
-    res.locals.csrfToken = req.csrfToken();
-  } else {
-    res.locals.csrfToken = '';
+// Simple CSRF protection for testing
+const csrfProtection = csrf({
+  cookie: {
+    httpOnly: true,
+    secure: true // Set to true in production with HTTPS
   }
+});
+
+// Generate CSRF token
+const csrfToken = (req, res, next) => {
+  res.locals.csrfToken = req.csrfToken ? req.csrfToken() : 'TEST_TOKEN';
   next();
 };
 
+// Apply CSRF to non-GET routes
+const csrfMiddleware = [
+  (req, res, next) => {
+    if (!['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
+      return csrfProtection(req, res, next);
+    }
+    next();
+  },
+  csrfToken
+];
+
 module.exports = {
   csrfProtection,
-  csrfToken
+  csrfToken,
+  csrfMiddleware
 };
