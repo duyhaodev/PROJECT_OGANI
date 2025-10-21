@@ -153,7 +153,7 @@ const httpsOptions = {
   cert: fs.readFileSync(path.join(__dirname, 'certs/dev-selfsigned.crt')),
 };
 
-const PORT = 4000;
+const PORT = 3000;
 
 https.createServer(httpsOptions, app).listen(PORT, () => {
   console.log(`HTTPS server running at https://localhost:${PORT}`);
