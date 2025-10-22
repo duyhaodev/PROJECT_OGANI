@@ -92,6 +92,9 @@ class CartController {
             if (!req.session.user) {
                 return res.redirect('/login');
             }
+            if (!mongoose.Types.ObjectId.isValid(req.session.user._id)) {
+                return res.status(400).send('Invalid user ID');
+            }
             const userId = req.session.user._id;
             const prodId = req.params.productId;
             const qty = parseInt(req.body.qty) || 1;
@@ -100,6 +103,9 @@ class CartController {
 
             // 1. Kiểm tra product tồn tại
             const product = await Product.findById(prodId).lean();
+            if (!mongoose.Types.ObjectId.isValid(prodId)) {
+            return res.status(400).send('Invalid product ID');
+            }
             if (!product) {
                 console.log('Product not found');
                 return res.status(404).send('Không tìm thấy sản phẩm');
