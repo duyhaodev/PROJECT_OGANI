@@ -22,7 +22,7 @@ router.post(
   csrfToken,
   cartController.updateItemQuantity
 );
-router.post('/add/:productId', csrfProtection, csrfToken, cartController.addToCart);
+router.post('/add/:productId', cartController.addToCart);
 
 router.get('/:id', csrfProtection, csrfToken, cartController.showCart);
 
