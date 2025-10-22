@@ -3,6 +3,14 @@ const Cart = require('../../models/cart.model');
 const User = require('../../models/user.model');
 const Product = require('../../models/product.model');
 const { calculateTotals } = require('../../config/helper');
+const validator = require('validator');
+
+function sanitizeInput(input) {
+    if (typeof input !== 'string') return input;
+    
+    // Loại bỏ tất cả HTML tags
+    return validator.escape(input.trim());
+}
 
 class OrderController {
     // Hiển thị trang thanh toán
@@ -117,6 +125,26 @@ class OrderController {
                 console.error('Missing required form data');
                 return res.status(400).send('Vui lòng điền đầy đủ thông tin giao hàng');
             }
+
+            // ===== THÊM ĐOẠN NÀY: Sanitize tất cả input từ form =====
+            const sanitizedData = {
+                receiverName: sanitizeInput(req.body.receiverName),
+                phoneNumber: sanitizeInput(req.body.phoneNumber),
+                address: sanitizeInput(req.body.address),
+                shippingMethod: sanitizeInput(req.body.shippingMethod || 'Standard'),
+                paymentMethod: sanitizeInput(req.body.paymentMethod || 'COD'),
+                note: sanitizeInput(req.body.note || '')
+            };
+
+            // Validate thêm - từ chối nếu phát hiện script tags
+            const dangerousPatterns = /<script|javascript:|onerror=|onload=/i;
+            if (dangerousPatterns.test(req.body.receiverName) || 
+                dangerousPatterns.test(req.body.address) ||
+                dangerousPatterns.test(req.body.note)) {
+                console.error('⚠️ XSS attempt detected from user:', userId);
+                return res.status(400).send('Dữ liệu không hợp lệ. Vui lòng không sử dụng ký tự đặc biệt.');
+            }
+            // ===== HẾT ĐOẠN THÊM =====
             
             try {
                 // Lấy thông tin giỏ hàng
@@ -149,7 +177,7 @@ class OrderController {
                 const vat = subtotal * 0.1; // 10% VAT
                 
                 // Lấy thông tin shipping từ form
-                let shippingFee = req.body.shippingMethod === 'Express' ? 50000 : 30000;
+                let shippingFee = sanitizedData.shippingMethod === 'Express' ? 50000 : 30000;
             
                 // Miễn phí vận chuyển cho đơn hàng từ 100.000đ
                 if (subtotal >= 100000) {
@@ -157,10 +185,10 @@ class OrderController {
                 }
                 
                 const shipping = {
-                    address: req.body.address,
-                    receiverName: req.body.receiverName,
-                    phoneNumber: req.body.phoneNumber,
-                    shippingMethod: req.body.shippingMethod || 'Standard',
+                    address: sanitizedData.address,
+                    receiverName: sanitizedData.receiverName,
+                    phoneNumber: sanitizedData.phoneNumber,
+                    shippingMethod: sanitizedData.shippingMethod || 'Standard',
                     shippingFee: shippingFee
                 };
                 
@@ -172,10 +200,10 @@ class OrderController {
                     items: orderItems,
                     shipping,
                     vat,
-                    note: req.body.note,
+                    note: sanitizedData.note,
                     subtotal,
                     totalAmount: subtotal + vat + shipping.shippingFee,
-                    paymentMethod: req.body.paymentMethod || 'COD'
+                    paymentMethod: sanitizedData.paymentMethod
                 });
                 
                 // Tính toán tổng tiền

@@ -118,42 +118,206 @@
 <!-- Checkout Section End -->
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const shippingRadios = document.querySelectorAll('input[name="shippingMethod"]');
-        const shippingFeeEl = document.querySelector('.checkout__order__subtotal span.shipping-fee');
-        const totalAmountEl = document.querySelector('.checkout__order__total span.total-amount');
+document.addEventListener("DOMContentLoaded", function () {
+    // ==================== PHẦN 1: CẬP NHẬT PHÍ VẬN CHUYỂN ====================
+    const shippingRadios = document.querySelectorAll('input[name="shippingMethod"]');
+    const shippingFeeEl = document.querySelector('.checkout__order__subtotal span.shipping-fee');
+    const totalAmountEl = document.querySelector('.checkout__order__total span.total-amount');
+    const subtotal = {{subtotal}};
+    const vat = {{vat}};
+    const FREE_SHIPPING_THRESHOLD = 100000;
 
-        const subtotal = {{subtotal}};
-        const vat = {{vat}};
+    // Format tiền tệ
+    const formatCurrency = (number) => new Intl.NumberFormat('vi-VN', { 
+        style: 'currency', 
+        currency: 'VND' 
+    }).format(number);
 
-    function formatCurrency(number) {
-        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(number);
-    }
-
-    function updateFees() {
-        let shippingFee = 30000; // mặc định
-        if (document.getElementById('express').checked) {
+    // Cập nhật phí vận chuyển và tổng tiền
+    function updateShippingFees() {
+        let shippingFee = 30000; // Phí tiêu chuẩn
+        
+        // Kiểm tra nếu chọn giao nhanh
+        if (document.getElementById('express')?.checked) {
             shippingFee = 50000;
         }
         
-        // Miễn phí vận chuyển cho đơn hàng từ 100.000đ
-        if (subtotal >= 100000) {
+        // Miễn phí nếu đơn hàng >= 100k
+        if (subtotal >= FREE_SHIPPING_THRESHOLD) {
             shippingFee = 0;
-            // Cập nhật text cho radio buttons
-            document.querySelector('label[for="standard"]').innerHTML = 'Tiêu chuẩn (Miễn phí) <input type="radio" id="standard" name="shippingMethod" value="Standard" checked><span class="checkmark"></span>';
-            document.querySelector('label[for="express"]').innerHTML = 'Nhanh (Miễn phí) <input type="radio" id="express" name="shippingMethod" value="Express"><span class="checkmark"></span>';
+            updateShippingLabels('Miễn phí');
         }
 
         const totalAmount = subtotal + vat + shippingFee;
-
-        shippingFeeEl.textContent = formatCurrency(shippingFee);
-        totalAmountEl.textContent = formatCurrency(totalAmount);
+        
+        // Cập nhật UI
+        if (shippingFeeEl) shippingFeeEl.textContent = formatCurrency(shippingFee);
+        if (totalAmountEl) totalAmountEl.textContent = formatCurrency(totalAmount);
     }
 
-    shippingRadios.forEach(radio => {
-        radio.addEventListener('change', updateFees);
-    });
+    // Cập nhật label radio button với text động
+    function updateShippingLabels(feeText) {
+        const standardLabel = document.querySelector('label[for="standard"]');
+        const expressLabel = document.querySelector('label[for="express"]');
+        
+        if (standardLabel) {
+            standardLabel.innerHTML = `Tiêu chuẩn (${feeText}) <input type="radio" id="standard" name="shippingMethod" value="Standard" checked><span class="checkmark"></span>`;
+        }
+        if (expressLabel) {
+            expressLabel.innerHTML = `Nhanh (${feeText}) <input type="radio" id="express" name="shippingMethod" value="Express"><span class="checkmark"></span>`;
+        }
+    }
 
-    updateFees(); // Khởi tạo lần đầu
+    // Gắn sự kiện thay đổi phương thức vận chuyển
+    shippingRadios.forEach(radio => radio.addEventListener('change', updateShippingFees));
+    
+    // Khởi tạo lần đầu
+    updateShippingFees();
+
+    // ==================== PHẦN 2: VALIDATION FORM CHỐNG XSS ====================
+    const checkoutForm = document.querySelector('form[action*="/order/place"]');
+    
+    if (!checkoutForm) return; // Không có form thì dừng
+
+    // Các pattern nguy hiểm
+    const DANGEROUS_PATTERNS = {
+        xss: /<script|<\/script|javascript:|onerror=|onload=|<iframe|onclick=|eval\(|expression\(/i,
+        html: /<[^>]+>/g
+    };
+
+    // Config validation cho từng field
+    const FIELD_RULES = {
+        receiverName: {
+            selector: 'input[name="receiverName"]',
+            maxLength: 100,
+            label: 'Tên người nhận'
+        },
+        address: {
+            selector: 'input[name="address"]',
+            maxLength: 200,
+            label: 'Địa chỉ'
+        },
+        phoneNumber: {
+            selector: 'input[name="phoneNumber"]',
+            maxLength: 15,
+            label: 'Số điện thoại',
+            pattern: /^[0-9+\-\s()]+$/,
+            patternError: 'Số điện thoại chỉ được chứa số và ký tự +, -, (, )'
+        },
+        note: {
+            selector: 'textarea[name="note"]',
+            maxLength: 500,
+            label: 'Ghi chú',
+            required: false
+        }
+    };
+
+    // Hàm hiển thị lỗi
+    const showError = (message) => {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: message,
+                confirmButtonColor: '#7fad39'
+            });
+        } else {
+            alert(message);
+        }
+    };
+
+    // Validate một field
+    function validateField(fieldName, value) {
+        const rule = FIELD_RULES[fieldName];
+        
+        // Bỏ qua nếu field không bắt buộc và rỗng
+        if (!rule.required && !value) return true;
+
+        // Kiểm tra XSS
+        if (DANGEROUS_PATTERNS.xss.test(value)) {
+            showError(`${rule.label} chứa ký tự không hợp lệ!`);
+            return false;
+        }
+
+        // Kiểm tra độ dài
+        if (value.length > rule.maxLength) {
+            showError(`${rule.label} quá dài (tối đa ${rule.maxLength} ký tự)!`);
+            return false;
+        }
+
+        // Kiểm tra pattern riêng (ví dụ: số điện thoại)
+        if (rule.pattern && !rule.pattern.test(value)) {
+            showError(rule.patternError || `${rule.label} không đúng định dạng!`);
+            return false;
+        }
+
+        return true;
+    }
+
+    // Validate toàn bộ form
+    function validateForm(e) {
+        // Lấy giá trị các field
+        const formData = {};
+        let isValid = true;
+
+        for (const [fieldName, rule] of Object.entries(FIELD_RULES)) {
+            const input = document.querySelector(rule.selector);
+            const value = input?.value?.trim() || '';
+            
+            formData[fieldName] = value;
+
+            // Validate từng field
+            if (!validateField(fieldName, value)) {
+                e.preventDefault();
+                isValid = false;
+                
+                // Focus vào field lỗi
+                if (input) {
+                    input.focus();
+                    input.classList.add('error');
+                    setTimeout(() => input.classList.remove('error'), 2000);
+                }
+                
+                break; // Dừng lại ở lỗi đầu tiên
+            }
+        }
+
+        // Log nếu có lỗi (để debug)
+        if (!isValid) {
+            console.warn('Form validation failed:', formData);
+        }
+
+        return isValid;
+    }
+
+    // Gắn sự kiện submit
+    checkoutForm.addEventListener('submit', validateForm);
+
+    // Validation realtime (tùy chọn)
+    Object.entries(FIELD_RULES).forEach(([fieldName, rule]) => {
+        const input = document.querySelector(rule.selector);
+        if (input) {
+            input.addEventListener('blur', function() {
+                const value = this.value.trim();
+                if (value) {
+                    validateField(fieldName, value);
+                }
+            });
+        }
     });
+});
 </script>
+
+<style>
+/* Style cho field bị lỗi */
+input.error, textarea.error {
+    border: 2px solid #dc3545 !important;
+    animation: shake 0.3s;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+</style>
