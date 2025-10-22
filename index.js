@@ -21,14 +21,17 @@ const cookieParser = require('cookie-parser');
 const fs = require('fs');
 const https = require('https');
 const mongoSanitize = require('express-mongo-sanitize');
+const { useSecurity } = require('./middleware/security.middleware');
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'src', 'public')));
 app.use(loadCatalogList);
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
 app.use(cookieParser());// Cho phép csurf lưu secret/token trong cookie
 app.use(mongoSanitize());
+
+// ✅ Kích hoạt middleware bảo mật (ẩn X-Powered-By & Server)
+useSecurity(app);
 
 app.use(session({
   // Dùng ENV để tránh lộ secret trong code
